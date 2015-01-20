@@ -1,0 +1,25 @@
+.appNav 
+{
+	float: right;
+	margin-right: 10px;
+}
+
+#recommendations ul
+{
+	list-style-type: none;
+}
+
+#recomm1 li
+{
+	display: inline-block;
+}
+
+#recomm2 li
+{
+	display: inline-block;
+}
+
+.rank
+{
+	width: 100px;
+}

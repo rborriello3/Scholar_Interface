@@ -1,0 +1,126 @@
+#authenticatedContainer
+{
+	float: left;
+	background: white;
+	width: 83%;
+	border-radius: 0 3px 3px 3px;
+	-moz-border-radius: 0 3px 3px 3px;
+	-webkit-border-radius: 0 3px 3px 3px;
+	min-height: 800px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	color: #464646;
+	padding: 0 5px 0 5px;
+}
+
+#messages
+{
+	margin-top: 30px;
+	padding: 0;
+}
+
+#messages .alert
+{
+	margin: 0;
+}
+
+.navbar #roleSubmit
+{
+	background-color: #005696;
+}
+
+.navbar a:hover
+{
+	text-decoration: none;
+	color: white;
+}
+
+.navbar .badge
+{
+  	padding: 0 4px 1.5px;
+	background-color: red;
+	text-decoration: none;
+}
+
+.navbar .badge:hover
+{
+	background-color: #f37321;
+}
+
+#navBarHome
+{
+	float: left;
+	margin: 1px 0 0 4px;
+}
+
+.navbar li
+{
+	float: right;
+	list-style-type: none;
+	margin: 1px 4px;
+	padding: 0 0 0 5px;
+	border-left: 1px solid #cdcdcd;
+}
+
+.navbar button
+{
+	border: none;
+	background-color: white;
+	color: #f37321;
+}
+
+.navbar button:hover
+{
+	color: white;
+}
+
+.sidebar_navigation
+{
+	margin-top: 10px;
+	float: left;
+	width: 14%;
+	padding-left: 10px;
+}
+
+.sidebar_navigation ul 
+{
+	margin: 0;
+	padding: 0;
+}
+
+.sidebar_navigation li
+{
+	list-style-type: none;
+	display: block;
+	margin-bottom: 5px;
+	border-top-right-radius: 0;
+	border-top-left-radius: 2px;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 2px;
+	background-color: #005696;
+}
+
+.sidebar_navigation li:hover
+{
+	background-color: white;
+}
+
+.sidebar_navigation li.active
+{
+	list-style-type: none;
+	display: block;
+	margin-bottom: 5px;
+	border-top-right-radius: 0;
+	border-top-left-radius: 2px;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 2px;
+	background: white;
+} 
+
+.sidebar_navigation ul li a
+{
+	display: block;
+	text-decoration: none;
+	padding: 20px;
+	padding-left: 5px;
+}

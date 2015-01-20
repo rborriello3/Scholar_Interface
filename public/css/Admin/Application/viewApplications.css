@@ -1,0 +1,51 @@
+.applications .ui-accordion-header
+{
+    background: #005696;
+    border-color: #005696;
+    margin-left: 2%;
+}
+
+.applications .ui-accordion-content
+{
+    background: white;
+    color: #464646;
+    margin-left: 2%;
+}
+
+.longText
+{
+    overflow: auto;
+    height: 300px;
+    width: 40%;
+    display: inline-block;
+    margin-right: 8%;
+}
+
+.recommendations
+{
+    overflow: auto;
+    height: 300px;
+    width: 40%;
+    display: inline-block;
+    margin-right: 8%;
+}
+
+.recommendations p
+{
+    overflow: auto;
+    width: 100%;
+}
+
+.applicationActions
+{
+   display: block;
+   float: left;
+   margin-top: 1%;
+   padding-right: 20px;
+}
+
+.editApplication:hover
+{
+    text-decoration: none;
+}
+

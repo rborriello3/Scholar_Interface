@@ -1,0 +1,21 @@
+#activateForm #assignRole
+{
+	border: 1px solid;
+	width: 200px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	padding: 0 10px 10px 10px;
+	float: left;
+	margin-right: 50px;
+}
+
+#gradeGroup
+{
+	float: left;
+	width: 400px;
+}
+
+#submits
+{
+	margin-top: 150px;
+}

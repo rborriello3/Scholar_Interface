@@ -1,0 +1,29 @@
+#pageIntro
+{
+	text-align: center;
+	color: white;
+}
+
+#registerFormExterior
+{
+	padding: 10px;
+	background-color: #005696;
+	width: 300px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	margin-top: 20px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+#form 
+{
+	background-color: #FFFFFF;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+#form ul
+{
+	list-style-type: none;
+}

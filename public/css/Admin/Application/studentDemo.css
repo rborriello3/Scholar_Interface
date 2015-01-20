@@ -1,0 +1,81 @@
+#demographics ul
+{
+	list-style-type: none;
+}
+
+.appNav
+{
+	float: right;
+	margin-right: 10px;
+}
+
+#generalInfo li
+{
+	margin-left: 8px;
+	display: inline-block;
+}
+
+#notfications li
+{
+	margin-left: 8px;
+	display: inline-block;
+}
+
+#address li
+{
+	display: inline-block;
+	margin-left: 8px;
+}
+
+#addressLine
+{
+	width: 400px;
+}
+
+#address #zip
+{
+	width: 70px;
+}
+
+#address #city
+{
+	width: 150px;
+}
+
+#address #county
+{
+	width: 100px;
+}
+
+#extraInfo li
+{
+	display: inline-block;
+	margin-left: 8px;
+	margin-right: 50px;
+}
+
+.dropdown-menu-form {
+    padding: 5px 10px 0;
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+#criteria
+{
+	width: 700px;
+}
+
+#criteria li
+{
+	display: block;
+}
+
+#minority
+{
+	width: 350px;
+}
+
+#minority li
+{
+	display: block;
+}

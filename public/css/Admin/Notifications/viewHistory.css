@@ -1,0 +1,18 @@
+.history .ui-accordion-header
+{
+    background: #005696;
+    border-color: #005696;
+    margin-left: 2%;
+}
+
+.history .ui-accordion-content
+{
+    background: white;
+    color: #464646;
+    margin-left: 2%;
+}
+
+.history ul
+{
+    list-style-type: none;
+}
