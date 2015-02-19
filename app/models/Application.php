@@ -128,14 +128,14 @@ class Application extends Eloquent
     private function checkFurtherNeeds($values, $appID)
     {
         // Add Recommendations
-        if ($values['types'] != '1' && $values['types'] != '3' && $values['types'] != '5' && $values['types'] != '7' && $values['types'] != '8')
+        if ($values['types'] != '1' &&$values['types'] != '3' && $values['types'] != '5' && $values['types'] != '7' && $values['types'] != '8')
         {
             $req = new ApplicationRecommendation($appID, $values['studentID']);
             $req->newRecommendation();
         }
 
         // Add Thank You and Acceptance
-        if ($values['types'] != '1' && $values['types'] != '4' && $values['types'] != '5')
+        if ($values['types'] != '4' && $values['types'] != '5')
         {
             $resp = new ApplicationResponse($appID, $values['studentID']);
             $resp->newResponse();
@@ -210,7 +210,6 @@ class Application extends Eloquent
             $app->statusID = 5;
             $return        = 'Student information successfully inputted - Application not submitted however due to application type.';
         }
-
         else
         {
             $app->statusID = 2;

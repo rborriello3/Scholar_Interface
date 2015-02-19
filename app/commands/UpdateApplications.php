@@ -51,10 +51,11 @@ class UpdateApplications extends Command
         $repeat = $this->argument('repeat');
         $this->helper->running($jobID);
         $apps = array(
-            '/var/www/machform/ScholarshipApplicationEnteringFreshmen.csv'   => 'ESAPON',
-            '/var/www/machform/ScholarshipApplicationCurrentStudents.csv'    => 'RSAPON',
-            '/var/www/machform/ScholarshipApplicationGraduatingStudents.csv' => 'GSAPON'
+            '/home/machform/ScholarshipApplicationEnteringFreshmen.csv'   => 'ESAPON',
+            '/home/machform/ScholarshipApplicationCurrentStudents.csv'    => 'RSAPON',
+            '/home/machform/ScholarshipApplicationGraduatingStudents.csv' => 'GSAPON'
         );
+
         $notFoundCount = 0;
         $notFound      = array();
         $multiAppCount = 0;
@@ -154,8 +155,8 @@ class UpdateApplications extends Command
                                     elseif ($type == 'RSAPON')
                                     {
                                         $application->typeID          = 6;
-                                        $application->extraCurricular = $app[38];
-                                        $application->essay           = $app[39];
+                                        $application->extraCurricular = $app[46];
+                                        $application->essay           = $app[47];
                                     }
                                     else
                                     {
@@ -184,22 +185,22 @@ class UpdateApplications extends Command
 
                                     if ($type == 'GSAPON')
                                     {
-                                        $updates['typeID']          = 4;
-                                        $updates['extraCurricular'] = $app[27];
-                                        $updates['essay']           = $app[28];
+                                        $application->typeID          = 4;
+                                        $application->extraCurricular = $app[28];
+                                        $application->essay           = $app[29];
                                     }
 
                                     elseif ($type == 'RSAPON')
                                     {
-                                        $updates['typeID']          = 6;
-                                        $updates['extraCurricular'] = $app[38];
-                                        $updates['essay']           = $app[39];
+                                        $application->typeID          = 6;
+                                        $application->extraCurricular = $app[47];
+                                        $application->essay           = $app[48];
                                     }
                                     else
                                     {
-                                        $updates['typeID']          = 2;
-                                        $updates['extraCurricular'] = $app[28];
-                                        $updates['essay']           = $app[29];
+                                        $application->typeID          = 2;
+                                        $application->extraCurricular = $app[29];
+                                        $application->essay           = $app[30];
                                     }
 
                                     \Application::where('studentID', '=', $app[9])->where('typeID', '=', $single)->whereHas('Aidyear', function ($q)
@@ -244,9 +245,9 @@ class UpdateApplications extends Command
         }
 
         $recFiles    = array(
-            '/var/www/machform/FacultyRecommendationEnteringFreshmen.csv'   => 'Entering Freshmen',
-            '/var/www/machform/FacultyRecommendationCurrentStudents.csv'    => 'Returning Student',
-            '/var/www/machform/FacultyRecommendationGraduatingStudents.csv' => 'Graduating'
+            '/home/machform/FacultyRecommendationEnteringFreshmen.csv'   => 'Entering Freshmen',
+            '/home/machform/FacultyRecommendationCurrentStudents.csv'    => 'Returning Student',
+            '/home/machform/FacultyRecommendationGraduatingStudents.csv' => 'Graduating'
         );
         $appNotFound        = array();
         $noAppCount         = 0;
@@ -439,20 +440,8 @@ class UpdateApplications extends Command
 
         if (isset($completeStudents) && count($completeStudents) > 0)
         {
-            $email = new \Email();
-
             foreach ($completeStudents as $anum => $appID)
             {
-                $student = \Student::find($anum);
-
-                if ($student->cellnotifications == 1 && $student->cellCarrier != 0)
-                {
-                    $sms = new \Text('');
-                    $sms->applicationNotifcation($student->cellPhone, $student->cellCarrier, FALSE);
-                }
-
-                $email->emailSentToSUNY($student->personalEmail, $student->firstName, $student->lastName);
-                $email->completedApplication($student->sunyEmail, $student->firstName, $student->lastName, $appID);
                 $application           = \Application::find($appID);
                 $application->statusID = 3;
                 $application->save();
@@ -463,57 +452,33 @@ class UpdateApplications extends Command
 
         if (isset($incompleteStudents) && count($incompleteStudents) > 0)
         {
-            $email = new \Email();
-
             foreach ($incompleteStudents as $anum => $appID)
             {
-                $student = \Student::find($anum);
-
-                if ($student->cellnotifications == 1 && $student->cellCarrier != 0)
-                {
-                    $sms = new \Text('');
-                    $sms->applicationNotifcation($student->cellPhone, $student->cellCarrier, 'checkEmail');
-                }
-
-                $email->emailSentToSUNY($student->personalEmail, $student->firstName, $student->lastName);
-                $email->incompleteApplication($student->sunyEmail, $student->firstName, $student->lastName, $appID);
                 $application           = \Application::find($appID);
                 $application->statusID = 2;
                 $application->save();
             }
         }
 
-        // Get all recommendations that have null recommender1 and null recommender2 because these students are not in the 
+        // Get all recommendations that have null recommender1 and null recommender2 because these students are not in the
         // machform csv there IS NO WAY for this script to catch them to notify them what so ever. So lets go shall we?
         $recs = DB::table('applicationRecommendations')->join('applications', 'applications.applicationID', '=', 'applicationRecommendations.applicationID')
-                                                       ->join('aidyears', 'aidyears.aidyear', '=', 'applications.aidyear')
-                                                       ->select('applicationRecommendations.applicationID', 'applications.studentID')
-                                                       ->where('aidyears.status', '=', 1)
-                                                       ->where('recommender1', '=', NULL)
-                                                       ->where('recommender2', '=', NULL)
-                                                       ->get();
+            ->join('aidyears', 'aidyears.aidyear', '=', 'applications.aidyear')
+            ->select('applicationRecommendations.applicationID', 'applications.studentID')
+            ->where('aidyears.status', '=', 1)
+            ->where('recommender1', '=', NULL)
+            ->where('recommender2', '=', NULL)
+            ->get();
 
         foreach ($recs as $r)
         {
-            $email = new \Email();
-            
-            $student = \Student::find($r->studentID);
-            
-            if ($student->cellnotifications == 1 && $student->cellCarrier != 0)
-            {
-                $sms = new \Text('');
-                $sms->applicationNotifcation($student->cellPhone, $student->cellCarrier, 'checkEmail');
-            }
-        
-            $email->emailSentToSUNY($student->personalEmail, $student->firstName, $student->lastName);
-            $email->incompleteApplication($student->sunyEmail, $student->firstName, $student->lastName, $r->applicationID);
             $application           = \Application::find($r->applicationID);
             $application->statusID = 2;
             $application->save();
         }
 
-        //$this->helper->needsToRepeat($jobID, $repeat);
-        //$this->helper->updateCount($jobID);
+        $this->helper->needsToRepeat($jobID, $repeat);
+        $this->helper->updateCount($jobID);
         $this->helper->applicationUploadNotification('Student scholarship applications and recommendations have successfully been uploaded into Scholarship Interface!', $notFoundCount, $notFound, $multiAppCount, $multiApp, $noAppCount, $appNotFound);
 
         return;

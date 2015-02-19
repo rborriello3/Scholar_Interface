@@ -5,7 +5,6 @@
 /app/storage/*
 NEXT.txt
 THINKING.txt
-UPLOAD.txt
 composer.lock
 vendor/
 .idea/

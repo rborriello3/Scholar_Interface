@@ -1,6 +1,6 @@
 <?php
 
-class Usersettings extends Eloquent
+class UserSettings extends Eloquent
 {
     /**
      * The database table
@@ -17,4 +17,14 @@ class Usersettings extends Eloquent
      */
     protected $primaryKey = 'userId';
 
+    public function updateSettings($values, $type)
+    {
+        foreach($values as $k => $v)
+        {
+            if ($k == 'aidyear' && $type == '2')
+            {
+                return SettingsHelpers::updateCurrentAidYear($v);
+            }
+        }
+    }
 }

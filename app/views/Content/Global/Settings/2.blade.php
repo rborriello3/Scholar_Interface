@@ -11,6 +11,8 @@
 
         <b>Enter Password:</b><br/>
         {{ Form::password('password', array('placeholder' => '••••••••')) }}
+        <br/>
+        <font color="red">{{ $errors -> first('password')}}</font>
         <br/><br/>
 
         {{ Form::label('aidyear', 'Update Current Aidyear') }} <br/>

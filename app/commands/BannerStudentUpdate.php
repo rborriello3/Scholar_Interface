@@ -50,18 +50,17 @@ class BannerStudentUpdate extends Command
         $repeat = $this->argument('repeat');
         $this->helper->running($jobID);
 
-        $bannerFile = '/var/www/ttxt/ttxtSdt.txt';
+        $bannerFile = '/home/ttxt/ttxtSdt.txt';
         $extraInfo  = array(
-            '/var/www/machform/ScholarshipApplicationEnteringFreshmen.csv'   => 'ESAPON',
-            '/var/www/machform/ScholarshipApplicationCurrentStudents.csv'    => 'RSAPON',
-            '/var/www/machform/ScholarshipApplicationGraduatingStudents.csv' => 'GSAPON'
+            '/home/machform/ScholarshipApplicationEnteringFreshmen.csv'   => 'ESAPON',
+            '/home/machform/ScholarshipApplicationCurrentStudents.csv'    => 'RSAPON',
+            '/home/machform/ScholarshipApplicationGraduatingStudents.csv' => 'GSAPON'
         );
 
         if (!file_exists($bannerFile))
         {
             $this->helper->statusNotification('Banner CSV file can not be located.', 23);
             $this->helper->failJob($jobID);
-
             return;
         }
 
@@ -149,11 +148,13 @@ class BannerStudentUpdate extends Command
                 $values = array(
                     'creditHourSP'  => ($banner[4]  != 0 ? $banner[4] : NULL),
                     'creditHourFA'  => ($banner[5]  != 0 ? $banner[5] : NULL),
-                    'GPA'           => ($banner[6]  != 0 ? $banner[6] : NULL), 'major' => $banner[7],
+                    'GPA'           => ($banner[6]  != 0 ? $banner[6] : NULL),
+                    'major'         => $banner[7],
                     'creditsEarned' => ($banner[8]  != 0 ? $banner[8] : NULL),
                     'highSchoolAvg' => ($banner[10] != 0 ? $banner[10] : NULL),
                     'highGrad'      => ($banner[11] !== '' ? date('m/y', strtotime($banner[11])) : '')
                 );
+
                 $demo->insertDemographics($values, $banner[0]);
                 // End of part 1
             }
@@ -316,12 +317,12 @@ class BannerStudentUpdate extends Command
                 }
 
                 fclose($file);
+                $this->helper->studentUploadNotification($bannerMessage, $incorrect, $incorrectCount);
             }
         }
 
         $this->helper->needsToRepeat($jobID, $repeat);
         $this->helper->updateCount($jobID);
-        $this->helper->studentUploadNotification($bannerMessage, $incorrect, $incorrectCount);
 
         return;
     }

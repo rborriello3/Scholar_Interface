@@ -85,7 +85,7 @@ class Awards extends Eloquent
                 Application::where('studentID', '=', $student[$i])->where('aidyear', '=', Session::get('currentAidyear'))->where('statusID', '=', 5)->update(array('statusID' => 9));
             }
 
-            $arrays[] = array('fundCode' => $fundCode[$i], 'studentID' => $student[$i], 'awardAmount' => $amount[$i], 'department' => $department[$i], 'notes' => $notes[$i]);
+            $arrays[] = array('fundCode' => $fundCode[$i], 'studentID' => $student[$i], 'awardAmount' => $amount[$i], 'department' => $department[$i], 'notes' => $notes[$i], 'aidyear' => Session::get('currentAidyear'));
             ++$count;
         }
 

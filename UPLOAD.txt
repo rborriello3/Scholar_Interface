@@ -1,29 +1,33 @@
 ///////////////////////////////Pagination///////////////////////////////////////
-
-Views/SuperUser/Users/newUser.blade.php
-Controller/Super/Accounts
-Models/User
-Content/Committee/Scoring/ShowApplications.blade.php
-Controller/Committee/ScoringController.php
-lang/en/validation
-models/applicationAssessment
-models/application
-Content/Committee/Scoring
-/routes
-Cont/data/applicationsDataController.php
-cont/super/accountscontroller.php
+    Views/SuperUser/Users/newUser.blade.php
+    Controller/Super/Accounts
+    Models/User
+    Content/Committee/Scoring/ShowApplications.blade.php
+    Controller/Committee/ScoringController.php
+    lang/en/validation
+    models/applicationAssessment
+    models/application
+    Content/Committee/Scoring
+    /routes
+    Cont/data/applicationsDataController.php
+    cont/super/accountscontroller.php
 ///////////////////////////////////////////////////////////////////////////////
 
 
 
 //////////////////////////////////////////Upload//////////////////////////////////
 	Controllers/
-		Not yet - SettingsController.php
+	    ApplicationController.php
+	    ApplicationsDataController.php
 
 	Routes/
+	    Applications.php
+	    Applications.php
+
+	    Data.php
+	    Data.php
 
 	Helpers/
-		Not yet - SettingsHelper.php
 
 	Models/
 
@@ -34,8 +38,9 @@ cont/super/accountscontroller.php
 	App/
 
 	Views/
-		Not yet - _partials/SideNavigation/"2/
-		Not yet - Global/Settings/*
+	    viewCommitteeGrade.blade.php
+
+	Commands/
 
 //////////////////////////////////////////////////////////////////////////////////
 

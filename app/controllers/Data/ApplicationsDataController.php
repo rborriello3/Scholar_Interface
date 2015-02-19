@@ -25,26 +25,44 @@ class ApplicationsDataController extends BaseController
             {
                 $crudLinks .= '<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">' . $application->statusName . '<span class="glyphicon glyphicon-arrow-down"></span></button>';
                 $statusLinks = '<li>' . link_to_route('doDeleteApplication', 'Deactivate Application', $parameters = array($application->GUID), $attributes = array('alt' => 'deleteApplication')) . '</li>';
+
+                if ($application->typeName != 'Athletes' && $application->typeName != 'Entering - FR' && $application->typeName != 'Graduating - FR' && $application->typeName != 'Returning - FR' && $application->typeName != 'Honors')
+                {
+                    $statusLinks .= '<li>' . link_to_route('showViewGrades', 'View Assessment', $parameters = array($application->GUID), $attributes = array('alt' => 'viewGrades')) . '</li>';
+                }
             }
 
             elseif ($application->statusName == 'Award')
             {
                 $crudLinks .= '<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">' . $application->statusName . '<span class="glyphicon glyphicon-arrow-down"></span></button>';
                 $statusLinks = '<li>' . link_to_route('showAwardSingleStudent', 'Award Scholarship', $parameters = array($application->GUID), $attributes = array('alt' => 'awardApplication')) . '</li>';
-                $statusLinks .= '<li>' . link_to_route('showViewGrades', 'View Assessment', $parameters = array($application->GUID), $attributes = array('alt' => 'viewGrades')) . '</li>';
                 $statusLinks .= '<li>' . link_to_route('doDeleteApplication', 'Deactivate Application', $parameters = array($application->GUID), $attributes = array('alt' => 'deleteApplication')) . '</li>';
 
+                if ($application->typeName != 'Athletes' && $application->typeName != 'Entering - FR' && $application->typeName != 'Graduating - FR' && $application->typeName != 'Returning - FR' && $application->typeName != 'Honors')
+                {
+                    $statusLinks .= '<li>' . link_to_route('showViewGrades', 'View Assessment', $parameters = array($application->GUID), $attributes = array('alt' => 'viewGrades')) . '</li>';
+                }
             }
             elseif ($application->statusName == 'Awarded')
             {
                 $crudLinks .= '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">' . $application->statusName . '<span class="glyphicon glyphicon-arrow-down"></span></button>';
-                $statusLinks = '<li>' . link_to_route('showViewGrades', 'View Assessment', $parameters = array($application->GUID), $attributes = array('alt' => 'viewGrades')) . '</li>';
+                $statusLinks = "";
+
+                if ($application->typeName != 'Athletes' && $application->typeName != 'Entering - FR' && $application->typeName != 'Graduating - FR' && $application->typeName != 'Returning - FR' && $application->typeName != 'Honors')
+                {
+                    $statusLinks .= '<li>' . link_to_route('showViewGrades', 'View Assessment', $parameters = array($application->GUID), $attributes = array('alt' => 'viewGrades')) . '</li>';
+                }
             }
 
             elseif ($application->statusName == 'Deactivated')
             {
                 $crudLinks .= '<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">' . $application->statusName . '<span class="glyphicon glyphicon-arrow-down"></span></button>';
                 $statusLinks = '<li>' . link_to_route('doActivateApplication', 'Activate Application', $parameters = array($application->GUID), $attributes = array('alt' => 'activateApplication')) . '</li>';
+
+                if ($application->statusName != 'Athletes' && $application->statusName != 'Entering - FR' && $application->statusName != 'Graduating - FR' && $application->statusName != 'Returning - FR' && $application->statusName != 'Honors')
+                {
+                    $statusLinks .= '<li>' . link_to_route('showViewGrades', 'View Assessment', $parameters = array($application->GUID), $attributes = array('alt' => 'viewGrades')) . '</li>';
+                }
             }
 
             elseif ($application->statusName == 'Ineligible')
@@ -77,8 +95,8 @@ class ApplicationsDataController extends BaseController
             ->whereRaw('statusID IN (3,5)')
             ->whereRaw('applicationType.typeID NOT IN (1,3,5,7,8)')
             ->where('applicationAssessment.userID', '=', Auth::user()->userId)
-            ->where('applicationAssessment.status', '!=', 'Deactivated'))
-            ->where('applications.aidyear', '=', Session::get('currentAidyear'))
+            ->where('applicationAssessment.status', '!=', 'Deactivated')
+            ->where('applications.aidyear', '=', Session::get('currentAidyear')))
         ->addColumn('Actions', function ($student)
         {
             if ($student->status == 'Waiting')
@@ -98,5 +116,17 @@ class ApplicationsDataController extends BaseController
 
             return $crudLinks;
         })->showColumns('received', 'firstName', 'lastName', 'studentID', 'aidyear', 'typeName')->searchColumns('lastName', 'student.studentID', 'typeName', 'received')->make();
+    }
+
+    public function getSpecificAssessment($guid)
+    {
+        return Datatable::query(DB::table('applicationAssessment')
+        ->join('applications', 'applications.applicationID', '=', 'applicationAssessment.applicationID')
+        ->join('user', 'user.userId', '=', 'applicationAssessment.userId')
+        ->select('user.name', 'user.userId', 'applicationAssessment.essay', 'applicationAssessment.extra', 'applicationAssessment.faculty', 'applicationAssessment.total', 'applicationAssessment.assessorNotes', 'applicationAssessment.assessmentDate')
+        ->where('applications.GUID', '=', $guid))
+        ->showColumns('name', 'essay', 'extra', 'faculty', 'total', 'assessorNotes', 'assessmentDate')
+        ->searchColumns('name')
+        ->make();
     }
 }

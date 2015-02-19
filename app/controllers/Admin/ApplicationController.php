@@ -480,6 +480,7 @@ class ApplicationController extends BaseController
 
     public function showViewGrades($guid)
     {
-        dd('view Grades ' . $guid);
+        $data['guid'] = $guid;
+        return View::make('Content.Admin.Applications.viewCommitteeGrade', $data);
     }
 }

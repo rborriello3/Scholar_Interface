@@ -118,8 +118,6 @@ class AwardsController extends BaseController
             $awards  = new Awards();
             $awarded = $awards->insertAward(Input::all(), TRUE, $guid);
 
-            //dd($awarded);
-
             if ($awarded[0] == TRUE && $awarded != 'Invalid')
             {
                 return Redirect::route('showAllAwards')->with('success', 'Student has been awarded.');
