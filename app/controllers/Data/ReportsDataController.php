@@ -17,12 +17,31 @@ class ReportsDataController extends BaseController
                             'unmetNeed.aidStatus', 'student.studentID')
                         ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                         ->where('applications.typeID', '=', 4)
+                        ->whereNotIn('applicationAssessment.status', array('Deactivated', 'Waiting'))
                         ->whereIn('applications.statusID', array(5, 8, 9))
                         ->groupBy('applicationAssessment.applicationID'))
                     ->showColumns('name', 'major', 'GPA', 'Total')
                     ->addColumn('grader', function($student)
                     {
-                        
+                        $graders = DB::table('activeUsers')
+                            ->join('user', 'user.userId', '=', 'activeUsers.userId')
+                            ->where('aidyear', '=', Session::get('currentAidyear'))
+                            ->where('activeUsers.gradeGroup', 'LIKE', '%4%')
+                            ->get(array('user.userId', 'name'));
+
+                        $output = "";
+
+                        foreach ($graders as $g)
+                        {
+                            $total = DB::table('applicationAssessment')
+                                ->where('userId', '=', $g->userId)
+                                ->where('applicationID', '=', $student->appID)
+                                ->get(array('total'));
+
+                            $output .= "(" . substr($g->name, strpos($g->name, " ")) . "-" . $total[0]->total . ") ";
+                        }
+
+                        return rtrim($output, " ");
                     })
                     ->addColumn('aid', function ($student)
                     {
@@ -33,6 +52,10 @@ class ReportsDataController extends BaseController
                         elseif ($student->aidStatus == 'MERIT')
                         {
                             return '<u>' . $student->aidStatus . '</u>';
+                        }
+                        else
+                        {
+                            return '<b>*$' . $student->aidStatus . '*</b>';
                         }
                     })->addColumn('awards', function ($award)
                     {
@@ -58,20 +81,16 @@ class ReportsDataController extends BaseController
         }
         else
         {
-            
             $students = DB::table('applications')
                         ->join('student', 'student.studentID', '=', 'applications.studentID')
                         ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
                         ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
                         ->join('unmetNeed', 'unmetNeed.studentID', '=', 'student.studentID')
-                        ->select('applicationAssessment.applicationID AS appID', DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'), 'studentDemographics.major', 'studentDemographics.GPA', DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 11 and applicationAssessment.applicationID = appID) as `Shultz`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 12 and applicationAssessment.applicationID = appID) as `Fiorello`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 15 and applicationAssessment.applicationID = appID) as `McGraw`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 16 and applicationAssessment.applicationID = appID) as `Sarbak`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 17 and applicationAssessment.applicationID = appID) as `Easton`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 18 and applicationAssessment.applicationID = appID) as `Sheridan`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 19 and applicationAssessment.applicationID = appID) as `Kelly`'), 'unmetNeed.aidStatus', 'student.studentID')
+                        ->select('applicationAssessment.applicationID AS appID',
+                            DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'),
+                            'studentDemographics.major', 'studentDemographics.GPA',
+                            DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total'),
+                            'unmetNeed.aidStatus', 'student.studentID')
                         ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                         ->where('applications.typeID', '=', 4)
                         ->whereIn('applications.statusID', array(5, 8, 9))
@@ -83,8 +102,35 @@ class ReportsDataController extends BaseController
                 ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
                 ->get(array('awardAmount', 'studentID'));
 
-            for ($i=0; $i < count($students); ++$i) 
-            { 
+
+            $graders = DB::table('activeUsers')
+                ->join('user', 'user.userId', '=', 'activeUsers.userId')
+                ->where('aidyear', '=', Session::get('currentAidyear'))
+                ->where('activeUsers.gradeGroup', 'LIKE', '%4%')
+                ->get(array('user.userId', 'name'));
+
+            $output = array();
+            $outPutString = "";
+
+            for ($ii = 0; $ii < count($students); $ii++)
+            {
+                for ($i = 0; $i < count($graders); $i++)
+                {
+                    $total = DB::table('applicationAssessment')
+                        ->where('userId', '=', $graders[$i]->userId)
+                        ->where('applicationID', '=', $students[$ii]->appID)
+                        ->get(array('total'));
+
+                    $outPutString .= "(" . substr($graders[$i]->name, strpos($graders[$i]->name, " ")) . "-" . $total[0]->total . ") ";
+
+                }
+
+                $output[] = rtrim($outPutString, " ");
+                $outPutString = "";
+            }
+
+            for ($i=0; $i < count($students); ++$i)
+            {
                 if ($i == 0)
                 {
                     if ($students[$i]->Total == $students[$i + 1]->Total)
@@ -108,8 +154,9 @@ class ReportsDataController extends BaseController
             
             $data['results'] = $students;
             $data['table'] = TRUE;
+            $data['graders'] = $output;
             $pdf = PDF::loadView('Content.Admin.Reports.PrintedReports.graduatingRankPrint', $data);
-            return $pdf->setPaper('a4')->setOrientation('landscape')->download();
+            return $pdf->setPaper('a4')->setOrientation('landscape')->download(Session::get('currentAidyear') . ' - Graduating Rank');
             
         }
     }
@@ -140,22 +187,36 @@ class ReportsDataController extends BaseController
                 ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
                 ->join('unmetNeed', 'unmetNeed.studentID', '=', 'student.studentID')
                                 ->select('applicationAssessment.applicationID AS appID', DB::raw('CONCAT(student.lastName, ", <br>", student.firstName) as name'), 'studentDemographics.major', 'studentDemographics.highSchoolAvg',
-                                                    DB::raw('ROUND (AVG(applicationAssessment.total), 2) + ROUND ((studentDemographics.highSchoolAvg / 20 - 1), 2) AS AVGTotal,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 12 and applicationAssessment.applicationID = appID) as `Fiorello`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 16 and applicationAssessment.applicationID = appID) as `Sarbak`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 18 and applicationAssessment.applicationID = appID) as `Sheridan`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 24 and applicationAssessment.applicationID = appID) as `Schmidt`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 25 and applicationAssessment.applicationID = appID) as `Devitt`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 26 and applicationAssessment.applicationID = appID) as `Frommer`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 27 and applicationAssessment.applicationID = appID) as `Illobre`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 28 and applicationAssessment.applicationID = appID) as `McCarty`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 29 and applicationAssessment.applicationID = appID) as `Peverely`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 30 and applicationAssessment.applicationID = appID) as `Yankanin`'), 'unmetNeed.aidStatus', 'student.studentID')
+                                    DB::raw('ROUND (AVG(applicationAssessment.total), 2) + ROUND ((studentDemographics.highSchoolAvg / 20 - 1), 2) AS AVGTotal'),
+                                    'unmetNeed.aidStatus', 'student.studentID')
                 ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                 ->where('applications.typeID', '=', 2)
                 ->whereIn('applications.statusID', array(5, 8, 9))
                 ->groupBy('applicationAssessment.applicationID'))
-                ->setSearchWithAlias()->searchColumns('major')->showColumns('name', 'major', 'highSchoolAvg', 'AVGTotal', 'Fiorello', 'Sarbak', 'Sheridan', 'Schmidt', 'Devitt', 'Frommer', 'Illobre', 'McCarty', 'Peverely', 'Yankanin')
+                ->setSearchWithAlias()->searchColumns('major')
+                ->showColumns('name', 'major', 'highSchoolAvg', 'AVGTotal')
+                ->addColumn('graders', function($student)
+                {
+                    $graders = DB::table('activeUsers')
+                        ->join('user', 'user.userId', '=', 'activeUsers.userId')
+                        ->where('aidyear', '=', Session::get('currentAidyear'))
+                        ->where('activeUsers.gradeGroup', 'LIKE', '%2%')
+                        ->get(array('user.userId', 'name'));
+
+                    $output = "";
+
+                    foreach ($graders as $g)
+                    {
+                        $total = DB::table('applicationAssessment')
+                            ->where('userId', '=', $g->userId)
+                            ->where('applicationID', '=', $student->appID)
+                            ->get(array('total'));
+
+                        $output .= "(" . substr($g->name, strpos($g->name, " ")) . "-" . $total[0]->total . ") ";
+                    }
+
+                    return rtrim($output, " ");
+                })
                 ->addColumn('aid', function ($student)
                 {
                     if ($student->aidStatus == 'NEED')
@@ -202,17 +263,8 @@ class ReportsDataController extends BaseController
                 ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
                 ->join('unmetNeed', 'unmetNeed.studentID', '=', 'student.studentID')
                 ->select('applicationAssessment.applicationID AS appID', DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'), 'studentDemographics.major', 'studentDemographics.highSchoolAvg',
-                                                    DB::raw('ROUND (AVG(applicationAssessment.total), 2) + ROUND ((studentDemographics.highSchoolAvg / 20 - 1), 2) AS AVGTotal,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 12 and applicationAssessment.applicationID = appID) as `Fiorello`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 16 and applicationAssessment.applicationID = appID) as `Sarbak`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 18 and applicationAssessment.applicationID = appID) as `Sheridan`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 24 and applicationAssessment.applicationID = appID) as `Schmidt`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 25 and applicationAssessment.applicationID = appID) as `Devitt`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 26 and applicationAssessment.applicationID = appID) as `Frommer`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 27 and applicationAssessment.applicationID = appID) as `Illobre`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 28 and applicationAssessment.applicationID = appID) as `McCarty`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 29 and applicationAssessment.applicationID = appID) as `Peverely`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 30 and applicationAssessment.applicationID = appID) as `Yankanin`'), 'unmetNeed.aidStatus', 'student.studentID')
+                    DB::raw('ROUND (AVG(applicationAssessment.total), 2) + ROUND ((studentDemographics.highSchoolAvg / 20 - 1), 2) AS AVGTotal'),
+                    'unmetNeed.aidStatus', 'student.studentID')
                 ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                 ->where('applications.typeID', '=', 2)
                 ->whereIn('applications.statusID', array(5, 8, 9))
@@ -223,6 +275,27 @@ class ReportsDataController extends BaseController
             $data['awards'] = DB::table('scholarshipAwards')
                 ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
                 ->whereIn('awardStatus', array('1', '2'))->get(array('awardAmount', 'studentID'));
+
+            $graders = DB::table('activeUsers')
+                ->join('user', 'user.userId', '=', 'activeUsers.userId')
+                ->where('aidyear', '=', Session::get('currentAidyear'))
+                ->where('activeUsers.gradeGroup', 'LIKE', '%2%')
+                ->get(array('user.userId', 'name'));
+
+            $output = array();
+            $outPutString = "";
+
+            for ($ii = 0; $ii < count($students); $ii++)
+            {
+                for ($i = 0; $i < count($graders); $i++)
+                {
+                    $total = DB::table('applicationAssessment')->where('userId', '=', $graders[$i]->userId)->where('applicationID', '=', $students[$ii]->appID)->get(array('total'));
+                    $outPutString .= "(" . substr($graders[$i]->name, strpos($graders[$i]->name, " ")) . "-" . $total[0]->total . ") ";
+                }
+
+                $output[]     = rtrim($outPutString, " ");
+                $outPutString = "";
+            }
 
             for ($i=0; $i < count($students); ++$i) 
             { 
@@ -249,8 +322,9 @@ class ReportsDataController extends BaseController
 
             $data['results'] = $students;
             $data['table'] = TRUE;
+            $data['graders'] = $output;
             $pdf = PDF::loadView('Content.Admin.Reports.PrintedReports.enteringRankPrint', $data);
-            return $pdf->setPaper('a4')->setOrientation('landscape')->download();
+            return $pdf->setPaper('a4')->setOrientation('landscape')->download(Session::get('currentAidyear') . ' - Entering Rank');
         }
     }
 
@@ -378,20 +452,38 @@ class ReportsDataController extends BaseController
                         ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
                         ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
                         ->join('unmetNeed', 'unmetNeed.studentID', '=', 'student.studentID')
-                        ->select('applicationAssessment.applicationID AS appID', 'creditHourFA', DB::raw('CONCAT(student.lastName, ", <br>", student.firstName) as name'), 'studentDemographics.major', 'studentDemographics.GPA', DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 11 and applicationAssessment.applicationID = appID) as `Shultz`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 12 and applicationAssessment.applicationID = appID) as `Fiorello`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 15 and applicationAssessment.applicationID = appID) as `McGraw`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 16 and applicationAssessment.applicationID = appID) as `Sarbak`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 17 and applicationAssessment.applicationID = appID) as `Easton`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 18 and applicationAssessment.applicationID = appID) as `Sheridan`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 19 and applicationAssessment.applicationID = appID) as `Kelly`'), 'unmetNeed.aidStatus', 'student.studentID')
+                        ->select('applicationAssessment.applicationID AS appID', 'creditHourFA', DB::raw('CONCAT(student.lastName, ", <br>", student.firstName) as name'), 'studentDemographics.major', 'studentDemographics.GPA',
+                            DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total'),
+                            'unmetNeed.aidStatus',
+                            'student.studentID')
                         ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                         ->where('applications.typeID', '=', 6)
                         ->whereIn('applications.statusID', array(5, 8, 9))
                         ->groupBy('applicationAssessment.applicationID')
                     )
-                    ->showColumns('name', 'Total', 'major', 'GPA', 'creditHourFA', 'Shultz', 'Fiorello', 'McGraw', 'Sarbak', 'Easton', 'Sheridan', 'Kelly')
+                    ->showColumns('name', 'Total', 'major', 'GPA', 'creditHourFA')
+                    ->addColumn('graders', function($student)
+                    {
+                        $graders = DB::table('activeUsers')
+                            ->join('user', 'user.userId', '=', 'activeUsers.userId')
+                            ->where('aidyear', '=', Session::get('currentAidyear'))
+                            ->where('activeUsers.gradeGroup', 'LIKE', '%6%')
+                            ->get(array('user.userId', 'name'));
+
+                        $output = "";
+
+                        foreach ($graders as $g)
+                        {
+                            $total = DB::table('applicationAssessment')
+                                ->where('userId', '=', $g->userId)
+                                ->where('applicationID', '=', $student->appID)
+                                ->get(array('total'));
+
+                            $output .= "(" . substr($g->name, strpos($g->name, " ")) . "-" . $total[0]->total . ") ";
+                        }
+
+                        return rtrim($output, " ");
+                    })
                     ->addColumn('aid', function($student)
                     {
                         if ($student->aidStatus > 0)
@@ -431,14 +523,9 @@ class ReportsDataController extends BaseController
                         ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
                         ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
                         ->join('unmetNeed', 'unmetNeed.studentID', '=', 'student.studentID')
-                        ->select('applicationAssessment.applicationID AS appID', 'creditHourFA', DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'), 'studentDemographics.major', 'studentDemographics.GPA', DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 11 and applicationAssessment.applicationID = appID) as `Shultz`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 12 and applicationAssessment.applicationID = appID) as `Fiorello`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 15 and applicationAssessment.applicationID = appID) as `McGraw`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 16 and applicationAssessment.applicationID = appID) as `Sarbak`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 17 and applicationAssessment.applicationID = appID) as `Easton`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 18 and applicationAssessment.applicationID = appID) as `Sheridan`,
-                                                    (SELECT total FROM applicationAssessment WHERE userId = 19 and applicationAssessment.applicationID = appID) as `Kelly`'), 'unmetNeed.aidStatus', 'student.studentID')
+                        ->select('student.studentID', 'applicationAssessment.applicationID AS appID', 'creditHourFA', DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'), 'studentDemographics.major', 'studentDemographics.GPA',
+                            DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total'),
+                            'unmetNeed.aidStatus', 'student.studentID')
                         ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                         ->where('applications.typeID', '=', 6)
                         ->whereIn('applications.statusID', array(5, 8, 9))
@@ -447,6 +534,28 @@ class ReportsDataController extends BaseController
                         ->get();
 
             $data['awards'] = DB::table('scholarshipAwards')->whereIn('awardStatus', array('1', '2'))->get(array('awardAmount', 'studentID'));
+
+            $graders = DB::table('activeUsers')
+                ->join('user', 'user.userId', '=', 'activeUsers.userId')
+                ->where('aidyear', '=', Session::get('currentAidyear'))
+                ->where('activeUsers.gradeGroup', 'LIKE', '%6%')
+                ->get(array('user.userId', 'name'));
+
+            $output = array();
+            $outPutString = "";
+
+            for ($ii = 0; $ii < count($students); $ii++)
+            {
+                for ($i = 0; $i < count($graders); $i++)
+                {
+                    $total = DB::table('applicationAssessment')->where('userId', '=', $graders[$i]->userId)->where('applicationID', '=', $students[$ii]->appID)->get(array('total'));
+                    $outPutString .= "(" . substr($graders[$i]->name, strpos($graders[$i]->name, " ")) . "-" . $total[0]->total . ") ";
+                }
+
+                $output[]     = rtrim($outPutString, " ");
+                $outPutString = "";
+            }
+
 
             for ($i=0; $i < count($students); ++$i) 
             { 
@@ -473,25 +582,154 @@ class ReportsDataController extends BaseController
             
             $data['results'] = $students;
             $data['table'] = TRUE;
+            $data['graders'] = $output;
             $pdf = PDF::loadView('Content.Admin.Reports.PrintedReports.returningRankPrint', $data);
-            return $pdf->setPaper('a4')->setOrientation('landscape')->download();
+            return $pdf->setPaper('a4')->setOrientation('landscape')->download(Session::get('currentAidyear') . ' - Returning Rank');
         } 
+    }
+
+    public function returningStudentsCriteria()
+    {
+        if (Request::ajax())
+        {
+            return Datatable::query(DB::table('student')
+                ->join('applications', 'applications.studentID', '=', 'student.studentID')
+                ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
+                ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
+                ->select(DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'),
+                    DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total'),
+                    'student.criteria', 'student.minority')
+                ->where('applications.aidyear', '=', Session::get('currentAidyear'))
+                ->where('applications.typeID', '=', 6)
+                ->whereIn('applications.statusID', array(5, 8, 9))
+                ->groupBy('applicationAssessment.applicationID'))
+                ->showColumns('name', 'Total')
+                ->addColumn('criteria', function($student)
+                {
+                    $criteria = explode(",", ($student->criteria));
+                    $return = "";
+
+                    foreach($criteria as $k)
+                    {
+                        $crit = DB::table('applicationCriteria')->where('criteriaID', '=', $k)->get(array('description'));
+                        $return .= $crit[0]->description . "<br>";
+                    }
+
+                    return $return;
+                })
+                ->addColumn('minority', function($student)
+                {
+                    $minority = explode(",", ($student->minority));
+                    $return = "";
+
+                    foreach($minority as $m)
+                    {
+                        $min = DB::table('minority')->where('minorityID', '=', $m)->get(array('description'));
+                        $return .= $min[0]->description . "<br>";
+                    }
+
+                    return $return;
+                })
+
+                ->setSearchWithAlias()
+                ->make();
+        }
+        else
+        {
+            $students = DB::table('student')
+                ->join('applications', 'applications.studentID', '=', 'student.studentID')
+                ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
+                ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
+                ->select(DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'),
+                    DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total'),
+                    'student.criteria', 'student.minority')
+                ->where('applications.aidyear', '=', Session::get('currentAidyear'))
+                ->where('applications.typeID', '=', 6)
+                ->whereIn('applications.statusID', array(5, 8, 9))
+                ->groupBy('applicationAssessment.applicationID')
+                ->orderBy('Total', 'desc')
+                ->get();
+
+            $outputCrit = array();
+            $crits = "";
+
+            foreach ($students as $s)
+            {
+                foreach (explode(",", $s->criteria) as $crits1)
+                {
+                    $crit         = DB::table('applicationCriteria')->where('criteriaID', '=', $crits1)->get(array('description'));
+                    $crits .= $crit[0]->description . "<br>";
+                }
+
+                $outputCrit[] = $crits;
+                $crits = "";
+
+            }
+
+            $outputMin = array();
+            $mins = "";
+
+            foreach ($students as $s)
+            {
+                foreach (explode(",", $s->minority) as $min)
+                {
+                    $min         = DB::table('minority')->where('minorityID', '=', $min)->get(array('description'));
+                    $mins .= $min[0]->description . "<br>";
+                }
+
+                $outputMin[] = $mins;
+                $mins = "";
+            }
+
+            for ($i=0; $i < count($students); ++$i)
+            {
+                if ($i == 0)
+                {
+                    if ($students[$i]->Total == $students[$i + 1]->Total)
+                    {
+                        $students[$i]->equal = TRUE;
+                    }
+                }
+                elseif (($i + 1 )< count($students))
+                {
+                    if ($students[$i]->Total == $students[$i + 1]->Total)
+                    {
+                        $students[$i]->equal = TRUE;
+                    }
+
+                    if ($students[$i]->Total == $students[$i - 1]->Total)
+                    {
+                        $students[$i]->equal = TRUE;
+                    }
+                }
+            }
+
+            $data['minority'] = $outputMin;
+            $data['criteria'] = $outputCrit;
+            $data['students'] = $students;
+            $data['table'] = TRUE;
+            $pdf = PDF::loadView('Content.Admin.Reports.PrintedReports.criteriaMinority', $data);
+            return $pdf->setPaper('a4')->setOrientation('landscape')->download(Session::get('currentAidyear') . ' - Criteria & Minority Report');
+
+
+
+        }
     }
 
     public function returningAssessmentsJSON($userId)
     {
-                return Datatable::query(DB::table('applicationAssessment')
-                    ->join('applications', 'applications.applicationID', '=', 'applicationAssessment.applicationID')
-                    ->join('student', 'student.studentID', '=', 'applications.studentID')
-                    ->select(DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'), 'applicationAssessment.essay', 'applicationAssessment.extra', 'applicationAssessment.faculty', 'Total', 'assessorNotes', 'assessmentDate')
-                    ->where('applicationAssessment.status', '!=', 'Deactivated')
-                    ->whereIn('applications.statusID', array(3, 5, 8, 9))
-                    ->where('applications.typeID', '=', 6)
-                    ->where('applications.aidyear', '=', Session::get('currentAidyear'))
-                    ->where('applicationAssessment.userId', '=', $userId))
-                    ->showColumns('name', 'essay', 'extra', 'faculty', 'Total', 'assessorNotes', 'assessmentDate')
-                    ->setSearchWithAlias()
-            ->make();
+        return Datatable::query(DB::table('applicationAssessment')
+            ->join('applications', 'applications.applicationID', '=', 'applicationAssessment.applicationID')
+            ->join('student', 'student.studentID', '=', 'applications.studentID')
+            ->select(DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'), 'applicationAssessment.essay', 'applicationAssessment.extra', 'applicationAssessment.faculty', 'Total', 'assessorNotes', 'assessmentDate')
+            ->where('applicationAssessment.status', '!=', 'Deactivated')
+            ->whereIn('applications.statusID', array(3, 5, 8, 9))
+            ->where('applications.typeID', '=', 6)
+            ->where('applications.aidyear', '=', Session::get('currentAidyear'))
+            ->where('applicationAssessment.userId', '=', $userId))
+            ->showColumns('name', 'essay', 'extra', 'faculty', 'Total', 'assessorNotes', 'assessmentDate')
+            ->setSearchWithAlias()
+        ->make();
     }
 
     public function returningStudentsAddress()

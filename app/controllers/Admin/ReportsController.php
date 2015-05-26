@@ -56,9 +56,12 @@ class ReportsController extends BaseController
      */
     public function graduating_assessments()
     {
-        $data['commMembers'] = User::where('userRole', 'LIKE', '%4%')->where('Status', '=', 'Active')->where('gradeGroup', 'LIKE', '%4%')->get(array(
-            'userId', 'name'
-        ));
+        $data['commMembers'] = DB::table('activeUsers')
+            ->join('user', 'user.userId', '=', 'activeUsers.userId')
+            ->select('user.name', 'activeUsers.userId')
+            ->where('gradeGroup', 'LIKE', '%4%')
+            ->where('activeUsers.aidyear', 'LIKE', '%' . Session::get('currentAidyear') . '%')
+            ->get();
 
         return View::make('Content.Admin.Reports.GeneratedReports.graduating_assessments', $data);
     }
@@ -79,9 +82,12 @@ class ReportsController extends BaseController
      */
     public function entering_assessments()
     {
-        $data['commMembers'] = User::where('userRole', 'LIKE', '%4%')->where('Status', '=', 'Active')->where('gradeGroup', 'LIKE', '%2%')->get(array(
-            'userId', 'name'
-        ));
+        $data['commMembers'] = DB::table('activeUsers')
+            ->join('user', 'user.userId', '=', 'activeUsers.userId')
+            ->select('user.name', 'activeUsers.userId')
+            ->where('gradeGroup', 'LIKE', '%2%')
+            ->where('activeUsers.aidyear', 'LIKE', '%' . Session::get('currentAidyear') . '%')
+            ->get();
 
         return View::make('Content.Admin.Reports.GeneratedReports.entering_assessments', $data);
     }
@@ -108,9 +114,12 @@ class ReportsController extends BaseController
 
     public function returning_assessments()
     {
-        $data['commMembers'] = User::where('userRole', 'LIKE', '%4%')->where('Status', '=', 'Active')->where('gradeGroup', 'LIKE', '%6%')->get(array(
-            'userId', 'name'
-        ));
+        $data['commMembers'] = DB::table('activeUsers')
+            ->join('user', 'user.userId', '=', 'activeUsers.userId')
+            ->select('user.name', 'activeUsers.userId')
+            ->where('gradeGroup', 'LIKE', '%6%')
+            ->where('activeUsers.aidyear', 'LIKE', '%' . Session::get('currentAidyear') . '%')
+            ->get();
 
         return View::make('Content.Admin.Reports.GeneratedReports.returning_assessments', $data);
     }

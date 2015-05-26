@@ -7,25 +7,20 @@
 
 
 @section('content')
-<strong><center>Returning Students Ranked Grid 2014-2015</center></strong><br>
+
+<strong><center>Returning Students Ranked Grid For {{{Session::get('currentAidyear')}}}</center></strong><br>
 <table cellspacing="0" cellpadding="3" width="100%"> 
     <thead>
         <tr class="Even">
             <th width="1%" align="center" valign="middle">Rank</th>
             <th width="15%" align="center" valign="middle">Student</th>
-            <th align="center" valign="middle">Score</th>
-            <th align="center" valign="middle">Major</th>
-            <th align="center" valign="middle">GPA</th>
-            <th align="center" valign="middle">Fall</th>
-            <th align="center" valign="middle">Shultz</th>
-            <th align="center" valign="middle">Fiorello</th>
-            <th align="center" valign="middle">McGraw</th>
-            <th align="center" valign="middle">Sarbak</th>
-            <th align="center" valign="middle">Easton</th>
-            <th align="center" valign="middle">Sheridan</th>
-            <th align="center" valign="middle">Kelly</th>
-            <th align="center" valign="middle">Need</th>
-            <th width="25%" align="center" valign="middle">Award(s)</th>
+            <th width="1%" align="center" valign="middle">Score</th>
+            <th width="1%" align="center" valign="middle">Major</th>
+            <th width="1%" align="center" valign="middle">GPA</th>
+            <th width="1%" align="center" valign="middle">Fall</th>
+            <th width="50%" align="center" valign="middle">Graders</th>
+            <th width="1%" align="center" valign="middle">Need</th>
+            <th width="35%" align="center" valign="middle">Award(s)</th>
         </tr>
     </thead>
     <tbody>
@@ -48,13 +43,9 @@
                 <td class="{{{$even}}}">{{{$r->major}}}</td>
                 <td class="{{{$even}}}">{{{$r->GPA}}}</td>
                 <td class="{{{$even}}}">{{{$r->creditHourFA}}}</td>
-                <td class="{{{$even}}}">{{{$r->Shultz}}}</td>
-                <td class="{{{$even}}}">{{{$r->Fiorello}}}</td>
-                <td class="{{{$even}}}">{{{$r->McGraw}}}</td>
-                <td class="{{{$even}}}">{{{$r->Sarbak}}}</td>
-                <td class="{{{$even}}}">{{{$r->Easton}}}</td>
-                <td class="{{{$even}}}">{{{$r->Sheridan}}}</td>
-                <td class="{{{$even}}}">{{{$r->Kelly}}}</td>
+                <td class="{{{$even}}}">
+                    {{$graders[($count - 1) - 1]}}
+                </td>
                 <td class="{{{$even}}}">
                     @if($r->aidStatus > '0')
                         <font color="red">${{{$r->aidStatus}}}</font>

@@ -145,7 +145,6 @@
 			<div class="panel-heading">Extra Information <font color="orange">{{$errors->first('transferInsti')}}</font>
 				<font color="orange">{{$errors->first('transferMaj')}}</font>
 			</div>
-
 			<ul>
 				<li>
 					{{Form::label('transferMaj', 'Transfering Major:')}}<br>
@@ -156,6 +155,9 @@
 					{{Form::label('transferInsti', 'Transfering Institute:')}}<br>
 					{{Form::text('transferInsti', $demo->transferInsti, array('size' => '65'))}}
 				</li>
+                <li>
+
+                </li>
 			</ul>
 		</div>
 

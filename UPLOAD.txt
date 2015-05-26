@@ -16,20 +16,20 @@
 
 
 //////////////////////////////////////////Upload//////////////////////////////////
+
 	Controllers/
-	    ApplicationController.php
-	    ApplicationsDataController.php
+	    ReportsController.php
+	    SessionController.php
+	    ReportsDataController.php
 
 	Routes/
-	    Applications.php
-	    Applications.php
-
-	    Data.php
-	    Data.php
+        Management and Admin/
+            /Reports.php
 
 	Helpers/
 
 	Models/
+        User.php
 
 	Lib/
 
@@ -38,12 +38,23 @@
 	App/
 
 	Views/
-	    viewCommitteeGrade.blade.php
+	    Admin/Reports/PrintedReports/*
+	    Admin/Reports/ForgotFolderName/*
 
 	Commands/
 
 //////////////////////////////////////////////////////////////////////////////////
 
+CREATE TABLE `aidYearGradingGroup` (
+  `userId` int(6) unsigned NOT NULL,
+  `aidyear` int(4) NOT NULL DEFAULT '0',
+  `gradeGroup` varchar(5) NOT NULL DEFAULT '',
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`userId`,`aidyear`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/* 1:46:08 AM Schol.dev */ ALTER TABLE `user` DROP `gradeGroup`;
 
 
 

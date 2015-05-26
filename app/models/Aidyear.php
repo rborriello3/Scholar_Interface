@@ -49,6 +49,4 @@ class Aidyear extends Eloquent
         $aidyear = $this->where('status', '=', '1')->get(array('aidyear'));
         return $aidyear[0]->aidyear;
     }
-
-
 }

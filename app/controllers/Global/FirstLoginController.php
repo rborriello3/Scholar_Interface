@@ -26,6 +26,7 @@ class FirstLoginController extends BaseController
         {
             $user = User::find(Auth::user()->userId);
             $user->firstLoginUpdate(Input::all());
+            $user->updateYearsActive(Auth::user()->userId);
 
             if (Input::get('cellnotify') == 1)
             {

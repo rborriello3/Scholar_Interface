@@ -124,7 +124,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface
         $this->ques2      = NULL;
         $this->answ1      = NULL;
         $this->answ2      = NULL;
-        $this->gradeGroup = NULL;
 
         return $this->save();
     }
@@ -181,6 +180,18 @@ class User extends Eloquent implements UserInterface, RemindableInterface
             $this->save();
             $assessment = new ApplicationAssessment();
             $assessment->newCommitteeMemberAssessment($this->userId, $values['group']);
+        }
+    }
+
+    public function updateYearsActive($id)
+    {
+        $aidyear = new Aidyear();
+        $aid = $aidyear->getCurrentAidyear();
+        $user = $this->find($id)->get(array('yearsActive'));
+
+        if (strrpos($user[0]->yearsActive, $aid) === FALSE)
+        {
+            DB::table('user')->where('userId', '=', $id)->update(array('yearsActive' => $user[0]->yearsActive . '*' . $aid . '*'));
         }
     }
 }

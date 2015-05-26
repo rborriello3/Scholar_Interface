@@ -19,3 +19,4 @@ Route::get('entering_regret', array('uses' => 'ReportsController@entering_regret
 Route::get('faculty_entering_address', array('uses' => 'ReportsController@faculty_entering_address', 'as' => 'faculty_entering_address'));
 Route::get('all_awards', array('uses' => 'ReportsController@all_awards', 'as' => 'all_awards'));
 Route::get('all_students', array('uses' => 'ReportsController@all_students', 'as' => 'all_students'));
+Route::get('returningStudentsCriteria', array('uses' => 'ReportsDataController@returningStudentsCriteria', 'as' => 'returningStudentsCriteria'));

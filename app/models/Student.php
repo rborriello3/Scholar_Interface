@@ -171,8 +171,4 @@ class Student extends Eloquent
         $student = $this->find($studentID);
         return $student->firstName . ' ' . $student->lastName;
     }
-
-
-
-
 }

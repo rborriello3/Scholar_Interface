@@ -1,7 +1,7 @@
 @extends('Layouts.dashboards')
 
 @section('head')
-<title>Scholarship Interface Entering Ranks 1415</title>
+<title>Scholarship Interface Entering Ranks {{{Session::get('currentAidyear')}}}</title>
 @parent
 <script type="text/javascript" src="{{asset('DataTables-1.9.4/media/js/jquery.dataTables.min.js')}}"></script>
 <link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.9.4/media/css/demo_table_jui.css') }}">
@@ -20,7 +20,7 @@
     {{ link_to_route('enteringRankJSON', 'Print', array(), array('class' => 'btn btn-primary', 'target' => '_blank'))}}
     {{ Datatable::table()
     ->setURL(route('enteringRankJSON'))
-    ->addColumn('Student', 'Major', 'AVG', 'Score', 'Fiorello', 'Sarbak', 'Sheridan', 'Schmidt', 'Devitt', 'Frommer', 'Illobre', 'McCarty', 'Peverely', 'Yankanin', 'Need', 'Award(s)')
+    ->addColumn('Student', 'Major', 'AVG', 'Score', 'Graders', 'Need', 'Award(s)')
     ->setOptions('bProcessing', true)
     ->setOptions('bSort', true)
     ->setOptions('aaSorting', array(
@@ -39,22 +39,13 @@
         )
     )
     ->setOptions('aoColumns', array(
+        array('sWidth' => '5%'),
+        array('sWidth' => '1%'),
+        array('sWidth' => '1%'),
+        array('sWidth' => '1%'),
         array('sWidth' => '50%'),
         array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '1%'),
-        array('sWidth' => '39%')
+        array('sWidth' => '20%')
     ))
     ->render() }}
 

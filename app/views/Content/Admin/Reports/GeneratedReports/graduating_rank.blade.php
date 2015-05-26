@@ -1,7 +1,7 @@
 @extends('Layouts.dashboards')
 
 @section('head')
-<title>Scholarship Interface Graduating Ranks 1415</title>
+<title>Scholarship Interface Graduating Ranks {{{Session::get('currentAidyear')}}}</title>
 @parent
 <script type="text/javascript" src="{{asset('DataTables-1.9.4/media/js/jquery.dataTables.min.js')}}"></script>
 <link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.9.4/media/css/demo_table_jui.css') }}">
