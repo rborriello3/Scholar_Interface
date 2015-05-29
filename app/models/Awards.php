@@ -104,12 +104,18 @@ class Awards extends Eloquent
 
     public function getHistory($studentID)
     {
-        $award = $this->where('scholarshipAwards.studentID', '=', $studentID)->join('scholarships', 'scholarships.FundCode', '=', 'scholarshipAwards.fundCode')
-                    ->join('student', 'student.studentID', '=', 'scholarshipAwards.studentID')->join('studentDemographics', 'studentDemographics.studentID', '=', 'scholarshipAwards.studentID')
-                    ->join('applications', 'applications.studentID', '=', 'scholarshipAwards.studentID')
+        $award = $this->where('scholarshipAwards.studentID', '=', $studentID)
+                    ->join('scholarships', 'scholarships.FundCode', '=', 'scholarshipAwards.fundCode')
+                    ->join('student', 'student.studentID', '=', 'scholarshipAwards.studentID')
                     ->join('awardStatus', 'awardStatus.awardStatusID', '=', 'scholarshipAwards.awardStatus')
-                    ->join('applicationType', 'applicationType.typeID', '=', 'applications.typeID')        
-                    ->get();
+                    ->join('applications', 'applications.studentID', '=', 'student.studentID')
+                    ->join('applicationType', 'applicationType.typeID', '=', 'applications.typeID')
+                    ->orderBy('scholarshipAwards.aidyear', 'desc')
+                    ->orderBy('awardAmount', 'desc')
+                    ->groupBy('scholarshipAwards.fundCode')
+                    ->get(array('scholarshipAwards.aidyear', 'awardStatus.description', 'scholarshipAwards.fundCode', 'applicationType.typeDescription',
+                                'scholarships.scholarshipName', 'scholarshipAwards.awardAmount', 'scholarshipAwards.department',
+                                'scholarshipAwards.notes', 'student.firstName', 'student.lastName', 'student.studentID'));
         return $award;
     }
 }

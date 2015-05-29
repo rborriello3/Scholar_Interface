@@ -24,6 +24,7 @@
 	Helpers/
 
 	Models/
+        Awards.php
 
 	Lib/
 
@@ -32,6 +33,7 @@
 	App/
 
 	Views/
+	    history.blade.php
 
 	Commands/
 

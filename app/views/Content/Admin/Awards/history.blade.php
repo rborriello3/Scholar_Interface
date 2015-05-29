@@ -17,8 +17,7 @@
 	@foreach($awardInfo as $v)
 
 		<div class="awards">
-    		<h3>{{'Aid Year: ' . $v->aidyear . ' - Application Received: ' . $v->received . ' - Type: ' . $v->typeName . ' - Status: ' .
-        		$v->description . ' - Fund Code: ' . $v->fundCode}} </h3>
+    		<h3>{{'Aid Year: ' . $v->aidyear . ' - Status: ' . $v->description . ' - Fund Code: ' . $v->fundCode . ' - Type: ' . $v->typeDescription}} </h3>
 
         	<div>
             	Scholarship Name: <b>{{{$v->scholarshipName}}}</b><br>
