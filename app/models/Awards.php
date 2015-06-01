@@ -89,17 +89,16 @@ class Awards extends Eloquent
             ++$count;
         }
 
-        if (DB::table($this->table)->insert($arrays))
-        {
+        try {
+            DB::table($this->table)->insert($arrays);
             $return[0] = true;
             $return[1] = $count;
-        }
-        else
+            return $return;
+        } catch (Exception $e)
         {
             $return[0] = false;
+            return $return;
         }
-
-        return $return;
     }
 
     public function getHistory($studentID)
