@@ -39,7 +39,7 @@ class AwardsController extends BaseController
 			}
 			else
 			{
-				return Redirect::route('showNewAwards')->with('error', 'Awards could not be saved due to an application/student processing error');
+				return Redirect::route('showNewAwards')->with('error', 'Awards could not be saved due to a processing error');
 			}
 		}
 
@@ -128,7 +128,7 @@ class AwardsController extends BaseController
             }
             else
             {
-                return Redirect::route('showAwardSingleStudent', $guid)->with('error', 'Award could not be saved due to an application/student processing error');
+                return Redirect::route('showAwardSingleStudent', $guid)->with('error', 'Award could not be saved due to a processing error');
             }
         }
 

@@ -112,6 +112,7 @@ class Awards extends Eloquent
                     ->orderBy('scholarshipAwards.aidyear', 'desc')
                     ->orderBy('awardAmount', 'desc')
                     ->groupBy('scholarshipAwards.fundCode')
+                    ->groupBy('scholarshipAwards.aidyear')
                     ->get(array('scholarshipAwards.aidyear', 'awardStatus.description', 'scholarshipAwards.fundCode', 'applicationType.typeDescription',
                                 'scholarships.scholarshipName', 'scholarshipAwards.awardAmount', 'scholarshipAwards.department',
                                 'scholarshipAwards.notes', 'student.firstName', 'student.lastName', 'student.studentID'));
