@@ -18,12 +18,17 @@
 //////////////////////////////////////////Upload//////////////////////////////////
 
 	Controllers/
+	    AwardsDataController.php
+	    AwardsControllers.php
 
 	Routes/
+	    Admin/Awards.php
+	    Manangement/Awards.php
 
 	Helpers/
 
 	Models/
+	    Awards.php
 
 	Lib/
 
@@ -34,3 +39,5 @@
 	Views/
 
 	Commands/
+
+    filters.php

@@ -134,4 +134,43 @@ class AwardsController extends BaseController
 
         return Redirect::route('showAwardSingleStudent', $guid)->withErrors($v->messages())->withInput()->with('error', 'Awards could not be saved due to invalid characters in text fields');
     }
+
+    public function showEditAward($fundCode, $studentID)
+    {
+        $data['studentID'] = $studentID;
+        $data['fundCode'] = $fundCode;
+        $scholarships = Scholarships::orderBy('scholarshipName', 'asc')->remember(2)->lists('scholarshipName', 'fundCode');
+        $data['scholarships'] = array($fundCode => $scholarships[$fundCode]);
+        $data['scholarships'] = array_merge($data['scholarships'], $scholarships);
+
+        return View::make('Content.Admin.Awards.edit', $data);
+    }
+
+    public function doEditAward($fundCode, $studentID)
+    {
+        $rules = array(
+            'fundCode'    => 'array_fundCode',
+            'studentID'   => 'array_studentID',
+            'awardAmount' => 'array_awardAmount',
+            'department'  => 'array_text',
+            'notes'       => 'array_text'
+        );
+
+        $v = Validator::make(Input::all(), $rules);
+
+        if($v->passes())
+        {
+            $awards  = new Awards();
+            $awarded = $awards->insertAward(Input::all(), null, null, true, $studentID, $fundCode);
+        }
+
+        if ($awarded[0] == TRUE)
+        {
+            return Redirect::route('showEditAward', array($awarded[1], $studentID))->with('success', 'Student award has been updated');
+        }
+        else
+        {
+            return Redirect::route('showEditAward', array($fundCode, $studentID))->with('error', 'Award could not be saved due to a processing error');
+        }
+    }
 }

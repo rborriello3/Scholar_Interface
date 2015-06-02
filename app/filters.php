@@ -381,7 +381,9 @@ Route::filter('studentID', function ($route)
 Route::filter('fundCode', function($route)
 {
     $fundCode = $route->getParameter('fundCode');
-    if (ctype_alpha($fundCode[0]) && strlen($fundCode) == 4 && ctype_digit(substr($fundCode, 1, 3)))
+    $schols = Scholarships::find($fundCode);
+
+    if (ctype_alpha($fundCode[0]) && strlen($fundCode) == 4 && ctype_digit(substr($fundCode, 1, 3)) && $schols)
     {
         return;
     }

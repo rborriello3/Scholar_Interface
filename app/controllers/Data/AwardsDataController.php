@@ -41,6 +41,7 @@ class AwardsDataController extends BaseController
             		$crudLinks .= '<li>' . link_to_route('showEditStudent', 'View/Edit Student', $parameters = array($award->studentID), $attributes = array('alt' => 'editStudent')) . '</li>';
    		            $crudLinks .= '<li>' . link_to_route('showStudentApplications', 'View Application(s)', $parameters = array($award->studentID), $attributes = array('alt' => 'viewApplication')) . '</li>';
                     $crudLinks .= '<li>' . link_to_route('showAwardHistory', 'Award History', $parameters = array($award->studentID), $attributes = array('alt' => 'viewAwards')) . '</li>';
+                    $crudLinks .= '<li>' . link_to_route('showEditAward', 'Edit Award', $parameters = array($award->fundCode, $award->studentID), $attributes = array('alt' => 'editAwards')) . '</li>';
             	$crudLinks .= '</ul>';
             
             $crudLinks .= '</div>';

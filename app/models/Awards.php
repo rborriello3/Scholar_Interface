@@ -12,9 +12,9 @@ class Awards extends Eloquent
      */
     public $timestamps = FALSE;
 
-    public function insertAward($values, $single, $guid = NULL)
+    public function insertAward($values, $single = null, $guid = null, $update = null, $studentID = null, $code = null)
     {
-        if ($single)
+        if ($single && ! is_null($single))
         {
             foreach ($values['studentID'] as $v)
             {
@@ -90,12 +90,26 @@ class Awards extends Eloquent
         }
 
         try {
-            DB::table($this->table)->insert($arrays);
+            if ($update && ! is_null($update))
+            {
+                DB::table($this->table)->where('studentID', '=', $studentID)
+                    ->where('fundCode', '=', $code)
+                    ->where('aidyear', '=', Session::get('currentAidyear'))
+                        ->update($arrays[0]);
+
+                $return[1] = $arrays[0]["fundCode"];
+            }
+            else
+            {
+                DB::table($this->table)->insert($arrays);
+                $return[1] = $count;
+            }
+
             $return[0] = true;
-            $return[1] = $count;
             return $return;
         } catch (Exception $e)
         {
+            dd($e->getMessage());
             $return[0] = false;
             return $return;
         }
