@@ -13,7 +13,7 @@
         <form class="form-inline" role="form" autocomplete="off" action="{{route('doEditAward', array($fundCode, $studentID))}}" method="POST"><br>
             {{Form::token()}}
 
-            <input type="submit" value="Save" class='btn btn-primary' />
+            <input type="submit" value="Update" class='btn btn-primary' />
             <img src="{{asset('images/Global/loader.gif')}}" style="display: none;" id="loading_image"> {{ link_to_route('showAllAwards', 'Return')}} <br><br>
 
             <div class="entry input-group">
@@ -22,12 +22,9 @@
                     {{Form::select('fundCode[]', $scholarships, '')}}
                 </div>
 
-                <br>
-                <font color="red">Enter A-Number: {{{$studentID}}}</font>
-                <br>
-
+                <br/>
                 <div class="form-group">
-                    <input class="form-control" name="studentID[]" type="text" placeholder="A-Number" maxlength="9"/>
+                    <input class="form-control" value="{{{$studentID}}}" name="studentID[]" type="text" placeholder="A-Number" maxlength="9" readonly/>
                 </div>
 
                 <div class="form-group">
