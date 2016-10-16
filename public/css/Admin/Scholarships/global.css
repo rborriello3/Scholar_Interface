@@ -1,0 +1,38 @@
+form ul
+{
+	list-style-type: none;
+}
+
+#generalInfo li
+{
+	display: inline-block;
+	text-align: center;
+	margin-left: 12%;	
+}
+
+#additional li
+{
+	display: inline-block;
+	text-align: center;
+	margin-left: 4%;	
+}
+
+#appType li
+{
+	display: block;
+	text-align: left;
+}
+
+#donorInfo li
+{
+        display: inline-block;
+        text-align: center;
+        margin-left: 12%;
+}
+
+
+.dropdown-menu-form {
+    padding: 5px 10px 0;
+    max-height: 300px;
+    overflow-y: scroll;
+}

@@ -1,0 +1,54 @@
+ul
+{
+	list-style-type: none;
+}
+
+#passwordDiv li 
+{
+	display: inline-block;
+	padding-right: 10px;
+}
+
+#passwordDiv
+{
+	width: 400px;
+	float: left;
+	height: 260px;
+}
+
+#questions
+{
+	width: 400px;
+	float: right;
+	height: 260px;
+}
+
+#questions li
+{
+	padding-right: 95px;
+}
+
+#secondQuestion
+{
+    width: 342px;
+}
+
+#cellnotify
+{
+	padding: 0;
+}
+
+#cellnotify li
+{
+	display: inline-block;
+}
+
+#cellPhoneInfo li
+{
+	margin-right: 20px;
+}
+
+#submit
+{
+	float: right;
+}

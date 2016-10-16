@@ -1,0 +1,17 @@
+.appNav 
+{
+	float: right;
+	margin-right: 10px;
+}
+
+#inputs ul
+{
+	margin-top: 20px;
+	list-style-type: none;
+	padding: 0;
+}
+
+#inputs
+{
+	display: inline-block;
+}

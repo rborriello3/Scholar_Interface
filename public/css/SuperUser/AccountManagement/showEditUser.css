@@ -1,0 +1,33 @@
+li
+{
+        display: inline-block;
+}
+
+form ul
+{
+        list-style-type: none;
+}
+
+#generalInfo li
+{
+        text-align: left;
+        margin-left: 14%;
+}
+
+#roles li
+{
+        text-align: left;
+        margin-left: 1%;
+}
+
+#gradingGroup li
+{
+	text-align: left;
+        margin-left: 1%;
+}
+
+#changePassword li
+{
+	text-align: left;
+	margin-left: 1%;
+}

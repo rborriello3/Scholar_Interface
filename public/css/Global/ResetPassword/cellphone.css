@@ -1,0 +1,21 @@
+#cellPhoneTokenInput form 
+{
+	margin-top: 200px;
+	margin-left: 390px;
+}
+
+#cellPhoneTokenInput input[type="text"]
+{	
+	width: 200px;
+	border: none;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	padding: 10px;
+	outline: none;
+}
+
+#cellPhoneTokenInput input[type="submit"]
+{
+	margin-left: 45px;
+}

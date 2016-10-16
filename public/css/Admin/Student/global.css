@@ -1,0 +1,45 @@
+li
+{
+	display: inline-block;
+}
+
+form ul
+{
+	list-style-type: none;
+}
+
+#generalInfo li
+{
+	text-align: center;
+	margin-left: 14%;	
+}
+
+#contact li
+{	
+	text-align: center;
+	margin-left: 1%;	
+}
+
+#address li
+{
+	text-align: center;
+	margin-left: 3%;	
+}
+
+#demograph1 li
+{
+	text-align: center;
+	margin-left: 5%;
+}
+
+#demograph2 li
+{
+	text-align: center;
+	margin-left: 8%;
+}
+
+#demograph3 li
+{
+	text-align: center;
+	margin-left: 5%;
+}

@@ -1,0 +1,1 @@
+{{{ $name }}}, your mobile verification token for Scholarship Interface is {{{ $token }}}

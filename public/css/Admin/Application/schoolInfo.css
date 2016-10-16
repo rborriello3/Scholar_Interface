@@ -1,0 +1,46 @@
+.appNav 
+{
+	float: right;
+	margin-right: 10px;
+}
+
+#educationalInfo ul
+{
+	list-style-type: none;
+}
+
+.collegeInfo li
+{
+	display: inline-block;
+	margin-left: 8px;
+}
+
+#creditsEarned
+{
+	width: 55px;
+}
+
+#expectedCredits
+{
+	width: 55px;
+}
+
+#GPA
+{
+	width: 55px;
+}
+
+#highSchoolAvg
+{
+	width: 55px;
+}
+
+.ui-datepicker-calendar 
+{
+    display: none;
+}
+
+button.ui-datepicker-current 
+{ 
+	display: none; 
+}

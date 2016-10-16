@@ -1,0 +1,33 @@
+#sendingInfo ul
+{
+    list-style-type: none;
+}
+
+#recInfo ul
+{
+    list-style-type: none;
+}
+
+#messInfo ul
+{
+    list-style-type: none;
+}
+
+#sendingInfo
+{
+    width: 45%;
+    float: left;
+    margin-bottom: 10%;
+}
+
+#recInfo
+{
+    width: 45%;
+    float: right;
+    margin-bottom: 10%;
+}
+
+#messInfo
+{
+    margin-top: 20%;
+}

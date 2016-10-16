@@ -1,0 +1,41 @@
+html
+{
+	height: 100%;
+}
+
+body
+{
+	min-width: 1020px;
+	color: #464646;
+	background: url('../../images/Global/background.png');
+}
+
+a
+{
+	color: #f37321;
+}
+
+a:hover
+{
+	color: #005696;
+}
+
+.btn-primary
+{
+	background-color: #005696;
+}
+
+.btn-primary:hover
+{
+	background-color: #f37321;
+}
+
+.panel-primary .panel-heading
+{
+	background-color: #005696;
+}
+
+.panel-primary
+{
+	border-color: #005696;
+}

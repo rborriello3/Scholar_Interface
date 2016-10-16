@@ -1,0 +1,66 @@
+Processes:
+	- Create new
+	- Edit
+	- Have the DB affect the queue <- this will be cool :D
+		- Have the user specified time and days affect the queue. This should be pretty cool. 
+
+Automation: 
+	- Look into Queues
+	- Queue::push('SendEmail@send', array('message' => $message));
+	- $date = Carbon::now()->addMinutes(15);
+	- Queue::later($date, 'SendEmail@send', array('message' => $message));
+		- In this example, we're using the Carbon date library to specify the delay we wish to assign to the job. 
+		- Alternatively, you may pass the number of seconds you wish to delay as an integer.
+		- Deleting A Processed Job
+			public function fire($job, $data = null)
+			{
+    			// Process the job...
+    			$job->delete();
+			}
+
+		- If you wish to release a job back onto the queue, you may do so via the release method:
+			public function fire($job, $data = null)
+			{
+    			// Process the job...
+    			$job->release();
+			}
+		- php artisan queue:listen
+		- Work on timings of the message
+	- Work on the manual data uploads
+	- We need the MachForm data
+		
+Applications:
+	- Finish the Complete page, allow for a edit button to be at the top right of each panel.
+	- Add specific email to the recomemndation 
+	- "Be sure to give A-Number to person who is completing recommendation!"
+
+Notification settngs:
+	- Come up with a way to store the k => v in the database. 
+
+Model injection
+
+Requests:
+	- Newburgh to access scholarship interface
+	- Home to access scholarship interface
+	- https://www.sunyorange.edu/scholarshipinterface
+	
+
+Grading:
+	- Paginated Grading
+
+Performance:
+	- Look into Caching
+
+Looks: 
+	- Work on the scaling of the divs.
+	- Work on the login page, register and reset PW pages.
+	- Work on the committee grading screens so they don't completely break! 
+		- Looks horrible!
+
+MachForm:
+Cell Phone, Home Phone, Carrier, and Address From MachForm
+
+Banner:
+Major, Credits (FA, SP, expectedCredits-> taken during high school, creditsEarned-> at SUNY Orange) 
+
+Check nightly for any changes to banner information and MachForm information (not as frequent hopefully!)

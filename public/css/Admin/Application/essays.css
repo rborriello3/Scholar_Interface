@@ -1,0 +1,21 @@
+.appNav 
+{
+	float: right;
+	margin-right: 10px;
+}
+
+#essays ul
+{
+	list-style-type: none;
+}
+
+#essays li
+{
+	margin-left: 25%;
+}
+
+textarea 
+{ 
+	resize:vertical; 
+}
+

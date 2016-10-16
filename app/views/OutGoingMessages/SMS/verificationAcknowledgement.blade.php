@@ -1,0 +1,1 @@
+{{{ $name }}}, you have successfully verified your mobile device.

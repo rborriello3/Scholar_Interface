@@ -1,0 +1,22 @@
+#selectForm form
+{
+	margin-left: 40%;
+	margin-top: 100px;
+}
+
+#selectForm select
+{
+	width: 200px;
+	padding: 10px;
+	border: none;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	outline: none;
+}
+
+#submit
+{
+	margin-top: 50px;
+	margin-left: 30px;
+}
