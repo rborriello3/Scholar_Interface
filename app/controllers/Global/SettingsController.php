@@ -22,9 +22,9 @@ class SettingsController extends BaseController
     public function doSettingsUpdate($type)
     {
         $settings = new UserSettings();
-        $rules = array('user' => 'Required|email', 'password' => 'Required|password');
+        $rules = array('password' => 'Required|password');
         $v = Validator::make(Input::all(), $rules);
-
+	
         if ($v->passes())
         {
             if (Hash::check(Input::get('password'), Auth::user()->password))

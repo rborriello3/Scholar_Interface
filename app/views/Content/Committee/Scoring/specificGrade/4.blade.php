@@ -27,6 +27,7 @@
     <div id="generalInfo" class="panel panel-primary">
         <div class="panel-heading">General Information</div>
         <ul class="panel-body">
+	
             <li>
                 Student Name:
                 <b>{{{$scoringInfo['studentName']}}}</b>
@@ -51,19 +52,10 @@
                 Application Type:
                 <b>{{{$scoringInfo['type']}}}</b>
             </li>
-
-            <li>
-                Criteria:
-                <b>{{{$scoringInfo['criteria']}}}</b>
-            </li>
-
-            <li>
-                Minority:
-                <b>{{{$scoringInfo['minority']}}}</b>
-            </li>
         </ul>
     </div>
-
+	</li></li>
+<br>
     <div id="educationalInfo" class="panel panel-primary">
         <div class="panel-heading">Educational Information</div>
         <ul class="panel-body">
@@ -209,6 +201,24 @@
         </ul>
     </div>
 </div>
+
+<div id="essaySelf" class="panel panel-primary">
+	<div class="panel-heading">Tell us a little about yourself
+	</div>
+	<p>
+		<b>{{{$scoringInfo['essaySelf']}}}</b>
+	</p>
+</div>
+<br>
+
+<div id="essayWhy" class="panel panel-primary">
+	<div class="panel-heading">In essay form, please explain how a SUNY Orange scholarship will help you in your education:
+	</div>
+	<p>
+		<b>{{{$scoringInfo['essayWhy']}}}</b>
+	</p>
+</div>
+<br>
 
 <div class="actions">
     <input class="btn btn-danger" type="submit" name='action' value="Finish Assessment">

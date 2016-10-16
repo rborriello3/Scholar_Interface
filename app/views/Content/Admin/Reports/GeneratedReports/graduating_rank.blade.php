@@ -19,7 +19,7 @@
     {{ link_to_route('graduatingRankJSON', 'Print', array(), array('class' => 'btn btn-primary', 'target' => '_blank'))}}
     {{ Datatable::table()
     ->setURL(route('graduatingRankJSON'))
-    ->addColumn('Student', 'Major', 'GPA', 'Score', 'Graders', 'Need', 'Award(s)')
+    ->addColumn('Student', 'City', 'County', 'Score', 'Major', 'GPA', 'Graders', 'Need', 'Award(s)')
     ->setOptions('bProcessing', true)
     ->setOptions('bSort', true)
     ->setOptions('aaSorting', array(
@@ -38,13 +38,15 @@
         )
     ) 
     ->setOptions('aoColumns', array(
+    array('sWidth' => '10%'),
+    array('sWidth' => '5%'),
+    array('sWidth' => '5%'),
     array('sWidth' => '1%'),
     array('sWidth' => '1%'),
     array('sWidth' => '1%'),
+    array('sWidth' => '35%'),
     array('sWidth' => '1%'),
-    array('sWidth' => '80%'),
-    array('sWidth' => '1%'),
-    array('sWidth' => '20%')
+    array('sWidth' => '35%')
     ))
     ->render() }}
 

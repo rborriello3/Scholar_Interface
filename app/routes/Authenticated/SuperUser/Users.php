@@ -3,8 +3,12 @@
 Route::get('home', array('uses' => 'AccountsController@showUsers', 'as' => 'showUsers'));
 
 Route::get('show/{id}', array('uses' => 'AccountsController@showUser', 'as' => 'showUser'));
+//added Route::post and doShowUser is not created yet
+//Route::post('edit/{id}', array('uses' => 'AccountsController@doEditUser', 'as' => 'doEditUser'));
 
 Route::get('edit/{id}', array('uses' => 'AccountsController@showEditUser', 'as' => 'showEditUser'));
+
+Route::post('edit/{id}', array('uses' => 'AccountsController@doEditUser', 'as' => 'doEditUser'));
 
 Route::get('activate/{id}', array('uses' => 'AccountsController@showActivate', 'as' => 'showActivateUser'));
 

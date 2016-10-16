@@ -10,7 +10,7 @@ class ApplicationRecommendation extends Eloquent
     /**
      * We don't want any default time stamps
      */
-    public $timestamps = FALSE;
+    public $timestamps = false;
 
     /**
      * must define a specific key for our database table
@@ -51,10 +51,7 @@ class ApplicationRecommendation extends Eloquent
             // So when we are doing the $recomm->$k = null we will not be able to set the DB records to null because the
             // Radio button names are not posting. We get around that by doing adding each name of the radios to the
             // $array array. Its a hack, but it works - and works good to!
-            $array      = array(
-                'character1'         => NULL, 'character2' => NULL, 'emotionalMaturity1' => NULL,
-                'emotionalMaturity2' => NULL, 'academicPotential1' => NULL, 'academicPotential2' => NULL
-            );
+            $array      = array('character1' => NULL, 'character2' => NULL, 'emotionalMaturity1' => NULL, 'emotionalMaturity2' => NULL, 'academicPotential1' => NULL, 'academicPotential2' => NULL);
             $insertInfo = array_merge($insertInfo, $array);
         }
         if (count($recomm) == 1)
@@ -163,18 +160,18 @@ class ApplicationRecommendation extends Eloquent
             if ($student->cellnotifications == 1)
             {
                 $SMS = new Text($loggedIn = '');
-                $SMS->applicationNotifcation($student->cellPhone, $student->cellCarrier, TRUE);
+                $SMS->applicationNotifcation($student->cellPhone, $student->cellCarrier, true);
             }
 
             $email = new Email();
             $email->emailSentToSUNY($student->personalEmail, $student->firstName, $student->lastName);
-            $email->completedApplication($student->sunyEmail, $student->firstName, $student->lastName, TRUE);
+            $email->completedApplication($student->sunyEmail, $student->firstName, $student->lastName, true);
             $assessments = new ApplicationAssessment();
             $assessments->initialize($id[0]->applicationID, $types);
 
-            return TRUE;
+            return true;
         }
 
-        return FALSE;
+        return false;
     }
 }

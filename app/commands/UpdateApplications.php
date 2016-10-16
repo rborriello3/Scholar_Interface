@@ -147,22 +147,31 @@ class UpdateApplications extends Command
 
                                     if ($type == 'GSAPON')
                                     {
-                                        $application->typeID          = 4;
-                                        $application->extraCurricular = $app[27];
-                                        $application->essay           = $app[28];
+                                        $application->typeID          		= 4;
+                                        $application->extraCurricular 		= $app[27];
+                                        $application->essay           		= $app[28];
+					$application->desiredScholarships	= $app[29];
+					$application->essaySelf       		= $app[30];
+                                        $application->essayWhy        		= $app[31];
                                     }
 
                                     elseif ($type == 'RSAPON')
                                     {
-                                        $application->typeID          = 6;
-                                        $application->extraCurricular = $app[46];
-                                        $application->essay           = $app[47];
+                                        $application->typeID          		= 6;
+                                        $application->extraCurricular 		= $app[46];
+                                        $application->essay           		= $app[47];
+					$application->desiredScholarships 	= $app[48];
+					$application->essaySelf       		= $app[49];
+					$application->essayWhy        		= $app[50];
                                     }
                                     else
                                     {
-                                        $application->typeID          = 2;
-                                        $application->extraCurricular = $app[28];
-                                        $application->essay           = $app[29];
+                                        $application->typeID          		= 2;
+                                        $application->extraCurricular 		= $app[28];
+                                        $application->essay           		= $app[29];
+					$application->essaySelf       		= $app[30];
+					$application->essayWhy        		= $app[31];
+					$application->desiredScholarships	= $app[32];
                                     }
 
                                     $application->save();
@@ -188,6 +197,9 @@ class UpdateApplications extends Command
                                         $application->typeID          = 4;
                                         $application->extraCurricular = $app[28];
                                         $application->essay           = $app[29];
+					$application->desiredScholarships = $app[30];
+					$application->essaySelf       = $app[31];
+					$application->essayWhy	      = $app[32];
                                     }
 
                                     elseif ($type == 'RSAPON')
@@ -195,12 +207,18 @@ class UpdateApplications extends Command
                                         $application->typeID          = 6;
                                         $application->extraCurricular = $app[47];
                                         $application->essay           = $app[48];
+					$application->desiredScholarships = $app[49];
+					$application->essaySelf       = $app[50];
+					$application->essayWhy        = $app[51];
                                     }
                                     else
                                     {
                                         $application->typeID          = 2;
                                         $application->extraCurricular = $app[29];
                                         $application->essay           = $app[30];
+					$application->essaySelf       = $app[31];
+					$application->essayWhy        = $app[32];
+					$application->desiredScholarships = $app[33];
                                     }
 
                                     \Application::where('studentID', '=', $app[9])->where('typeID', '=', $single)->whereHas('Aidyear', function ($q)
@@ -243,11 +261,11 @@ class UpdateApplications extends Command
                 }
             }
         }
-
+//Changed File name: added  Scholarship to FacultyRecommendationEnteringFreshmen.csv
         $recFiles    = array(
-            '/home/machform/FacultyRecommendationEnteringFreshmen.csv'   => 'Entering Freshmen',
-            '/home/machform/FacultyRecommendationCurrentStudents.csv'    => 'Returning Student',
-            '/home/machform/FacultyRecommendationGraduatingStudents.csv' => 'Graduating'
+            '/home/machform/ScholarshipFacultyRecommendationEnteringFreshmen.csv'   => 'Entering Freshmen',
+            '/home/machform/ScholarshipFacultyRecommendationCurrentStudents.csv'    => 'Returning Student',
+            '/home/machform/ScholarshipFacultyRecommendationGraduatingStudents.csv' => 'Graduating'
         );
         $appNotFound        = array();
         $noAppCount         = 0;

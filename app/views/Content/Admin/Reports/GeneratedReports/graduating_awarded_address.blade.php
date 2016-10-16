@@ -19,7 +19,7 @@
     <h4 class='reportName'>All Awarded Graduating Students</h4>
     {{ Datatable::table()
     ->setURL(route('graduatingStudentAddress'))
-    ->addColumn('Student ID', 'First', 'Last', 'Address 1', 'Address 2', 'City', 'State', 'Zip', 'Scholarship', 'Amount')
+    ->addColumn('Student ID', 'First', 'Last', 'Email', 'Address 1', 'Address 2', 'City', 'State', 'Zip', 'Scholarship', 'Amount') 
     ->setOptions('bProcessing', true)
     ->setOptions('bSort', true)
     ->setOptions('aaSorting', array(
@@ -41,13 +41,14 @@
         array('sWidth' => '1%'),
         array('sWidth' => '10%'),
         array('sWidth' => '10%'),
+	array('sWidth' => '1%'),
         array('sWidth' => '20%'),
         array('sWidth' => '5%'),
         array('sWidth' => '1%'),
         array('sWidth' => '1%'),
+	array('sWidth' => '1%'),
         array('sWidth' => '1%'),
         array('sWidth' => '1%'),
-        array('sWidth' => '1%')
     ))
     ->render() }}
 

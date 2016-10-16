@@ -6,5 +6,5 @@
 @stop
 
 @section('dashBoardContent')
-    <h2>Work In Progress.....</h2>
+
 @stop

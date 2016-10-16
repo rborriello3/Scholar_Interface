@@ -45,6 +45,16 @@
 
             <p>{{{$v->extraCurricular}}}</p>
         </div>
+	<div class="longText">
+	    <b>Tell us a little about yourself:</b>
+
+	    <p>{{{$v->essaySelf}}}</p>
+	</div>
+	<div class="longText">
+	    <b>In essay form, please explain how a SUNY Orange scholarship will help you in your education:</b>
+
+	    <p>{{{$v->essayWhy}}}</p>
+	</div>
         <br><br>
 
 

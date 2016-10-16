@@ -22,7 +22,7 @@
 
 		{{ Form::label('messageBody', 'Message Body:')}}
 <br>
-		{{ Form::textarea('messageBody', '')}}
+		{{ Form::textarea('messageBody', 'Dear ' . $student->firstName . ' ' . $student->lastName . ',')}}
 <br>
 		<font color="red">{{ $errors -> first('messageBody')}}</font>
 <br>

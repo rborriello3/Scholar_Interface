@@ -1,5 +1,4 @@
-<?php
-
+<?php 
 class ReportsDataController extends BaseController
 {
     public function graduatingRankJSON()
@@ -8,24 +7,27 @@ class ReportsDataController extends BaseController
         {
             return Datatable::query(DB::table('applications')
                         ->join('student', 'student.studentID', '=', 'applications.studentID')
-                        ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
+                        ->join('studentDemographics', 'studentDemographics.studentID', '=', 'applications.studentID')
                         ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
+			->join('studentAddress', 'studentAddress.studentID', '=', 'applications.studentID')
                         ->leftjoin('unmetNeed', 'unmetNeed.studentID', '=', 'student.studentID')
                         ->select('applications.applicationID', DB::raw('CONCAT(student.lastName, ", <br>", student.firstName) as name'),
-                            'studentDemographics.major', 'studentDemographics.GPA',
+                            'studentDemographics.major as major', 'studentDemographics.GPA as GPA',
                             DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total'),
-                            'unmetNeed.aidStatus', 'student.studentID')
+                            'student.studentID', 'studentAddress.city as city', 'studentAddress.county as county')
                         ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                         ->where('applications.typeID', '=', 4)
-                        ->whereIn('applications.statusID', array(5, 8, 9))
+                        ->whereIn('applications.statusID', array(3, 5, 8, 9))
                         ->groupBy('applications.applicationID'))
-                    ->showColumns('name', 'major', 'GPA', 'Total')
+                    ->showColumns('name', 'city', 'county')
+		    ->showColumns('Total', 'major', 'GPA')
                     ->addColumn('grader', function($student)
                     {
                         $graders = DB::table('activeUsers')
                             ->join('user', 'user.userId', '=', 'activeUsers.userId')
                             ->where('aidyear', '=', Session::get('currentAidyear'))
                             ->where('activeUsers.gradeGroup', 'LIKE', '%4%')
+			    ->where('activeUsers.status', '=', '1')
                             ->get(array('user.userId', 'name'));
 
                         $output = "";
@@ -44,32 +46,41 @@ class ReportsDataController extends BaseController
                     })
                     ->addColumn('aid', function ($student)
                     {
-                        if ($student->aidStatus == 'NEED')
-                        {
-                            return '<strong><font color="red">*' . $student->aidStatus . '*</font></strong>';
-                        }
-                        elseif ($student->aidStatus == 'MERIT')
-                        {
-                            return '<u>' . $student->aidStatus . '</u>';
-                        }
-                        elseif ($student->aidStatus)
-                        {
-                            return '<b>*$' . $student->aidStatus . '*</b>';
-                        }
-                    })->addColumn('awards', function ($award)
+                        $aid = DB::table('unmetNeed')
+			    ->where('studentID', '=', $student->studentID)
+			    ->where('aidyear', '=', Session::get('currentAidyear'))
+			    ->get(array('aidStatus'));
+
+			$output = "";
+
+			foreach($aid as $a)
+			{
+			    $output .= $a->aidStatus . "<br>";
+			}
+
+			return $output;
+                    })
+		    ->addColumn('awards', function ($award)
                     {
                         $awards = DB::table('scholarshipAwards')->where('studentID', $award->studentID)
                             ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
-                            ->whereIn('awardStatus', array(
-                            '1', '2'
-                        ))->get(array('awardAmount'));
+                            ->whereIn('awardStatus', array('1', '2'))
+			    ->get(array('fundCode', 'awardAmount'));
+
                         if (count($awards) > 0)
                         {
                             $return = '';
 
                             foreach ($awards as $v)
                             {
-                                $return .= '<strong>$' . $v->awardAmount . '</strong> ';
+                                $name = DB::table('scholarships')
+				    ->where('fundCode', '=', $v->fundCode)
+				    ->get(array('scholarshipName'));
+
+				foreach($name as $n)
+				{
+				   $return .= '<strong>$' . $v->awardAmount . '</strong> - ' . $n->scholarshipName . '<br>';
+				}
                             }
 
                             return $return;
@@ -92,7 +103,7 @@ class ReportsDataController extends BaseController
                             'unmetNeed.aidStatus', 'student.studentID')
                         ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                         ->where('applications.typeID', '=', 4)
-                        ->whereIn('applications.statusID', array(5, 8, 9))
+                        ->whereIn('applications.statusID', array(3, 5, 8, 9))
                         ->groupBy('applicationAssessment.applicationID')
                         ->orderBy('Total', 'desc')
                         ->get();
@@ -182,68 +193,74 @@ class ReportsDataController extends BaseController
         {
             return Datatable::query(DB::table('applications')
                 ->join('student', 'student.studentID', '=', 'applications.studentID')
-                ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
+               	->join('studentDemographics', 'studentDemographics.studentID', '=', 'applications.studentID')
                 ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
-                ->leftjoin('unmetNeed', 'unmetNeed.studentID', '=', 'student.studentID')
-                                ->select('applicationAssessment.applicationID AS appID', DB::raw('CONCAT(student.lastName, ", <br>", student.firstName) as name'), 'studentDemographics.major', 'studentDemographics.highSchoolAvg',
-                                    DB::raw('ROUND (AVG(applicationAssessment.total), 2) + ROUND ((studentDemographics.highSchoolAvg / 20 - 1), 2) AS AVGTotal'),
-                                    'unmetNeed.aidStatus', 'student.studentID')
+		->join('studentAddress', 'studentAddress.studentID', '=', 'applications.studentID')
+                ->select('applications.applicationID', DB::raw('CONCAT(student.lastName, ", <br>", student.firstName) AS name'), 'studentDemographics.major AS major', 'studentDemographics.highSchoolAvg AS highSchoolAvg', DB::raw('(ROUND(AVG(applicationAssessment.total), 2) + ROUND((studentDemographics.highSchoolAvg / 20 - 1), 2)) AS AVGTotal'),'student.studentID', 'studentDemographics.highSchoolName as HS', 'studentAddress.city as city', 'studentAddress.county as county')
                 ->where('applications.aidyear', '=', Session::get('currentAidyear'))
-                ->where('applications.typeID', '=', 2)
-                ->whereIn('applications.statusID', array(5, 8, 9))
+                ->where('applications.typeID', '=', '2') 
+                ->whereIn('applications.statusID', array(3, 5, 8, 9))
                 ->groupBy('applications.applicationID'))
-                ->setSearchWithAlias()->searchColumns('major')
-                ->showColumns('name', 'major', 'highSchoolAvg', 'AVGTotal')
-                ->addColumn('graders', function($student)
-                {
-                    $graders = DB::table('activeUsers')
-                        ->join('user', 'user.userId', '=', 'activeUsers.userId')
-                        ->where('aidyear', '=', Session::get('currentAidyear'))
-                        ->where('activeUsers.gradeGroup', 'LIKE', '%2%')
-                        ->get(array('user.userId', 'name'));
+                ->showColumns('name', 'major', 'HS', 'city', 'county', 'highSchoolAvg', 'AVGTotal')
+		->addColumn('grader', function($student)
+		{
+		    $graders = DB::table('activeUsers')
+			->join('user', 'user.userId', '=', 'activeUsers.userId')
+			->where('aidyear', '=', Session::get('currentAidyear'))
+			->where('activeUsers.gradeGroup', 'LIKE', '%2%')
+			->where('activeUsers.status', '=', '1')
+			->get(array('user.userId as userId', 'name'));
 
-                    $output = "";
+		    $output = "";
 
-                    foreach ($graders as $g)
-                    {
-                        $total = DB::table('applicationAssessment')
-                            ->where('userId', '=', $g->userId)
-                            ->where('applicationID', '=', $student->appID)
-                            ->get(array('total'));
 
-                        $output .= "(" . substr($g->name, strpos($g->name, " ")) . "-" . $total[0]->total . ") ";
-                    }
+		    foreach($graders as $g)
+		    {
+		    	$total = DB::table('applicationAssessment')
+			    ->where('userId', '=', $g->userId)
+			    ->where('applicationID', '=', $student->applicationID)
+			    ->get(array('total'));
 
-                    return rtrim($output, " ");
-                })
+			$output .= "(" . substr($g->name, strpos($g->name, " ")) . "-" . $total[0]->total . ") ";
+		    }
+		    
+		    return rtrim($output, " ");
+		}) 
                 ->addColumn('aid', function ($student)
                 {
-                    if ($student->aidStatus == 'NEED')
-                    {
-                        return '<strong><font color="red">*' . $student->aidStatus . '*</font></strong>';
-                    }
-                    elseif ($student->aidStatus == 'MERIT')
-                    {
-                        return '<u>' . $student->aidStatus . '</u>';
-                    }
-                    elseif ($student->aidStatus)
-                    {
-                        return '<b>*$' . $student->aidStatus . '*</b>';
-                    }
+                    $aid = DB::table('unmetNeed')
+			->where('studentID', '=', $student->studentID)
+			->where('aidyear', '=', Session::get('currentAidyear'))
+			->get(array('aidStatus'));
+
+		    $output = "";
+
+		    foreach($aid as $a)
+		    {
+			$output .= $a->aidStatus . "<br";
+		    }
+
+		    return $output;
                 })->addColumn('awards', function ($award)
                 {
                     $awards = DB::table('scholarshipAwards')->where('studentID', $award->studentID)
                         ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
-                        ->whereIn('awardStatus', array(
-                        '1', '2'
-                    ))->get(array('awardAmount'));
+                        ->whereIn('awardStatus', array('1', '2'))
+			->get(array('fundCode', 'awardAmount'));
                     if (count($awards) > 0)
                     {
                         $return = '';
 
                         foreach ($awards as $v)
                         {
-                            $return .= '<strong>$' . $v->awardAmount . '</strong> ';
+			    $name = DB::table('scholarships')
+				->where('fundCode', '=', $v->fundCode)
+				->get(array('scholarshipName'));
+
+			    foreach($name as $n)
+			    {
+                            	$return .= '<strong>$' . $v->awardAmount . '</strong> - ' . $n->scholarshipName . '<br>';
+			    }
                         }
 
                         return $return;
@@ -261,19 +278,20 @@ class ReportsDataController extends BaseController
                 ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
                 ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
                 ->leftjoin('unmetNeed', 'unmetNeed.studentID', '=', 'student.studentID')
-                ->select('applicationAssessment.applicationID AS appID', DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'), 'studentDemographics.major', 'studentDemographics.highSchoolAvg',
+                ->select('applicationAssessment.applicationID AS appID', DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'), 'studentDemographics.major AS major', 'studentDemographics.highSchoolAvg AS highSchoolAvg',
                     DB::raw('ROUND (AVG(applicationAssessment.total), 2) + ROUND ((studentDemographics.highSchoolAvg / 20 - 1), 2) AS AVGTotal'),
                     'unmetNeed.aidStatus', 'student.studentID')
                 ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                 ->where('applications.typeID', '=', 2)
-                ->whereIn('applications.statusID', array(5, 8, 9))
-                ->groupBy('applications.applicationID')
+                ->whereIn('applications.statusID', array(3, 5, 8, 9))
+                ->groupBy('applicationAssessment.applicationID')
                 ->orderBy('AVGTotal', 'desc')
                 ->get();
 
             $data['awards'] = DB::table('scholarshipAwards')
-                ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
-                ->whereIn('awardStatus', array('1', '2'))->get(array('awardAmount', 'studentID'));
+                ->whereIn('awardStatus', array('1', '2'))
+		->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
+		->get(array('awardAmount', 'studentID'));
 
             $graders = DB::table('activeUsers')
                 ->join('user', 'user.userId', '=', 'activeUsers.userId')
@@ -348,18 +366,20 @@ class ReportsDataController extends BaseController
         return Datatable::query(DB::table('student')
                     ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                     ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
-                    ->join('applications', 'applications.studentID', '=', 'student.studentID')
+                 //   ->join('applications', 'applications.studentID', '=', 'student.studentID')
                     ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                    ->select('student.studentID', 'firstName', 'lastName', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'scholarshipName', 'scholarshipAwards.awardAmount')
+                    ->select('student.studentID as studentID', 'student.firstName as firstName', 'student.lastName as lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
+                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode')
                     ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
-                    ->where('department', '=', NULL)
-                    ->orWhere('department', '=', "")
-                    ->where('applications.typeID', '=', 4)
-                    ->whereIn('applications.statusID', array(9))
+               //    ->where('department', '=', NULL)
+                 //  ->orWhere('department', '=', "")
+                  /*  ->where('scholarshipAwards.typeID', '=', 4)
+		    ->orWhere('scholarshipAwards.typeID', '=', 5)*/
+		    ->whereIn('scholarshipAwards.typeID', array(4, 5)) 
+                    ->where('scholarshipAwards.awardStatus', '=', 1)
                     ->groupBy('student.studentID')
                 )
-            ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode')
             ->addColumn('scholarshipName', function($name)
             {
                 $awards = DB::table('scholarships')->leftJoin('scholarshipAwards', 'scholarshipAwards.fundCode', '=', 'scholarships.fundCode')
@@ -422,17 +442,17 @@ class ReportsDataController extends BaseController
         return Datatable::query(DB::table('student')
                     ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                     ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
-                    ->join('applications', 'applications.studentID', '=', 'student.studentID')
+                   // ->join('applications', 'applications.studentID', '=', 'student.studentID')
                     ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                    ->select('student.studentID', 'firstName', 'lastName', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'awardAmount', 'department', 'scholarshipName')
-                    ->where('applications.statusID', '=', '9')
-                    ->where('scholarshipAwards.department', '!=', 'NULL')
-                    ->where('scholarshipAwards.department', '!=', '')
+                    ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
+                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'scholarshipAwards.awardAmount', 'scholarshipAwards.department', 'scholarships.scholarshipName')
+                   // ->where('scholarshipAwards.statusID', '=', '3')
+                   //->where('scholarshipAwards.department', '!=', 'NULL')
                     ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
-                    ->where('applications.typeID', '=', '5')
+		    ->where('scholarshipAwards.awardStatus', '=', 1)
+                    ->where('scholarshipAwards.typeID', '=', 5)
                 )
-            ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode', 'awardAmount', 'department', 'scholarshipName')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode', 'awardAmount', 'department', 'scholarshipName')
             ->addColumn('amount', function($award)
                 {
                     return '$' . $award->awardAmount;
@@ -450,25 +470,57 @@ class ReportsDataController extends BaseController
                         ->join('student', 'student.studentID', '=', 'applications.studentID')
                         ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
                         ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
-                        ->leftjoin('unmetNeed', 'unmetNeed.studentID', '=', 'student.studentID')
-                        ->select('applicationAssessment.applicationID AS appID', 'creditHourFA',
+ 			->join('studentAddress', 'studentAddress.studentID', '=', 'applications.studentID')
+			->leftjoin('unmetNeed', 'unmetNeed.studentID', '=', 'student.studentID')
+                        ->select('applicationAssessment.applicationID AS appID', 'studentDemographics.creditHourFA as creditHourFA',
                             DB::raw('CONCAT(student.lastName, ", <br>", student.firstName) as name'),
-                            'studentDemographics.major', 'studentDemographics.GPA',
+                            'studentDemographics.major as major', 'studentDemographics.GPA as GPA',
                             DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total'),
-                            'unmetNeed.aidStatus',
-                            'student.studentID')
+                            'student.studentID', 'studentAddress.city as city', 'studentAddress.county as county', 'student.criteria as criteria', 'student.minority as minority')
                         ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                         ->where('applications.typeID', '=', 6)
-                        ->whereIn('applications.statusID', array(5, 8, 9))
+                        ->whereIn('applications.statusID', array(3, 5, 8, 9))
                         ->groupBy('applicationAssessment.applicationID')
                     )
-                    ->showColumns('name', 'Total', 'major', 'GPA', 'creditHourFA')
+                    ->showColumns('name', 'city', 'county')
+		    ->addColumn('criteria', function($student)
+		    {	
+			$criteria = explode(",", ($student->criteria));
+			$return = "";
+
+			foreach($criteria as $k)
+			{
+			    $crit = DB::table('applicationCriteria')
+				->where('criteriaID', '=', $k)
+				->get(array('description'));
+			    $return .= $crit[0]->description . "<br>";
+			}
+
+			return $return;
+		    })
+		    ->addColumn('minority', function($student)
+		    {
+			$minority = explode(",", ($student->minority));
+			$return = "";
+
+			foreach($minority as $m)
+			{
+			    $min = DB::table('minority')
+				->where('minorityID', '=', $m)
+				->get(array('description'));
+			    $return .= $min[0]->description . "<br>";
+			}
+
+			return $return;
+		    })
+		    ->showColumns('Total', 'major', 'GPA', 'creditHourFA')
                     ->addColumn('graders', function($student)
                     {
                         $graders = DB::table('activeUsers')
                             ->join('user', 'user.userId', '=', 'activeUsers.userId')
                             ->where('aidyear', '=', Session::get('currentAidyear'))
                             ->where('activeUsers.gradeGroup', 'LIKE', '%6%')
+			    ->where('activeUsers.status', '=', '1')
                             ->get(array('user.userId', 'name'));
 
                         $output = "";
@@ -487,37 +539,47 @@ class ReportsDataController extends BaseController
                     })
                     ->addColumn('aid', function($student)
                     {
-                        if ($student->aidStatus == 'NEED')
-                        {
-                            return '<strong><font color="red">*' . $student->aidStatus . '*</font></strong>';
-                        }
-                        elseif ($student->aidStatus == 'MERIT')
-                        {
-                            return '<u>' . $student->aidStatus . '</u>';
-                        }
-                        elseif ($student->aidStatus)
-                        {
-                            return '<b>*$' . $student->aidStatus . '*</b>';
-                        }
+			$aid = DB::table('unmetNeed')
+				->where('studentID', '=', $student->studentID)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->get(array('aidStatus'));
+			
+			$output = "";
+	
+			foreach($aid as $a)
+			{
+				$output .= $a->aidStatus . "<br>";
+			}
+
+			return $output;
                     })->addColumn('awards', function($award)
                     {
                         $awards = DB::table('scholarshipAwards')->where('studentID', $award->studentID)
-                            ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
-                            ->whereIn('awardStatus', array(
-                            '1', '2'
-                        ))->get(array('awardAmount'));
+			    ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
+                            ->whereIn('scholarshipAwards.awardStatus', array('1', '2'))
+			    ->get(array('fundCode', 'awardAmount'));
+
                         if (count($awards) > 0)
                         {
                             $return = '';
 
                             foreach ($awards as $v)
                             {
-                                $return .= '<strong>$' . $v->awardAmount . '</strong> ';
+				$name = DB::table('scholarships')
+					->where('fundCode', '=', $v->fundCode)
+					->get(array('scholarshipName'));
+
+			        foreach($name as $n)
+				{
+					$return .= '<strong>$' . $v->awardAmount . '</strong> - ' . $n->scholarshipName . '<br>';
+				}
                             }
 
                             return $return;
                         }
                     })
+                    
+		   
                     ->setSearchWithAlias()
                     ->make();
         }
@@ -533,7 +595,7 @@ class ReportsDataController extends BaseController
                             'unmetNeed.aidStatus', 'student.studentID')
                         ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                         ->where('applications.typeID', '=', 6)
-                        ->whereIn('applications.statusID', array(5, 8, 9))
+                        ->whereIn('applications.statusID', array(3,5, 8, 9))
                         ->groupBy('applications.applicationID')
                         ->orderBy('Total', 'desc')
                         ->get();
@@ -593,7 +655,7 @@ class ReportsDataController extends BaseController
         } 
     }
 
-    public function returningStudentsCriteria()
+/*    public function returningStudentsCriteria()
     {
         if (Request::ajax())
         {
@@ -601,14 +663,15 @@ class ReportsDataController extends BaseController
                 ->join('applications', 'applications.studentID', '=', 'student.studentID')
                 ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
                 ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
+		->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                 ->select(DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'),
                     DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total'),
-                    'student.criteria', 'student.minority')
+                    'studentAddress.city', 'studentAddress.county', 'student.criteria', 'student.minority')
                 ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                 ->where('applications.typeID', '=', 6)
-                ->whereIn('applications.statusID', array(5, 8, 9))
+                ->whereIn('applications.statusID', array(3,5, 8, 9))
                 ->groupBy('applicationAssessment.applicationID'))
-                ->showColumns('name', 'Total')
+                ->showColumns('name', 'Total', 'city', 'county')
                 ->addColumn('criteria', function($student)
                 {
                     $criteria = explode(",", ($student->criteria));
@@ -635,6 +698,7 @@ class ReportsDataController extends BaseController
 
                     return $return;
                 })
+		//->showColumns('studentAddress.city', 'studentAddress.county');
 
                 ->setSearchWithAlias()
                 ->make();
@@ -644,13 +708,14 @@ class ReportsDataController extends BaseController
             $students = DB::table('student')
                 ->join('applications', 'applications.studentID', '=', 'student.studentID')
                 ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
+		->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                 ->join('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
                 ->select(DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'),
                     DB::raw('ROUND (AVG(applicationAssessment.total), 2) + studentDemographics.GPA AS Total'),
                     'student.criteria', 'student.minority')
                 ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                 ->where('applications.typeID', '=', 6)
-                ->whereIn('applications.statusID', array(5, 8, 9))
+                ->whereIn('applications.statusID', array(3,5, 8, 9))
                 ->groupBy('applicationAssessment.applicationID')
                 ->orderBy('Total', 'desc')
                 ->get();
@@ -719,19 +784,20 @@ class ReportsDataController extends BaseController
 
 
         }
-    }
-
+    }*/
     public function returningAssessmentsJSON($userId)
     {
         return Datatable::query(DB::table('applicationAssessment')
             ->join('applications', 'applications.applicationID', '=', 'applicationAssessment.applicationID')
             ->join('student', 'student.studentID', '=', 'applications.studentID')
+	  //  ->join('activeUsers', 'activeUsers.userId', '=', $userId)
             ->select(DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'), 'applicationAssessment.essay', 'applicationAssessment.extra', 'applicationAssessment.faculty', 'Total', 'assessorNotes', 'assessmentDate')
             ->where('applicationAssessment.status', '!=', 'Deactivated')
             ->whereIn('applications.statusID', array(3, 5, 8, 9))
             ->where('applications.typeID', '=', 6)
             ->where('applications.aidyear', '=', Session::get('currentAidyear'))
             ->where('applicationAssessment.userId', '=', $userId))
+	//    ->where('activeUsers.status', '=', '1')
             ->showColumns('name', 'essay', 'extra', 'faculty', 'Total', 'assessorNotes', 'assessmentDate')
             ->setSearchWithAlias()
         ->make();
@@ -740,20 +806,22 @@ class ReportsDataController extends BaseController
     public function returningStudentsAddress()
     {
         return Datatable::query(DB::table('student')
-                    ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
+                    ->leftjoin('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                     ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
-                    ->join('applications', 'applications.studentID', '=', 'student.studentID')
+                    //->join('applications', 'applications.studentID', '=', 'student.studentID')
                     ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                    ->select('student.studentID', 'firstName', 'lastName', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
+                    ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
                         DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'scholarshipName', 'scholarshipAwards.awardAmount')
                     ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
-                    ->where('department', '=', '')
-                    ->orWhere('department', '=', 'NULL')
-                    ->where('applications.typeID', '=', 6)
-                    ->whereIn('applications.statusID', array(9))
+                  //->where('department', '=', '')
+                    //->orWhere('department', '=', 'NULL')
+                   /* ->where('scholarshipAwards.typeID', '=', 6)
+		    ->orWhere('scholarshipAwards.typeID', '=', 7)*/
+		    ->whereIn('scholarshipAwards.typeID', array(6, 7, 11, 12))
+                    ->where('scholarshipAwards.awardStatus', '=',1)
                     ->groupBy('student.studentID')
                 )
-            ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode')
             ->addColumn('scholarshipName', function($name)
             {
                 $awards = DB::table('scholarships')->leftJoin('scholarshipAwards', 'scholarshipAwards.fundCode', '=', 'scholarships.fundCode')
@@ -817,22 +885,22 @@ class ReportsDataController extends BaseController
         return Datatable::query(DB::table('student')
                     ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                     ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
-                    ->join('applications', 'applications.studentID', '=', 'student.studentID')
+                   // ->join('applications', 'applications.studentID', '=', 'student.studentID')
                     ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                    ->select('student.studentID', 'firstName', 'lastName', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'awardAmount', 'department', 'scholarshipName')
-                    ->where('applications.statusID', '=', '9')
+                    ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
+                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'scholarshipAwards.awardAmount', 'scholarshipAwards.department', 'scholarships.scholarshipName')
+                  //  ->where('applications.statusID', '=', '9')
                     ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
-                    ->where('scholarshipAwards.department', '!=', 'NULL')
-                    ->where('scholarshipAwards.department', '!=', '')
-                    ->where('applications.typeID', '=', '7')
+                   // ->where('scholarshipAwards.department', '!=', 'NULL')
+                   // ->orWhere('scholarshipAwards.department', '!=', '')
+                    ->whereIn('scholarshipAwards.typeID', array(7, 11, 12))
                 )
-            ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode', 'awardAmount', 'department', 'scholarshipName')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode', 'awardAmount', 'department', 'scholarshipName')
             ->addColumn('amount', function($award)
                 {
                     return '$' . $award->awardAmount;
                 })
-            ->showColumns('department')
+           // ->showColumns('department')
             ->setSearchWithAlias()
             ->make();
     }
@@ -843,18 +911,21 @@ class ReportsDataController extends BaseController
                 ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                 ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
                 ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
-                ->join('applications', 'applications.studentID', '=', 'student.studentID')
                 ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                ->select('student.studentID', 'firstName', 'lastName', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                    DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'studentDemographics.highSchoolName',  'awardAmount', 'department', 'scholarshipName')
+                ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
+                    DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'studentDemographics.highSchoolName',  'awardAmount', 'scholarshipName')
                 ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
-                ->where('applications.statusID', '=', '9')
-                ->where('scholarshipAwards.department', '=', '')
-                ->where('applications.typeID', '=', '2')
+          
+               // ->where('scholarshipAwards.department', '=', '')
+		//->orWhere('scholarshipAwards.department', '=', NULL)
+               /* ->where('scholarshipAwards.typeID', '=', 2)
+		->orWhere('scholarshipAwards.typeID', '=', 3)*/
+		->whereIn('scholarshipAwards.typeID', array(2, 3, 9, 10))
+		->where('scholarshipAwards.awardStatus', '=', 1)
                 ->groupBy('student.studentID')
 
         )
-            ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode', 'highSchoolName')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode', 'highSchoolName')
             ->addColumn('scholarshipName', function($name)
             {
                 $awards = DB::table('scholarships')->leftJoin('scholarshipAwards', 'scholarshipAwards.fundCode', '=', 'scholarships.fundCode')
@@ -919,17 +990,18 @@ class ReportsDataController extends BaseController
                 ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                 ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
                 ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
-                ->join('applications', 'applications.studentID', '=', 'student.studentID')
+               // ->join('applications', 'applications.studentID', '=', 'student.studentID')
                 ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                ->select('student.studentID', 'firstName', 'lastName', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                    DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'studentDemographics.highSchoolName', 'awardAmount', 'department', 'scholarshipName')
-                ->where('applications.statusID', '=', '9')
-                ->where('scholarshipAwards.department', '!=', 'NULL')
+                ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
+                    DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'studentDemographics.highSchoolName', 'awardAmount', 'scholarshipAwards.department', 'scholarshipName')
+               // ->where('applications.statusID', '=', '9')
+               // ->where('scholarshipAwards.department', '!=', 'NULL')
                 ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
-                ->where('scholarshipAwards.department', '!=', '')
-                ->where('applications.typeID', '=', '3')
+               // ->where('scholarshipAwards.department', '!=', '')
+		->where('scholarshipAwards.awardStatus', '=', '1')
+                ->whereIn('scholarshipAwards.typeID', array(3, 9, 10))
         )
-            ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode', 'highSchoolName', 'awardAmount', 'department', 'scholarshipName')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode', 'highSchoolName', 'awardAmount', 'department', 'scholarshipName')
             ->addColumn('amount', function($award)
             {
                 return '$' . $award->awardAmount;
@@ -943,20 +1015,22 @@ class ReportsDataController extends BaseController
     {
         return Datatable::query(DB::table('student')
                 ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
+		//->join('awardStatus', 'awardStatus.awardStatusID', '=', 'scholarshipAwards.awardStatus')
                 ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
-                ->join('applications', 'applications.studentID', '=', 'student.studentID')
+              //  ->join('applications', 'applications.studentID', '=', 'student.studentID')
                 ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                ->select('student.studentID', 'firstName', 'lastName', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
+                ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
                     DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode')
-                ->where('applications.statusID', '=', '9')
-                ->where('applications.aidyear', '=', Session::get('currentAidyear'))
-                ->whereNotIn('applications.typeID', array(4,5))
+                //->where('applications.statusID', '=', '9')
+                ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
+		//->where('scholarshipAwards.awardStatus', '=', 1)
+               // ->whereNotIn('applications.typeID', array(4,5))
                 ->groupBy('student.studentID')
             )
-            ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode')
             ->addColumn('scholarshipFundCode', function($name)
             {
-                $awards = DB::table('scholarshipAwards')->where('studentID', '=', $name->studentID)->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))->where('awardStatus', '=', 2)
+                $awards = DB::table('scholarshipAwards')->where('studentID', '=', $name->studentID)->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))->whereIn('awardStatus', array(1,2))
                     ->get(array('scholarshipAwards.fundCode'));
 
                 $return = '';
@@ -1002,6 +1076,8 @@ class ReportsDataController extends BaseController
                     ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
                     ->whereIn('awardStatus', array(
                     '1', '2'
+
+
                 ))->get(array('awardAmount'));
 
                 $return = '';
@@ -1036,6 +1112,19 @@ class ReportsDataController extends BaseController
                 })
             ->setSearchWithAlias()
             ->make();
+    }
+
+    public function show_scholarship_award_history_JSON($fundCode)
+    {
+	return Datatable::query(DB::table('scholarshipAwards')
+	    ->join('student', 'student.studentID', '=', 'scholarshipAwards.studentID')
+	    ->select('scholarshipAwards.studentID', 'student.firstName as firstName', 'student.lastName as lastName', 'scholarshipAwards.aidyear', 'scholarshipAwards.awardAmount')
+	    ->where('scholarshipAwards.fundCode', '=', $fundCode)
+	    ->orderBy('scholarshipAwards.aidyear')
+	    ->orderBy('student.lastName'))
+	    ->showColumns('studentID', 'firstName', 'lastName', 'aidyear', 'awardAmount')
+	    ->setSearchWithAlias()
+	    ->make();
     }
 
 }

@@ -105,7 +105,7 @@ class BannerStudentUpdate extends Command
                         $student            = new \Student();
                         $student->studentID = $banner[0];
                         $student->firstName = $banner[2];
-                        $student->lastName  = $banner[1];
+			$student->lastName  = $banner[1];
                         $student->sunyEmail = $banner[3];
                         $student->save();
                         ++$newStudents;
@@ -246,16 +246,16 @@ class BannerStudentUpdate extends Command
 
                             if ($type == 'GSAPON')
                             {
-                                $student->goal       = $extra[26];
-                                $student->minority   = 1;
-                                $student->criteria   = 1;
-                                $demo->transferMaj   = $extra[24];
-                                $demo->transferInsti = $extra[25];
-                                $demo->collegeGrad   = date('m/y', strtotime($extra[23]));
+				$student->goal		=$extra[26];
+				$student->minority	= 1;
+				$student->criteria	= 1;
+				$demo->transferMaj	= $extra[24];
+				$demo->transferInsti	= $extra[25];
+				$demo->collegeGrad	= date('m/y', strtotime($extra[23]));
                             }
-                            elseif ($type == 'RSAPON')
+			    elseif ($type == 'RSAPON')
                             {
-                                $criteria = array($extra[25], 2, $extra[26], 3, $extra[27], 4, $extra[28], 5, $extra[29], 6, $extra[30], 7, $extra[31], 8, $extra[32], 9);
+                                $criteria = array($extra[25], 2, $extra[26], 3, $extra[27], 4, $extra[28], 5, $extra[29], 6, $extra[30], 7, $extra[31], 8, $extra[32], 9, $extra[33], 10, $extra[34], 11, $extra[35], 12, $extra[36], 13, $extra[37], 14, $extra[38], 15, $extra[39], 16, $extra[40], 17);
                                 $checkedCriteria = array();
 
                                 foreach ($criteria as $k => $v)
@@ -266,7 +266,7 @@ class BannerStudentUpdate extends Command
                                     }
                                 }
 
-                                $minority        = array($extra[33], 2, $extra[34], 3, $extra[35], 4, $extra[36], 5, $extra[7], 6);
+                                $minority        = array($extra[41], 2, $extra[42], 3, $extra[43], 4, $extra[44], 5, $extra[45], 6);
                                 $checkedMinority = array();
 
                                 foreach ($minority as $k => $v)
@@ -294,16 +294,16 @@ class BannerStudentUpdate extends Command
                                 {
                                     $student->criteria = 1;
                                 }
-
-                                $student->goal = $extra[22];
+				$student->goal = $extra[22];
                             }
                             else
                             {
                                 $student->goal        = $extra[23];
                                 $student->minority    = 1;
-                                $student->criteria    = 1;
-                                $demo->highSchoolName = $extra[25];
-                            }
+				$student->criteria    = 1;
+				$demo->highSchoolName = $extra[25];
+				
+			    }
 
                             $student->save();
                             $demo->save();

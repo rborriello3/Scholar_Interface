@@ -58,9 +58,10 @@ class ReportsController extends BaseController
     {
         $data['commMembers'] = DB::table('activeUsers')
             ->join('user', 'user.userId', '=', 'activeUsers.userId')
-            ->select('user.name', 'activeUsers.userId')
-            ->where('gradeGroup', 'LIKE', '%4%')
+	    ->select('user.name', 'activeUsers.userId')
+            ->where('activeUsers.gradeGroup', 'LIKE', '%4%')
             ->where('activeUsers.aidyear', 'LIKE', '%' . Session::get('currentAidyear') . '%')
+	    
             ->get();
 
         return View::make('Content.Admin.Reports.GeneratedReports.graduating_assessments', $data);
@@ -85,7 +86,7 @@ class ReportsController extends BaseController
         $data['commMembers'] = DB::table('activeUsers')
             ->join('user', 'user.userId', '=', 'activeUsers.userId')
             ->select('user.name', 'activeUsers.userId')
-            ->where('gradeGroup', 'LIKE', '%2%')
+            ->where('activeUsers.gradeGroup', 'LIKE', '%2%')
             ->where('activeUsers.aidyear', 'LIKE', '%' . Session::get('currentAidyear') . '%')
             ->get();
 
@@ -117,7 +118,7 @@ class ReportsController extends BaseController
         $data['commMembers'] = DB::table('activeUsers')
             ->join('user', 'user.userId', '=', 'activeUsers.userId')
             ->select('user.name', 'activeUsers.userId')
-            ->where('gradeGroup', 'LIKE', '%6%')
+            ->where('activeUsers.gradeGroup', 'LIKE', '%6%')
             ->where('activeUsers.aidyear', 'LIKE', '%' . Session::get('currentAidyear') . '%')
             ->get();
 
@@ -162,5 +163,30 @@ class ReportsController extends BaseController
     public function all_students()
     {
         return View::make('Content.Admin.Reports.GeneratedReports.all_students');
+    }
+
+    //Creates scholarship drop-down list and sends to view
+    public function choose_scholarship_award_history()
+    {
+	$data['scholarships'] = array('' => 'Choose Scholarship (Alphabetical Order)');
+	$scholarships = Scholarships::orderBy('scholarshipName', 'asc')
+	    ->where('active', '=', 1)
+	    ->remember(2)
+	    ->lists('scholarshipName', 'fundCode');
+
+	//Attach fundCode to each scholarship name
+	foreach($scholarships as $k=>$v)
+	{
+	    $scholarships[$k] = $v . " - " . $k;
+	}
+	$data['scholarships'] = array_merge($data['scholarships'], $scholarships);
+	return View::make('Content.Admin.Reports.GeneratedReports.choose_scholarship_award_history', $data);
+    }
+
+    public function show_scholarship_award_history()
+    {
+	$fundCode = Input::get('fundCode');
+	
+	return View::make('Content.Admin.Reports.GeneratedReports.show_scholarship_award_history')->with('fundCode', $fundCode[0]);
     }
 }

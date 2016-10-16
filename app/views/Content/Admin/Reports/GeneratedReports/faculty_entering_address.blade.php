@@ -19,7 +19,7 @@
 <h4 class='reportName'>All Awarded Entering Faculty Recommended Students</h4>
 {{ Datatable::table()
 ->setURL(route('enteringFacultyAddress'))
-->addColumn('Student ID', 'First', 'Last', 'Address 1', 'Address 2', 'City', 'State', 'Zip','HS', 'Amount', 'Department', 'Scholarship')
+->addColumn('Student ID', 'First', 'Last', 'Email', 'Address 1', 'Address 2', 'City', 'State', 'Zip','HS', 'Amount', 'Department', 'Scholarship')
 ->setOptions('bProcessing', true)
 ->setOptions('bSort', true)
 ->setOptions('aaSorting', array(
@@ -41,6 +41,7 @@ array('sExtends' => 'copy', 'sButtonText' => 'Copy Current Set')
 array('sWidth' => '1%'),
 array('sWidth' => '10%'),
 array('sWidth' => '10%'),
+array('sWidth' => '1%'),
 array('sWidth' => '20%'),
 array('sWidth' => '10%'),
 array('sWidth' => '1%'),

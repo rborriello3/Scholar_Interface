@@ -96,22 +96,24 @@ class ApplicationsDataController extends BaseController
             ->whereRaw('applicationType.typeID NOT IN (1,3,5,7,8)')
             ->where('applicationAssessment.userID', '=', Auth::user()->userId)
             ->where('applicationAssessment.status', '!=', 'Deactivated')
-            ->where('applications.aidyear', '=', Session::get('currentAidyear')))
+            ->where('applications.aidyear', '=', Session::get('currentAidyear'))
+	->orderBy('applicationType.typeID', 'asc')
+	->orderBy('applicationAssessment.status', 'desc'))
         ->addColumn('Actions', function ($student)
         {
             if ($student->status == 'Waiting')
             {
-                $crudLinks = link_to_route('showGrading', 'Start - New', $parameters = array($student->GUID), $attributes = array('class' => 'btn btn-success', 'alt' => 'showApplication','title' => 'Score ' . $student->firstName . '\'s Application'));
+                $crudLinks = link_to_route('showGrading', 'Start Application Assessment', $parameters = array($student->GUID), $attributes = array('class' => 'btn btn-success', 'alt' => 'showApplication','title' => 'Score ' . $student->firstName . '\'s Application'));
             }
 
             elseif ($student->status == 'Graded')
             {
-                $crudLinks = link_to_route('showGrading', 'Edit - Complete', $parameters = array($student->GUID), $attributes = array('class' => 'btn btn-danger', 'alt' => 'showApplication', 'title' => 'Score ' . $student->firstName . '\'s Application'));
+                $crudLinks = link_to_route('showGrading', 'Application Assessment Complete', $parameters = array($student->GUID), $attributes = array('class' => 'btn btn-danger', 'alt' => 'showApplication', 'title' => 'Score ' . $student->firstName . '\'s Application'));
             }
 
             elseif ($student->status == 'Incomplete')
             {
-                $crudLinks = link_to_route('showGrading', 'Finish - Incomplete', $parameters = array($student->GUID), $attributes = array('class' => 'btn btn-warning', 'alt' => 'showApplication', 'title' => 'Score ' . $student->firstName . '\'s Application'));
+                $crudLinks = link_to_route('showGrading','Continue Application Assessment', $parameters = array($student->GUID), $attributes = array('class' => 'btn btn-warning', 'alt' => 'showApplication', 'title' => 'Score ' . $student->firstName . '\'s Application'));
             }
 
             return $crudLinks;

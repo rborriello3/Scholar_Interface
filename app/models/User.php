@@ -191,7 +191,27 @@ class User extends Eloquent implements UserInterface, RemindableInterface
 
         if (strrpos($user[0]->yearsActive, $aid) === FALSE)
         {
-            DB::table('user')->where('userId', '=', $id)->update(array('yearsActive' => $user[0]->yearsActive . '*' . $aid . '*'));
+	   DB::table('user')->where('userId', '=', $id)->update(array('yearsActive' => $user[0]->yearsActive . '*' . $aid . '*'));
         }
     }
+
+   public function editUser($id, $values)
+   {
+        $yearsActive = $values['monthTo'] . '/' . $values['yearTo'];
+	DB::table('user') ->where('userId', '=', $id)->update(array('name' => $values['name'] ));
+        DB::table('user') ->where('userId', '=', $id)->update(array('email' => $values['email']));
+	DB::table('user') ->where('userId', '=', $id)->update(array('yearto' => $yearsActive ));
+	DB::table('user') ->where('userId', '=', $id)->update(array('userRole' => implode('',  $values['availableRoles'])));
+	if(in_array('4', $values['availableRoles']) !== FALSE)
+	{
+		DB::table('user') ->where('userId', '=', $id)->update(array('gradeGroup' => implode(',' , $values['availableGroups'])));
+	}
+	else if(in_array('4', $values['availableRoles']) == FALSE)
+	{
+		
+		DB::table('user') ->where('userId', '=', $id)->update(array('gradeGroup' => 0));
+	}
+	$this->save();
+	
+   }
 }

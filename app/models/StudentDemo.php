@@ -10,18 +10,18 @@ class StudentDemo extends Eloquent
     /**
      * We don't want any default time stamps
      */
-    public $timestamps = FALSE;
+    public $timestamps = false;
 
     /**
      * must define a specific key for our database table
      */
     protected $primaryKey = 'studentID';
 
-    public function insertDemographics($values, $studentID = NULL)
+    public function insertDemographics($values, $studentID = null)
     {
         $studentInfo = array_except($values, array('_token', 'selecttype', 'GUID', 'type'));
 
-        if ($studentID == NULL)
+        if ($studentID == null)
         {
             $studentInfo = array_add($studentInfo, 'studentID', Session::get('studentID'));
             $student     = $this->find(Session::get('studentID'));

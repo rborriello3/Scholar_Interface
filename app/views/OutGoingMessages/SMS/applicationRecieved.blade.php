@@ -1,0 +1,1 @@
+SUNY Orange has recieved your scholarship application. Please review your email for details.

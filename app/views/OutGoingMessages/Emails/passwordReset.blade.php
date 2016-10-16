@@ -8,7 +8,6 @@
 
 <a href="https://schol.occc/password/reset/update/{{{$token}}}">SUNY Orange - Using Campus Infrastucture<a><br>
 <a href="https://schol.sunyorange.edu/password/reset/update/{{{$token}}}">At Home - Using Personal Network</a><br>
-<a href="https://192.168.2.2/password/reset/update/{{{$token}}}">Test Bench</a><br><br>
 
 <p>This link will only be active for no more than 5 minutes. Once the
     time frame has been met, the link will expire and a new email will be

@@ -15,21 +15,29 @@ class ApplicationResponse extends Eloquent
     /**
      * must define a specific key for our database table
      */
-    protected $primaryKey = 'applicationID';
+   // protected $primaryKey = 'applicationID';
+//    protected $primaryKey = array('studentID', 'fundCode', 'aidyear');
 
-    protected $appID;
+   // protected $appID;
     protected $student;
+    protected $fund;
+    protected $year;
 
-    public function __construct($appID = null, $studentID = null)
+   // public function __construct($appID = null, $studentID = null)
+    public function __construct($studentID = null, $fundCode = null, $aidyear= null)
     {
-        $this->appID   = $appID;
-        $this->student = $studentID;
+       // $this->appID   = $appID;
+        $this->student 	= $studentID;
+        $this->fund     = $fundCode;
+        $this->year 	= $aidyear;
     }
 
     public function newResponse()
     {
-        $this->applicationID   = $this->appID;
+       // $this->applicationID   = $this->appID;
         $this->studentID       = $this->student;
+        $this->fundCode	       = $this->fund;
+        $this->aidyear         = $this->year;
         $this->requirementDate = date('m/d/y');
         $this->save();
     }
@@ -52,25 +60,59 @@ class ApplicationResponse extends Eloquent
         {
             if (in_array($value, $ty))
             {
-                $update = $this->find($value);
+               // $update = $this->find($value);
+		$id = substr($value, 0, 9);
+		$fundCode = substr($value, 9, 13);
+		
+		$update = DB::table('applicationResponses')
+				->where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->first();
 
-                if ($update->thankYou != 1)
+                if ($update->thankyou != 1)
                 {
-                    $update->thankYou = 1;
+                    /*$update->thankyou = 1;
                     $update->TYupdate = $date;
-                    $return = $update->save();
+                   // $return = $update->save();
+		    $return = 1;*/
+
+		    ApplicationResponse::where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->update(array('thankyou' => '1', 'TYupdate' => $date));
+
+		    $return = 1;
+
                     $usedApps[$value] = TRUE;
                 }
             }
             else
             {
-                $update = $this->find($value);
+                //$update = $this->find($value);
+		$id = substr($value, 0, 9);
+		$fundCode = substr($value, 9, 13);
+		
+		$update = DB::table('applicationResponses')
+				->where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->first();
 
-                if ($update->thankYou != 0)
+                if ($update->thankyou != 0)
                 {
-                    $update->thankYou = 0;
+                    /*$update->thankyou = 0;
                     $update->TYupdate = $date;
                     $return = $update->save();
+		    $return = 1;*/
+
+		    ApplicationResponse::where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->update(array('thankyou' => '0', 'TYupdate' => $date));
+
+		    $return = 1;
+
                     $unusedApps[$value] = TRUE;
                 }
             }
@@ -80,25 +122,56 @@ class ApplicationResponse extends Eloquent
         {
             if(in_array($value, $ACPT))
             {
-                $update = $this->find($value);
-
-                if ($update->acceptance != 1)
+                //$update = $this->find($value);
+		$id = substr($value, 0, 9);
+		$fundCode = substr($value, 9, 13);
+		
+		$update = ApplicationResponse::where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->first();
+                
+		if ($update->acceptance != 1)
                 {
-                    $update->acceptance = 1;
+                    /*$update->acceptance = 1;
                     $update->ACCPTUpdate = $date;
                     $return = $update->save();
+		    $return = 1;*/
+		    ApplicationResponse::where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->update(array('acceptance' => '1', 'ACCPTUpdate' => $date));
+
+		    $return = 1;
                     $usedApps[$value] = TRUE;
                 }
             }
             else
             {
-                $update = $this->find($value);
-
-                if ($update->acceptance != 0)
+                //$update = $this->find($value);
+		$id = substr($value, 0, 9);
+		$fundCode = substr($value, 9, 13);
+		
+		$update = DB::table('applicationResponses')
+				->where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->first();
+                
+		if ($update->acceptance != 0)
                 {
-                    $update->acceptance = 0;
+                   /* $update->acceptance = 0;
                     $update->ACCPTUpdate = $date;
-                    $return = $update->save();
+                   // $return = $update->save();
+		    $return = 1;*/
+
+		    ApplicationResponse::where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->update(array('acceptance' => '0', 'ACCPTUpdate' => $date));
+
+		    $return = 1;
+
                     $unusedApps[$value] = TRUE;
                 }
             }
@@ -108,25 +181,59 @@ class ApplicationResponse extends Eloquent
         {
             if(in_array($value, $CV))
             {
-                $update = $this->find($value);
-
-                if ($update->convocation != 1)
+                //$update = $this->find($value);
+		$id = substr($value, 0, 9);
+		$fundCode = substr($value, 9, 13);
+		
+		$update = DB::table('applicationResponses')
+				->where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->first();
+                
+		if ($update->convocation != 1)
                 {
-                    $update->convocation = 1;
+                   /* $update->convocation = 1;
                     $update->CVUpdate = $date;
-                    $return = $update->save();
+                   // $return = $update->save();
+		    $return = 1;*/
+
+		    ApplicationResponse::where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->update(array('convocation' => '1', 'CVUpdate'=> $date));
+
+		    $return = 1;
+
                     $usedApps[$value] = TRUE;
                 }
             }
             else
             {
-                $update = $this->find($value);
-
-                if ($update->convocation != 0)
+               // $update = $this->find($value);
+		$id = substr($value, 0, 9);
+		$fundCode = substr($value, 9, 13);
+		
+		$update = DB::table('applicationResponses')
+				->where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->first();
+                
+		if ($update->convocation != 0)
                 {
-                    $update->convocation = 0;
+                   /* $update->convocation = 0;
                     $update->CVUpdate = $date;
-                    $return = $update->save();
+                   // $return = $update->save();
+		    $return = 1;*/
+
+		    ApplicationResponse::where('studentID', '=', $id)
+				->where('fundCode', '=', $fundCode)
+				->where('aidyear', '=', Session::get('currentAidyear'))
+				->update(array('convocation'=> '0', 'CVUpdate' => $date));
+
+		    $return = 1;
+
                     $unusedApps[$value] = TRUE;
                 }
             }
@@ -134,31 +241,62 @@ class ApplicationResponse extends Eloquent
 
         foreach ($usedApps as $used => $notUsed)
         {
-            $comp = $this->find($used);
+            //$comp = $this->find($used);
+	    $id = substr($used, 0, 9);
+	    $fundCode = substr($used, 9, 13);
+		
+	    $comp = DB::table('applicationResponses')
+			->where('studentID', '=', $id)
+			->where('fundCode', '=', $fundCode)
+			->where('aidyear', '=', Session::get('currentAidyear'))
+			->first();
 
-            if($comp->thankYou == 1 && $comp->acceptance == 1)
+            if($comp->thankyou == 1 && $comp->acceptance == 1)
             {
-                DB::table('scholarshipAwards')->where('studentID', '=', $comp->studentID)->update(array('awardStatus' => 2));
+                DB::table('scholarshipAwards')
+			->where('studentID', '=', $comp->studentID)
+			->where('fundCode', '=', $comp->fundCode)
+			->where('aidyear', '=', $comp->aidyear)
+			->update(array('awardStatus' => 2));
             }
         }
 
         foreach ($unusedApps as $used => $notUsed)
         {
-            $comp = $this->find($used);
-
-            if($comp->thankYou == 0 || $comp->acceptance == 0)
+            //$comp = $this->find($used);
+	    $id = substr($used, 0, 9);
+	    $fundCode = substr($used, 9, 13);
+		
+	    $comp = DB::table('applicationResponses')
+			->where('studentID', '=', $id)
+			->where('fundCode', '=', $fundCode)
+			->where('aidyear', '=', Session::get('currentAidyear'))
+			->first();
+            
+	    if($comp->thankyou == 0 || $comp->acceptance == 0)
             {
-                DB::table('scholarshipAwards')->where('studentID', '=', $comp->studentID)->update(array('awardStatus' => 1));
+                DB::table('scholarshipAwards')
+			->where('studentID', '=', $comp->studentID)
+			->where('fundCode', '=', $comp->fundCode)
+			->where('aidyear', '=', $comp->aidyear)
+			->update(array('awardStatus' => 1));
             }
         }
 
         return $return;
     }
 
-    public function makeUpdatesToResponses($GUID, $status)
+    //public function makeUpdatesToResponses($GUID, $status)
+    public function makeUpdatesToResponses($studentID, $aidyear, $fundCode, $status)
     {
-        $info = DB::table('applications')->where('GUID', '=', $GUID)->get(array('applicationID', 'studentID'));
-        $update = $this->find($info[0]->applicationID);
+       // $info = DB::table('applications')->where('GUID', '=', $GUID)->get(array('applicationID', 'studentID'));
+	$info = DB::table('applicationResponses')
+			->where('studentID', '=', $studentID)
+			->where('aidyear', '=', $aidyear)
+			->where('fundCode', '=', $fundCode)
+			->get(array('studentID', 'fundCode', 'aidyear'));
+
+        $update = $this->find(array($info[0]->studentID, $info[0]->fundCode, $info[0]->aidyear));
         $update->thankYou = $status;
         $update->acceptance =  $status;
         $update->TYupdate = date('m/d/y');
@@ -167,11 +305,19 @@ class ApplicationResponse extends Eloquent
 
         if($status == 0)
         {
-            $return = DB::table('scholarshipAwards')->where('studentID', '=', $info[0]->studentID)->update(array('awardStatus' => 1));
+            $return = DB::table('scholarshipAwards')
+			->where('studentID', '=', $info[0]->studentID)
+			->where('fundCode', '=', $info[0]->fundCode)
+			->where('aidyear', '=', $info[0]->aidyear)
+			->update(array('awardStatus' => 1));
         }
         else
         {
-            $return = DB::table('scholarshipAwards')->where('studentID', '=', $info[0]->studentID)->update(array('awardStatus' => 2));
+            $return = DB::table('scholarshipAwards')
+			->where('studentID', '=', $info[0]->studentID)
+			->where('fundCode', '=', $info[0]->fundCode)
+			->where('aidyear', '=', $info[0]->aidyear)
+			->update(array('awardStatus' => 2));
         }
 
         return $return;

@@ -9,7 +9,8 @@
 @stop
 
 @section('dashBoardContent')
-
+<?php 
+/*
 <div id="upper">
     {{ Form::open(array('url' => route('doPaginateRequest'), 'method' => 'POST', 'accept-charset' => 'UTF-8')) }}
     {{ Form::submit('Begin Mass Grading', array('class' => 'btn btn-primary'))}}
@@ -30,7 +31,8 @@
     {{ Form::close() }}
     <font color="red">{{ $errors -> first('massGradeType')}}</font>
 </div>
-
+*/
+?>
 <div id="lower">
     <h4 class='reportName'>Applications Overview</h4>
     {{ Datatable::table()

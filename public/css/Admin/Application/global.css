@@ -1,0 +1,29 @@
+form ul
+{
+	list-style-type: none;
+}
+
+#essays li
+{
+	display: inline-block;
+	text-align: left;
+	margin-left: 1%;	
+}
+
+#recommender1 li
+{
+	display: block;
+	text-align: left;	
+}
+
+#recommender2 li
+{
+	display: block;
+	text-align: left;
+}
+
+.dropdown-menu-form {
+    padding: 5px 10px 0;
+    max-height: 300px;
+    overflow-y: scroll;
+}

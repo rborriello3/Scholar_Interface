@@ -20,3 +20,5 @@ Route::get('faculty_entering_address', array('uses' => 'ReportsController@facult
 Route::get('all_awards', array('uses' => 'ReportsController@all_awards', 'as' => 'all_awards'));
 Route::get('all_students', array('uses' => 'ReportsController@all_students', 'as' => 'all_students'));
 Route::get('returningStudentsCriteria', array('uses' => 'ReportsDataController@returningStudentsCriteria', 'as' => 'returningStudentsCriteria'));
+Route::get('choose_scholarship_award_history', array('uses' => 'ReportsController@choose_scholarship_award_history', 'as' => 'choose_scholarship_award_history'));
+Route::post('show_scholarship_award_history', array('uses' => 'ReportsController@show_scholarship_award_history', 'as' => 'show_scholarship_award_history'));

@@ -38,6 +38,11 @@
                 <div class="form-group">
                     <input class="form-control" name="notes[]" type="text" placeholder="Notes" />
                 </div>
+		
+		<div class="form-group">
+			{{Form::select('typeID[]', $typeID, '')}}
+	<!--		<input class="form-control" name="typeID[]" type="text" placeholder="Student Type (Graduating = 4, Returning = 6, Entering = 2)" />-->
+		</div>
             </div>
         </form>
     </div>

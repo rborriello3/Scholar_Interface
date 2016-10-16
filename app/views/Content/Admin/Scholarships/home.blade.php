@@ -16,21 +16,28 @@
 <h4 class='reportName'>Scholarships Overview</h4>
 	{{ Datatable::table()
 		->setURL(route('allScholarshipsJSON'))
-		->addColumn('Actions', 'Name', 'Amount', 'Requirements', 'Years', 'Basis', 'Recipients', 'Equal?')
+		->addColumn('Actions', 'Name', 'Amount', 'Requirements','Description', 'Years', 'Basis', 'Recipients', 'Equal?', 'Donor Name', 'Donor Number', 'Donor Email', 'Donor Address', 'Application Types')
 		->setOptions('bProcessing', true)
 		->setOptions('bSort', false)
 		->setOptions('iDisplayLength', 50)
 		->setOptions('aLengthMenu', [50, 100, 125, 150, 200, 300, 400])
-		->setOptions('bAutoWidth', false)
+		->setOptions('bAutoWidth', false)	
 		->setOptions('aoColumns', array(
 			array('sWidth' => '1%'),
 			array('sWidth' => '8%'),
 			array('sWidth' => '2%'),
 			array('sWidth' => '1%'),
-			array('sWidth' => '4%'),
+			array('sWidth' => '40%'),
 			array('sWidth' => '1%'),
 			array('sWidth' => '1%'),
 			array('sWidth' => '1%'),
+			array('sWidth' => '1%'),
+                        array('sWidth' => '1%'),
+			array('sWidth' => '1%'),
+			array('sWidth' => '1%'),
+			array('sWidth' => '1%'),
+			array('sWidth' => '1%'),
+
 		))	
 ->render() }}
 @stop

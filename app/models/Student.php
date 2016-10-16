@@ -121,11 +121,7 @@ class Student extends Eloquent
             $this->where('studentID', '=', $id)->update(array('studentID' => $values['studentID']));
         }
 
-        $student = array_only($values, array('studentID', 'firstName', 'lastName', 'personalEmail', 
-                                            'sunyEmail', 'homephone', 'cellPhone', 'cellCarrier', 
-                                            'address', 'city', 'state', 'zipCode', 'county'
-                                            )
-                            );
+        $student = array_only($values, array('studentID', 'firstName', 'lastName', 'personalEmail', 'sunyEmail', 'homephone', 'cellPhone', 'cellCarrier', 'address', 'city', 'state', 'zipCode', 'county'));
 
         $this->upDateStudent($student);
 
@@ -145,8 +141,7 @@ class Student extends Eloquent
         }
         else
         {
-            $student = array_only($values, array('studentID', 'firstName', 'lastName', 'personalEmail', 
-                                                'sunyEmail', 'homephone', 'cellPhone', 'cellCarrier'));
+            $student = array_only($values, array('studentID', 'firstName', 'lastName', 'personalEmail', 'sunyEmail', 'homephone', 'cellPhone', 'cellCarrier'));
 
             $add = array_only($values, array('studentID', 'address', 'city', 'state', 'zipCode', 'county'));
 
@@ -171,4 +166,8 @@ class Student extends Eloquent
         $student = $this->find($studentID);
         return $student->firstName . ' ' . $student->lastName;
     }
+
+
+
+
 }

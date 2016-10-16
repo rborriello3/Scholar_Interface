@@ -74,9 +74,7 @@ class JobHelper
      */
     public function statusNotification($mess, $group)
     {
-        $users = \User::where('userRole', 'LIKE', '%' . $group . '%')->where('status', '=', 'Active')->where('userId', '!=', '1')->get(array(
-            'userId', 'email', 'name'
-        ));
+        $users = \User::where('userRole', 'LIKE', '%' . $group . '%')->where('status', '=', 'Active')->where('userId', '!=', '1')->get(array('userId', 'email', 'name'));
 
         foreach ($users as $v)
         {
@@ -103,9 +101,7 @@ class JobHelper
      */
     public function studentUploadNotification($bannerMessage, $incorrect, $incorrectCount)
     {
-        $users = \User::where('userRole', 'LIKE', '%' . 3 . '%')->where('status', '=', 'Active')->where('userId', '!=', '1')->get(array(
-            'userId', 'email', 'name'
-        ));
+        $users = \User::where('userRole', 'LIKE', '%' . 3 . '%')->where('status', '=', 'Active')->where('userId', '!=', '1')->get(array('userId', 'email', 'name'));
 
         foreach ($users as $v)
         {
@@ -138,9 +134,7 @@ class JobHelper
      */
     public function applicationUploadNotification($appMessage, $notFoundCount, $notFound, $multiAppCount, $multiApp, $noAppCount, $appNotFound)
     {
-        $users = \User::where('userRole', 'LIKE', '%' . 3 . '%')->where('status', '=', 'Active')->where('userId', '!=', '1')->get(array(
-            'userId', 'email', 'name'
-        ));
+        $users = \User::where('userRole', 'LIKE', '%' . 3 . '%')->where('status', '=', 'Active')->where('userId', '!=', '1')->get(array('userId', 'email', 'name'));
 
         foreach ($users as $v)
         {

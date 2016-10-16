@@ -24,3 +24,4 @@ Route::get('faculty_entering_address', array('uses' => 'ReportsDataController@en
 Route::get('all_awards', array('uses' => 'ReportsDataController@all_Awards', 'as' => 'all_awards_json'));
 Route::get('all_students', array('uses' => 'ReportsDataController@all_students', 'as' => 'all_students_json'));
 Route::get('all_grades/{guid}', array('uses' => 'ApplicationsDataController@getSpecificAssessment', 'as' => 'specificAssessmentJSON', 'before' => 'appGUID'));
+Route::get('show_scholarship_award_history_JSON/{fundCode}', array('uses' => 'ReportsDataController@show_scholarship_award_history_JSON', 'as' => 'show_scholarship_award_history_JSON', 'before' => 'fundCode'));

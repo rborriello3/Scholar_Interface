@@ -22,6 +22,7 @@
 
 
 @section('content')
+
 <div id="homepage">
     <br>
     <img src="{{asset('images/Global/sunyOrangeBanner.png')}}" id="banner">
@@ -50,7 +51,7 @@
                 <li>
                     {{ Form::password('password', array('placeholder' => '••••••••')) }}
                     <br>
-                   {{ link_to_route('password.EmailStep', 'Forgot Password?')}} 
+                   {{link_to_route('password.EmailStep', 'Forgot Password?')}} 
                 </li>
                 <li>
                     <font color="red">{{ $errors -> first('password')}}</font>

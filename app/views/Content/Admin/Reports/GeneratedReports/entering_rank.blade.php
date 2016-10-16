@@ -20,11 +20,11 @@
     {{ link_to_route('enteringRankJSON', 'Print', array(), array('class' => 'btn btn-primary', 'target' => '_blank'))}}
     {{ Datatable::table()
     ->setURL(route('enteringRankJSON'))
-    ->addColumn('Student', 'Major', 'AVG', 'Score', 'Graders', 'Need', 'Award(s)')
+    ->addColumn('Student', 'Major', 'High School', 'City', 'County', 'AVG', 'Score', 'Graders', 'Need', 'Award(s)')
     ->setOptions('bProcessing', true)
     ->setOptions('bSort', true)
     ->setOptions('aaSorting', array(
-            array(3, 'desc')
+            array(6, 'desc')
         ))
     ->setOptions('iDisplayLength', 150)
     ->setOptions('aLengthMenu', [50, 100, 150, 200, 250, 300, 350, 400, 450])
@@ -41,11 +41,14 @@
     ->setOptions('aoColumns', array(
         array('sWidth' => '5%'),
         array('sWidth' => '1%'),
+	array('sWidth' => '10%'),
+	array('sWidth' => '5%'),
+	array('sWidth' => '5%'),
         array('sWidth' => '1%'),
         array('sWidth' => '1%'),
         array('sWidth' => '50%'),
         array('sWidth' => '1%'),
-        array('sWidth' => '20%')
+        array('sWidth' => '30%')
     ))
     ->render() }}
 

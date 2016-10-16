@@ -135,11 +135,11 @@ class Application extends Eloquent
         }
 
         // Add Thank You and Acceptance
-        if ($values['types'] != '4' && $values['types'] != '5')
+/*        if ($values['types'] != '4' && $values['types'] != '5')
         {
             $resp = new ApplicationResponse($appID, $values['studentID']);
             $resp->newResponse();
-        }
+        }*/
     }
 
     private function updateApplication($appID, $values)
@@ -171,6 +171,11 @@ class Application extends Eloquent
         $app                  = $this->find($appID[0]->applicationID);
         $app->essay           = $values['essay'];
         $app->extraCurricular = $values['extraCurricular'];
+	//*******added 2/13/16 @ 1338
+	$app->desiredScholarships = $values['desiredScholarships'];
+	//*******
+	$app->essaySelf	      = $values['essaySelf'];
+	$app->essayWhy        = $values['essayWhy'];
         $app->save();
     }
 
@@ -250,6 +255,8 @@ class Application extends Eloquent
         $data['education']       = $education;
         $data['essay']           = $application->essay;
         $data['extraCurricular'] = $application->extraCurricular;
+	$data['essaySelf']       = $application->essaySelf;
+	$data['essayWhy']        = $application->essayWhy;
         $data['recommendations'] = $recommendation;
         $data['criteria']        = $this->criteriaDescription($studentInfo->criteria);
         $data['minority']        = $this->minorityDescription($studentInfo->minority);
@@ -288,7 +295,7 @@ class Application extends Eloquent
 
     public function applicationHistory()
     {
-        $return = DB::table('applications')->join('student', 'student.studentID', '=', 'applications.studentID')->leftjoin('applicationRecommendations', 'applicationRecommendations.applicationID', '=', 'applications.applicationID')->join('applicationType', 'applicationType.typeID', '=', 'applications.typeID')->join('applicationStatus', 'applicationStatus.statusID', '=', 'applications.statusID')->select('GUID', 'applications.studentID', 'firstName', 'lastName', 'applications.received', 'applicationStatus.statusName', 'applicationType.typeName', 'extraCurricular', 'essay', 'aidyear', 'recommender1', 'email1', 'department1', 'courseName1', 'academicPotential1', 'character1', 'emotionalMaturity1', 'overallRank1', 'comments1', 'recommender2', 'email2', 'department2', 'courseName2', 'academicPotential2', 'character2', 'emotionalMaturity2', 'overallRank2', 'comments2')->where('student.studentID', '=', $this->student)->groupBy('applications.applicationID')->orderBy('applications.received', 'desc')->get();
+	$return = DB::table('applications')->join('student', 'student.studentID', '=', 'applications.studentID')->leftjoin('applicationRecommendations', 'applicationRecommendations.applicationID', '=', 'applications.applicationID')->join('applicationType', 'applicationType.typeID', '=', 'applications.typeID')->join('applicationStatus', 'applicationStatus.statusID', '=', 'applications.statusID')->select('GUID', 'applications.studentID', 'firstName', 'lastName', 'applications.received', 'applicationStatus.statusName', 'applicationType.typeName', 'extraCurricular', 'essay','essaySelf', 'essayWhy', 'aidyear', 'recommender1', 'email1', 'department1', 'courseName1', 'academicPotential1', 'character1', 'emotionalMaturity1', 'overallRank1', 'comments1', 'recommender2', 'email2', 'department2', 'courseName2', 'academicPotential2', 'character2', 'emotionalMaturity2', 'overallRank2', 'comments2')->where('student.studentID', '=', $this->student)->groupBy('applications.applicationID')->orderBy('applications.received', 'desc')->get();
 
         return $return;
     }

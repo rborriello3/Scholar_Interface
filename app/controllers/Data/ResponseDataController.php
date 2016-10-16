@@ -6,32 +6,30 @@ class ResponseDataController extends BaseController
     {
         return Datatable::query(DB::table('applicationResponses')
                 ->join('student', 'student.studentID', '=', 'applicationResponses.studentID')
-                ->join('applications', 'applications.applicationID', '=', 'applicationResponses.applicationID')
-                ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'applicationResponses.studentID')
-                ->select('applicationResponses.applicationID', 'applications.GUID', 'applicationResponses.studentID', 'thankYou', 'acceptance', 'convocation',
-                        'student.firstName', 'student.lastName', 'applications.aidyear', 'requirementDate', 'TYupdate', 'ACCPTUpdate', 'CVUpdate')
+		->leftjoin('scholarships', 'scholarships.fundCode', '=', 'applicationResponses.fundCode')
+             	->select('applicationResponses.studentID', 'applicationResponses.fundCode', 'scholarships.scholarshipName', 'applicationResponses.aidyear', 'applicationResponses.thankyou', 'applicationResponses.acceptance', 'applicationResponses.convocation', 'student.firstName', 'student.lastName', 'applicationResponses.aidyear', 'applicationResponses.requirementDate', 'applicationResponses.TYupdate', 'applicationResponses.ACCPTUpdate', 'applicationResponses.CVUpdate')
                 ->orderBy('student.lastName', 'asc')
-                ->where('applications.aidyear', '=', Session::get('currentAidyear'))
-                ->groupBy('applicationResponses.studentID')
+                ->where('applicationResponses.aidyear', '=', Session::get('currentAidyear'))
+		//->where('scholarships.fundCode', '=', 'applicationResponses.fundCode')
 
         )
             ->addColumn('actions', function($resp)
             {
                 $crudLinks = '<div class="btn-group">';
 
-                if (($resp->thankYou == 0 && $resp->acceptance == 0) && $resp->convocation == 0)
+                if (($resp->thankyou == 0 && $resp->acceptance == 0) && $resp->convocation == 0)
                 {
                     $crudLinks .= '<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Incomplete <span class="glyphicon glyphicon-arrow-down"></span></button>';
                 }
-                elseif (($resp->thankYou == 0 && $resp->acceptance == 0) && $resp->convocation == 1)
+                elseif (($resp->thankyou == 0 && $resp->acceptance == 0) && $resp->convocation == 1)
                 {
                     $crudLinks .= '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Incomplete <span class="glyphicon glyphicon-arrow-down"></span></button>';
                 }
-                elseif ($resp->thankYou == 0 || $resp->acceptance == 0)
+                elseif ($resp->thankyou == 0 || $resp->acceptance == 0)
                 {
                     $crudLinks .= '<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">Incomplete <span class="glyphicon glyphicon-arrow-down"></span></button>';
                 }
-                elseif ($resp->thankYou == 1 && $resp->acceptance == 1 && $resp->convocation == 0)
+                elseif ($resp->thankyou == 1 && $resp->acceptance == 1 && $resp->convocation == 0)
                 {
                     $crudLinks .= '<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">Convocation <span class="glyphicon glyphicon-arrow-down"></span></button>';
                 }
@@ -44,13 +42,13 @@ class ResponseDataController extends BaseController
                     $crudLinks .= '<li>' . link_to_route('showEditStudent', 'View/Edit Student', $parameters = array($resp->studentID), $attributes = array('alt'   => 'editStudent', 'title' => 'Edit ' . $resp->firstName)) . '</li>';
                     $crudLinks .= '<li>' . link_to_route('showMessageStudent', 'Message Student', $parameters = array($resp->studentID), $attributes = array('alt' => 'messageStudent')) . '</li>';
 
-                    if($resp->thankYou != 1 && $resp->acceptance != 1)
+                    if($resp->thankyou != 1 && $resp->acceptance != 1)
                     {
-                        $crudLinks .= '<li>' . link_to_route('doAcceptAwardsManagement', 'Accept Award Offer', $parameters = array($resp->GUID), $attributes = array('alt' =>'acceptAward')) . '</li>';
+                        $crudLinks .= '<li>' . link_to_route('doAcceptAwardsManagement', 'Accept Award Offer', $parameters = array($resp->studentID, $resp->fundCode, $resp->aidyear), $attributes = array('alt' =>'acceptAward')) . '</li>';
                     }
                     else
                     {
-                        $crudLinks .= '<li>' . link_to_route('doRedoAward', 'Revoke Acceptance', $parameters = array($resp->GUID), $attributes = array('alt' =>'acceptAward')) . '</li>';
+                        $crudLinks .= '<li>' . link_to_route('doRedoAward', 'Revoke Acceptance', $parameters = array($resp->studentID, $resp->fundCode, $resp->aidyear), $attributes = array('alt' =>'acceptAward')) . '</li>';
                     }
 
                 $crudLinks .= '</ul>';
@@ -58,20 +56,29 @@ class ResponseDataController extends BaseController
 
                 return $crudLinks;
             })
-            ->showColumns('firstName', 'lastName', 'studentID', 'aidyear')
+            ->showColumns('firstName', 'lastName', 'studentID')
+	    ->addColumn('scholarshipName', function($resp){ 
+	    
+		/*$scholarshipName = Scholarships::where('fundCode', '=', $resp->fundCode)->first();
+
+	//	$name = $scholarshipName->scholarshipName;
+		return $scholarshipName[0]->scholarshipName;*/
+		return $resp->scholarshipName;
+	    }) 
+	    ->showColumns('aidyear')
             ->addColumn('thankYou', function($resp)
             {
-                if ($resp->thankYou == 1)
+                if ($resp->thankyou == 1)
                 {
-                    $return = '<input type="checkbox" name="thankYou[]" value="' . $resp->applicationID . '" checked="checked"> Yes';
-                    $return .= '<input type="hidden" name="hiddenThankYou[]" value="' . $resp->applicationID . '">';
+                    $return = '<input type="checkbox" name="thankYou[]" value="' . $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '" checked="checked"> Yes';
+                    $return .= '<input type="hidden" name="hiddenThankYou[]" value="' . $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '">';
                     $return .= '<input type="hidden" name="thankYou[]" value="">';
 
                 }
                 else
                 {
-                    $return = '<input type="checkbox" name="thankYou[]" value="' . $resp->applicationID . '"> Yes';
-                    $return .= '<input type="hidden" name="hiddenThankYou[]" value="' . $resp->applicationID . '">';
+                    $return = '<input type="checkbox" name="thankYou[]" value="' . $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '"> Yes';
+                    $return .= '<input type="hidden" name="hiddenThankYou[]" value="' . $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '">';
                     $return .= '<input type="hidden" name="thankYou[]" value="">';
                 }
 
@@ -83,14 +90,14 @@ class ResponseDataController extends BaseController
             {
                 if ($resp->acceptance == 1)
                 {
-                    $return = '<input type="checkbox" name="acceptance[]" value="' . $resp->applicationID . '" checked="checked"> Yes';
-                    $return .= '<input type="hidden" name="hiddenAcceptance[]" value="' . $resp->applicationID . '">';
+                    $return = '<input type="checkbox" name="acceptance[]" value="' .  $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '" checked="checked"> Yes';
+                    $return .= '<input type="hidden" name="hiddenAcceptance[]" value="' . $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '">';
                     $return .= '<input type="hidden" name="acceptance[]" value="">';
                 }
                 else
                 {
-                    $return = '<input type="checkbox" name="acceptance[]" value="' . $resp->applicationID . '"> Yes';
-                    $return .= '<input type="hidden" name="hiddenAcceptance[]" value="' . $resp->applicationID . '">';
+                    $return = '<input type="checkbox" name="acceptance[]" value="' . $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '"> Yes';
+                    $return .= '<input type="hidden" name="hiddenAcceptance[]" value="' . $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '">';
                     $return .= '<input type="hidden" name="acceptance[]" value="">';
                 }
 
@@ -101,14 +108,14 @@ class ResponseDataController extends BaseController
             {
                 if ($resp->convocation == 1)
                 {
-                    $return = '<input type="checkbox" name="convocation[]" value="' . $resp->applicationID . '" checked="checked"> Yes';
-                    $return .= '<input type="hidden" name="hiddenConvocation[]" value="' . $resp->applicationID . '">';
+                    $return = '<input type="checkbox" name="convocation[]" value="' . $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '" checked="checked"> Yes';
+                    $return .= '<input type="hidden" name="hiddenConvocation[]" value="' . $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '">';
                     $return .= '<input type="hidden" name="convocation[]" value="">';
                 }
                 else
                 {
-                    $return = '<input type="checkbox" name="convocation[]" value="' . $resp->applicationID . '"> Yes';
-                    $return .= '<input type="hidden" name="hiddenConvocation[]" value="' . $resp->applicationID . '">';
+                    $return = '<input type="checkbox" name="convocation[]" value="' . $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '"> Yes';
+                    $return .= '<input type="hidden" name="hiddenConvocation[]" value="' . $resp->studentID . $resp->fundCode/* . $resp->aidyear*/ . '">';
                     $return .= '<input type="hidden" name="convocation[]" value="">';
                 }
 

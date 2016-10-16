@@ -16,9 +16,7 @@ class ScoringController extends BaseController
     {
         $application            = new Application($guid);
         $data['scoringInfo']    = $application->retrieveScoringInfo();
-        $data['grades']         = array(
-            '' => 'Score (Higher = Better)', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5'
-        );
+        $data['grades']         = array('' => 'Score (Higher = Better)', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5');
         $data['guid']           = $guid;
         $assessment             = new ApplicationAssessment();
         $data['insertedValues'] = $assessment->getValues($guid, Auth::user()->userId);
@@ -26,13 +24,36 @@ class ScoringController extends BaseController
         return View::make('Content.Committee.Scoring.specificGrade.' . $data['scoringInfo']['typeID'], $data);
     }
 
+
+/*	public function showNextGrading($received)
+	{
+		$guid 			= Datatable::query(DB::table('applications')
+			->join('student', 'student.studentID', '=', 'applications.studentID')
+			->join('applicationType', 'applicationType.typeID', '=', 'applications.typeID')
+			->leftjoin('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
+			->select('GUID')
+			->whereRaw('statusID IN (3, 5)')
+			->whereRaw('applicationType.typeID NOT IN (1, 3, 5, 7, 8)')
+			->where('applicationAssessment.userID', '=', Auth::user()->userId)
+			->where('applicationAssessment.status', '!=', 'Deactivated')
+			->where('applications.aidyear', '=', Session::get('currentAidyear'))
+			->where('received', '<', $received)
+			->orderBy('received', 'desc')
+			->limit('1'));
+
+		$application		= new Application($guid);
+		$data['scoringInfo']	= $application->retrieveScoringInfo();
+		$data['grades']		= array('' => 'Score (Higher = Better)', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5');
+		$data['guid']		= $guid;
+		$assessment		= new ApplicationAssessment();
+		$data['insertedValues']	= $assessment->getValues($guid, Auth::user()->userId);
+
+		return View::make('Content.Committee.Scoring.specificGrade.' . $data['scoringInfo']['typeID'], $data);
+	}
+*/
     public function processGrade($guid, $page = NULL)
     {
-        $rules = array(
-            'faculty' => 'Required_if:action,Finish Assessment|numeric|max:5',
-            'essay'   => 'Required_if:action,Finish Assessment|numeric|max:5',
-            'extra'   => 'Required_if:action,Finish Assessment|numeric|max:5', 'assessorNotes' => 'essay'
-        );
+        $rules = array('faculty' => 'Required_if:action,Finish Assessment|numeric|max:5', 'essay' => 'Required_if:action,Finish Assessment|numeric|max:5', 'extra' => 'Required_if:action,Finish Assessment|numeric|max:5', 'assessorNotes' => 'essay');
 
         $v = Validator::make(Input::all(), $rules);
 
@@ -40,12 +61,13 @@ class ScoringController extends BaseController
         {
             $assessment = new ApplicationAssessment();
             $result     = $assessment->updateAssessment(Input::all(), $guid);
+		$application = new Application($guid);
 
             if ($result == 'Complete')
             {
                 if ($page == '')
                 {
-                    return Redirect::route('showCommitteeApps')->with('success', 'Application Scored - You may edit below');
+                    return Redirect::route('showCommitteeApps')->with('success', 'Application Complete - you may edit below');
                 }
 
                 else
@@ -124,9 +146,7 @@ class ScoringController extends BaseController
         $application               = new Application($guid);
         $data['scoringInfo']       = $application->retrieveScoringInfo();
         $data['applicationCounts'] = $application->committeeScoringCounts();
-        $data['grades']            = array(
-            '' => 'Score (Higher = Better)', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5'
-        );
+        $data['grades']            = array('' => 'Score (Higher = Better)', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5');
         $data['guid']              = $guid;
         $assessment                = new ApplicationAssessment();
         $data['insertedValues']    = $assessment->getValues($guid, Auth::user()->userId);

@@ -13,6 +13,7 @@
 @section('dashBoardContent')
 <br>
 {{link_to_route('showCreateUser', 'Create New User')}}
+
 <br>
 <br>
 

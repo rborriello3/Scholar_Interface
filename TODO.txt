@@ -1,0 +1,27 @@
+2) Server Side DataTables
+
+3) Application, Scholarship, Grading Student management stuff
+
+4) AwardingAccountability
+
+5) Accountability
+
+6) Global configuration settings
+
+7) Reports
+	- Adhoc first
+	- Dashboard reports
+
+8) Mailings
+
+9) Admin section to update global configurations and users and what not
+
+10) super admin to help desk support
+
+11) all other roles
+
+12) Site help 
+
+13) Custom form
+
+14) Color blind support

@@ -15,7 +15,7 @@ class Text
      * If instantiated with no arguements it will assume it is a user checking to
      * see as well if the user has a number, if not it will take the input
      */
-    public function __construct($loggedIn = FALSE)
+    public function __construct($loggedIn = false)
     {
         if ($loggedIn)
         {
@@ -65,7 +65,7 @@ class Text
 
         if (!Mail::send('OutGoingMessages.SMS.sendCode', $data, $callback))
         {
-            return FALSE;
+            return false;
         }
 
         $userCell                = Usercellphone::find($this->id);
@@ -73,48 +73,43 @@ class Text
         $userCell->cellTokenTime = date("Y-m-d H:i:s");
         $userCell->save();
 
-        return TRUE;
+        return true;
     }
 
     public function applicationNotifcation($number, $carrier, $update)
     {
         $data     = array();
         $add      = DB::table('cellCarriers')->where('carrierId', '=', $carrier)->get(array('smsAddress'));
-        
-        if (count($add) == 1 && $add != NULL)
+        $callback = function ($message) use ($number, $add)
         {
-            $callback = function ($message) use ($number, $add)
-            {
-                $message->to($number . '@' . $add[0]->smsAddress);
-            };
+            $message->to($number . '@' . $add[0]->smsAddress);
+        };
 
-            if (!$update)
+        if (!$update)
+        {
+            if (!Mail::send('OutGoingMessages.SMS.applicationReceived', $data, $callback))
             {
-                if (!Mail::send('OutGoingMessages.SMS.applicationReceived', $data, $callback))
-                {
-                    return FALSE;
-                }
-            }
-        
-
-            elseif ($update == 'checkEmail')
-            {
-                if (!Mail::send('OutGoingMessages.SMS.applicationNotification', $data, $callback))
-                {
-                    return FALSE;
-                }
-            }
-
-            else
-            {
-                if (!Mail::send('OutGoingMessages.SMS.applicationUpdated', $data, $callback))
-                {
-                    return FALSE;
-                }
+                return false;
             }
         }
-        
-        return TRUE;
+
+        elseif ($update == 'checkEmail')
+        {
+            if (!Mail::send('OutGoingMessages.SMS.applicationNotification', $data, $callback))
+            {
+                return false;
+            }
+        }
+
+        else
+        {
+            if (!Mail::send('OutGoingMessages.SMS.applicationUpdated', $data, $callback))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function sendVerificationAcknowledgement()
@@ -127,10 +122,10 @@ class Text
 
         if (!Mail::send('OutGoingMessages.SMS.verificationAcknowledgement', $data, $callback))
         {
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     public function textRix($mess)

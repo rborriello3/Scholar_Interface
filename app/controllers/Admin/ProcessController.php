@@ -16,23 +16,13 @@ class ProcessController extends BaseController
 
     public function doNewProcess()
     {
-        $rules = array(
-            'processName' => 'Required|alpha_space_dash_num', 'processDescription' => 'Required|alpha_space_dash_num',
-            'hour'        => 'Required|numeric', 'min' => 'Required|numeric', 'meridian' => 'Required',
-            'days'        => 'array_text', 'scriptLocation' => 'Required|alpha', 'repeat' => 'Required|numeric'
-        );
+        $rules = array('processName' => 'Required|alpha_space_dash_num', 'processDescription' => 'Required|alpha_space_dash_num', 'hour' => 'Required|numeric', 'min' => 'Required|numeric', 'meridian' => 'Required', 'days' => 'array_text', 'scriptLocation' => 'Required|alpha', 'repeat' => 'Required|numeric');
 
         $v = Validator::make(Input::all(), $rules);
 
         if ($v->passes())
         {
-            $values  = array(
-                'userID'             => Auth::user()->userId, 'processName' => Input::get('processName'),
-                'processDescription' => Input::get('processDescription'),
-                'executionTime'      => Input::get('hour') . ':' . Input::get('min') . ' ' . Input::get('meridian'),
-                'days'               => Input::get('days'), 'status' => 'Uninitialized',
-                'scriptLocation'     => Input::get('scriptLocation'), 'repeat' => Input::get('repeat')
-            );
+            $values = array('userID' => Auth::user()->userId, 'processName' => Input::get('processName'), 'processDescription' => Input::get('processDescription'), 'executionTime' => Input::get('hour') . ':' . Input::get('min') . ' ' . Input::get('meridian'), 'days' => Input::get('days'), 'status' => 'Uninitialized', 'scriptLocation' => Input::get('scriptLocation'), 'repeat' => Input::get('repeat'));
             $process = new Processes();
             $process->newProcess($values);
 
@@ -79,7 +69,7 @@ class ProcessController extends BaseController
                 else
                 {
                     $originalFile    = $file->getClientOriginalName();
-                    $destinationPath = '/var/www/ScholarshipInterface/app/Uploads/';
+                    $destinationPath = '/var/www/scholarshipInterface/app/Uploads/';
                     ++$count;
 
                     if (!$file->move($destinationPath, $originalFile))

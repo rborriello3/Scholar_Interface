@@ -9,7 +9,7 @@ Class ResponseController extends BaseController
 
     public function doResponseProcess()
     {
-        $response = new ApplicationResponse();
+        $response = new ApplicationResponse('studentID', 'fundCode', 'aidyear');
         $responses = $response->updateResponse(Input::only('thankYou', 'acceptance', 'convocation', 'hiddenThankYou', 'hiddenAcceptance', 'hiddenConvocation'));
 
         if ($responses == TRUE)
@@ -20,10 +20,10 @@ Class ResponseController extends BaseController
         return Redirect::route('showResponseHome')->with('error', 'Error in updating responses.');
     }
 
-    public function doAcceptAward($GUID)
+    public function doAcceptAward($studentID, $fundCode, $aidyear)
     {
-        $response = new ApplicationResponse('', '');
-        $return = $response->makeUpdatesToResponses($GUID, 1);
+        $response = new ApplicationResponse('', '', '', '');
+        $return = $response->makeUpdatesToResponses($studentID, $fundCode, $aidyear, 1);
 
         if($return)
         {
@@ -33,10 +33,10 @@ Class ResponseController extends BaseController
         return Redirect::route('showResponseHome')->with('error', 'Award could not be accepted');
     }
 
-    public function doRedoAward($GUID)
+    public function doRedoAward($studentID, $fundCode, $aidyear)
     {
-        $response = new ApplicationResponse('', '');
-        $return = $response->makeUpdatesToResponses($GUID, 0);
+        $response = new ApplicationResponse('', '', '', '');
+        $return = $response->makeUpdatesToResponses($studentID, $fundCode, $aidyear, 0);
 
         if($return || $return == 1)
         {

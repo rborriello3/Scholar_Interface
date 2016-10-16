@@ -47,11 +47,12 @@
         	</div>
 
         	<div id="additional" class="panel panel-primary">
-	        <div class="panel-heading">Additional Information <font color="orange">{{ $errors -> first('programRequired')}}</font> <font color="orange">{{ $errors -> first('yearFrom')}}</font> <font color="orange"> {{$errors->first('yearTo')}} </font> <font color="orange"> {{$errors->first('awardBasis')}} </font> <font color="orange"> {{$errors->first('recipients')}} </font> <font color="orange"> {{$errors->first('equalAwarding')}} </font> <font color="orange"> {{$errors->first('appType')}} </font>
-	        </div>
+	        <div class="panel-heading">Additional Information <font color="orange">{{ $errors -> first('programRequired')}}</font> <font color="orange">{{ $errors -> first('yearFrom')}}</font> <font color="orange"> {{$errors->first('yearTo')}} </font> <font color="orange"> {{$errors->first('awardBasis')}} </font> <font color="orange"> {{$errors->first('recipients')}} </font> <font color="orange"> {{$errors->first('equalAwarding')}} </font> <font color="orange"> {{$errors->first('appType')}} </font> <font color="orange"> {{$errors -> first('department')}}</font>
+
+        </div>
 				<ul>
 					<li>
-						{{ Form::label('programRequired', 'Program')}}
+						{{ Form::label('programRequired', 'Major/Requirements')}} 
 						<br>
 						{{ Form::text('programRequired')}}
 					</li>
@@ -103,9 +104,29 @@
                             	@endforeach
                     		</ul>
                 		</div>	
-            		</li>
+            		<li>
+							{{ Form::label('department', 'Department')}}
+							<br>
+							{{ Form::text('department') }} 
+						</li>
         		</ul>
         	</div>
+
+		<div id="donorInfo" class="panel panel-primary"></div>
+                <div class="panel-heading">Donor Information
+			<ul>
+				<li>
+					{{Form::label('donorContactName', 'Donor Contact Name:   ')}}
+					{{Form::text('donorContactName')}}
+					<br></br>
+        	{{Form::label('donorContactNumber', 'Donor Contact Number: ')}}
+        	{{Form::text('donorContactNumber')}}
+        	<br></br>
+        	{{Form::label('donorContactEmail', 'Donor Contact Email: ')}}
+        	{{Form::text('donorContactEmail')}}
+				</li>
+	 		</ul>
+			</div>
 
 	{{ Form::close()}}
 

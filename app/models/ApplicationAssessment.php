@@ -16,7 +16,7 @@ class ApplicationAssessment extends Eloquent
     {
         return $this->belongsTo('Application', 'applicationID', 'applicationID');
     }
-
+	//Removing '->where('gradeGroup', 'LIKE', '%' . $appType . '%')
     public function initialize($app, $appType)
     {
         $committeeMembers = User::where('userRole', 'LIKE', '%4%')->where('status', '=', 'Active')->where('gradeGroup', 'LIKE', '%' . $appType . '%')->get(array('userId'));

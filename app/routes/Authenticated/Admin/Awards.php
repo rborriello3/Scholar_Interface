@@ -10,8 +10,8 @@ Route::group(array('before' => 'studentID|fundCode'), function ()
 	Route::get('activate/{fundCode}/{studentID}', array('uses' => 'AwardsController@doActivateAward', 'as' => 'doActivateAward'));
 	Route::get('accept/{fundCode}/{studentID}', array('uses' => 'AwardsController@doAcceptAward', 'as' => 'doAcceptAward'));
 	Route::get('revoke/{fundCode}/{studentID}', array('uses' => 'AwardsController@doRevokeAward', 'as' => 'doRevokeAward'));
-    Route::get('edit/{fundCode}/student/{studentID}', array('uses' => 'AwardsController@showEditAward', 'as' => 'showEditAward'));
-    Route::post('edit/{fundCode}/student/{studentID}', array('uses' => 'AwardsController@doEditAward', 'as' => 'doEditAward'));
+    Route::get('edit/{fundCode}/student/{studentID}/{typeID}', array('uses' => 'AwardsController@showEditAward', 'as' => 'showEditAward'));
+    Route::post('edit/{fundCode}/student/{studentID}/{typeID}', array('uses' => 'AwardsController@doEditAward', 'as' => 'doEditAward'));
 });
 
 Route::get('history/{studentID}', array('uses' => 'AwardsController@showAwardHistory', 'as' => 'showAwardHistory', 'before' => 'studentID'));

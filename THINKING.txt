@@ -1,0 +1,6 @@
+- Color blind support
+
+- If student does not exist in our database already then w/e is added into the demographics save
+	-- if they do exist then prepopulate the fields and allow admin to update them as needed accordingly
+
+	

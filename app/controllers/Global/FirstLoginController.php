@@ -13,12 +13,7 @@ class FirstLoginController extends BaseController
 
     public function doFirstLoginUpdate()
     {
-        $rules = array('password'    => 'Required|password|confirmed', 'password_confirmation' => 'Required',
-                       'ques1'       => 'Required|integer', 'ques2' => 'Required|integer',
-                       'answ1'       => 'Required|date_format:Y', 'answ2' => 'Required|alpha_space_dash',
-                       'cellnotify'  => 'numeric|digits:1|max:2', 'cellPhone' => 'required_if:cellnotify,1|phone',
-                       'cellCarrier' => 'required_if:cellnotify,1|integer|max:16'
-        );
+        $rules = array('password' => 'Required|password|confirmed', 'password_confirmation' => 'Required', 'ques1' => 'Required|integer', 'ques2' => 'Required|integer', 'answ1' => 'Required|date_format:Y', 'answ2' => 'Required|alpha_space_dash', 'cellnotify' => 'numeric|digits:1|max:2', 'cellPhone' => 'required_if:cellnotify,1|phone', 'cellCarrier' => 'required_if:cellnotify,1|integer|max:16');
 
         $v = Validator::make(Input::all(), $rules);
 
@@ -26,13 +21,12 @@ class FirstLoginController extends BaseController
         {
             $user = User::find(Auth::user()->userId);
             $user->firstLoginUpdate(Input::all());
-            $user->updateYearsActive(Auth::user()->userId);
 
             if (Input::get('cellnotify') == 1)
             {
                 $cellPhone = new Usercellphone();
                 $cellPhone->newEntry(Input::get('cellPhone'), Input::get('cellCarrier'));
-                $text = new Text($loggedIn = TRUE);
+                $text = new Text($loggedIn = true);
                 $text->sendCode();
             }
 

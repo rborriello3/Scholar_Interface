@@ -66,7 +66,7 @@ class NotificationsDataController extends BaseController
         })
         ->showColumns('toUser', 'from', 'description', 'time')
         ->setSearchWithAlias()
-        ->searchColumns('studentID', 'toUser', 'description', 'ID', 'from')
+        ->searchColumns('studentID', 'toUser', 'description', 'ID')
         ->make();
     }
 }

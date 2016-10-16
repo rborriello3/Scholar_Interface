@@ -23,7 +23,7 @@
 ->setOptions('bProcessing', true)
 ->setOptions('bSort', true)
 ->setOptions('aaSorting', array(
-array(2, 'asc')
+array(3, 'asc')
 ))
 ->setOptions('iDisplayLength', 50)
 ->setOptions('aLengthMenu', [50, 100, 150, 200, 250, 300, 350, 400, 450])

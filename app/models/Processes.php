@@ -10,7 +10,7 @@ class Processes extends Eloquent
     /**
      * We don't want any default time stamps
      */
-    public $timestamps = FALSE;
+    public $timestamps = false;
 
     /**
      * must define a specific key for our database table
@@ -30,12 +30,12 @@ class Processes extends Eloquent
         {
             if ($k == 'days')
             {
-                $this->$k = implode(',', $v);
-                unset($values[$k]);
+              $this->$k = implode(',', $v);
+              unset($values[$k]);
             }
             else
             {
-                $this->$k = $v;
+               $this->$k = $v;
             }
         }
 

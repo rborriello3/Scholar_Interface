@@ -21,14 +21,14 @@
             	<div class="form-group">
                     {{Form::select('fundCode[]', $scholarships, '')}}
                 </div>
-                <br>
+                <br> 
 
                 <div class="form-group">
                     <input class="form-control" name="studentID[]" type="text" placeholder="Student ID" maxlength="9" />
-                </div>
+               </div>
 
             	<div class="form-group">
-            		<input class="form-control" name="awardAmount[]" type="text" placeholder="Amount" />
+            		<input class="form-control" name="awardAmount[]" type="text" placeholder="Amount">
             	</div>
 
                 <div class="form-group">
@@ -38,6 +38,11 @@
             	<div class="form-group">
             		<input class="form-control" name="notes[]" type="text" placeholder="Notes" />
             	</div>
+
+		<div class="form-group">
+			{{Form::select('typeID[]', $typeID, '')}}
+<!--<input class="form-control" name="typeID[]" type="text" size="93" placeholder="Student Type (Graduating = 4, Returning = 6, Entering = 2)" />-->
+		</div>
 
                	<div class="form-group">
             		<span class="input-group-btn">

@@ -7,7 +7,6 @@
     Navigate to the following link depending on where you are:<br>
     &nbsp;&nbsp;&nbsp;<a href="https://schol.occc">SUNY Orange - Using Campus Infrastucture</a><br>
     &nbsp;&nbsp;&nbsp;<a href="https://schol.sunyorange.edu">At Home - Using Personal Network</a><br>
-    {{--&nbsp;&nbsp;&nbsp;<a href="https://192.168.2.2">Test Bench</a><br>--}}
 
     <h4>Step 2</h4>
     &nbsp;&nbsp;&nbsp;Copy and paste your email on file into the email field.<br>

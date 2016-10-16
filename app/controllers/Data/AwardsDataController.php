@@ -10,6 +10,7 @@ class AwardsDataController extends BaseController
 	    		->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
 	 			->select('student.studentID', 'firstName', 'lastName', 'awardAmount', 'awardStatus.description', 'scholarshipAwards.aidyear', 'scholarshipName', 'scholarships.fundCode')
                 ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
+		->where('scholarshipAwards.awardStatus', '!=', '3')
 	 			->orderBy('lastName', 'asc')
 	 			)
 	    ->addColumn('actions', function($award)
@@ -28,12 +29,12 @@ class AwardsDataController extends BaseController
 					$statusLinks = '<li>' . link_to_route('doDeactivateAward', 'Deactivate Award', $parameters = array($award->fundCode, $award->studentID), $attributes = array('alt' => 'deactivateAward')) . '</li>';
 					$statusLinks .= '<li>' . link_to_route('doRevokeAward', 'Revoke Award', $parameters = array($award->fundCode, $award->studentID), $attributes = array('alt' => 'revokeAward')) . '</li>';
 	           	}
-	           	elseif ($award->description == 'Deactivated')
+	           	/*elseif ($award->description == 'Deactivated')
 	           	{
 	 	           	$crudLinks .= '<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">' . $award->studentID . '<span class="glyphicon glyphicon-arrow-down"></span></button>';
 					$statusLinks = '<li>' . link_to_route('doActivateAward', 'Activate Award', $parameters = array($award->fundCode, $award->studentID), $attributes = array('alt' => 'ativateAward')) . '</li>';            
 					$statusLinks .= '<li>' . link_to_route('doAcceptAward', 'Accept Award', $parameters = array($award->fundCode, $award->studentID), $attributes = array('alt' => 'acceptAward')) . '</li>';            
-	           	}
+	           	}*/
 
             	$crudLinks .= '<ul class="dropdown-menu" role="menu">';
             		$crudLinks .= $statusLinks;

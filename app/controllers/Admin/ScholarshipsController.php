@@ -29,7 +29,8 @@ class ScholarshipsController extends BaseController
 				'yearTo'            => 'Required|date_format:Y',
 				'recipients'        => 'Required|numeric',
 				'equalAwarding'     => 'Required|numeric',
-				'appType'			=> 'Required|array_num'
+				'appType'	    => 'Required|array_num',
+				'department' 	    => 'text'
 			);
 
 		$v = Validator::make(Input::all(), $rules);

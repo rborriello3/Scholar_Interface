@@ -10,8 +10,38 @@ class AwardsController extends BaseController
 	public function newAwards()
 	{
 		$data['scholarships'] = array('' => 'Choose Scholarship (Alphabetical Order)');
-		$scholarships = Scholarships::orderBy('scholarshipName', 'asc')->where('active', '=', 1)->remember(1)->lists('scholarshipName', 'fundCode');
+		$scholarships = Scholarships::orderBy('scholarshipName', 'asc')->where('active', '=', 1)->remember(2)->lists('scholarshipName', 'fundCode', 'scholarshipAmount');
+		$amounts = Scholarships::orderBy('scholarshipName', 'asc')->where('active', '=', 1)->remember(1)->lists('scholarshipAmount', 'fundCode');
+
+//		var_dump($amounts);
+		//Attach fundCode to each scholarship name
+		foreach($scholarships as $k => $v)
+		{
+			$scholarships[$k] = $v . " - " . $k . " ($" . $amounts[$k] . ")";
+		}
+//		var_dump($scholarships);
+	
+		//Attach scholarship amount to each name/fundCode combo
+/*		foreach($amounts as $k => $v)
+		{
+			$amounts[$k] = $scholarships[$k] . "(" . $v . ")";
+		}
+*/		
+
 		$data['scholarships'] = array_merge($data['scholarships'], $scholarships);
+
+		$data['typeID'] = array('' => 'Choose scholarship type (Alphabetical Order');
+		$typeID = ApplicationType::orderBy('typeName', 'asc')
+				->where('typeID', '!=', 0)
+				->where('typeID', '!=', 1)
+				->where('typeID', '!=', 8)
+				->orWhere('typeID', '>=', 9)	
+				->remember(1)->lists( 'typeName', 'typeID');
+		
+
+		//Make typeID look nice (format: "typeID - typeName")
+	
+		$data['typeID'] = array_merge($data['typeID'], $typeID);
 
 		return View::make('Content.Admin.Awards.showNewAwards', $data);
 	}
@@ -23,7 +53,8 @@ class AwardsController extends BaseController
 				'studentID'   => 'array_studentID',
 				'awardAmount' => 'array_awardAmount',
 				'department'  => 'array_text',
-				'notes'       => 'array_text'
+				'notes'       => 'array_text',
+				'typeID'      => 'array_num'
 			);
 
 		$v = Validator::make(Input::all(), $rules);
@@ -48,14 +79,14 @@ class AwardsController extends BaseController
 
 	public function doDeactivateAward($fundCode, $studentID)
 	{	
-		Awards::where('fundCode', '=', $fundCode)->where('studentID', '=', $studentID)->update(array('awardStatus' => 3));		
+		Awards::where('fundCode', '=', $fundCode)->where('studentID', '=', $studentID)->where('aidyear', '=', Session::get('currentAidyear'))->update(array('awardStatus' => 3));		
 
 		return Redirect::route('showAllAwards')->with('success', 'Successfully deactivated award');
 	}
 
 	public function doActivateAward($fundCode, $studentID)
 	{
-		Awards::where('fundCode', '=', $fundCode)->where('studentID', '=', $studentID)->update(array('awardStatus' => 1));		
+		Awards::where('fundCode', '=', $fundCode)->where('studentID', '=', $studentID)->where('aidyear', '=', Session::get('currentAidyear'))->update(array('awardStatus' => 1));		
 
 		return Redirect::route('showAllAwards')->with('success', 'Award has been set back to awarded - must be set to accepted');
 	}
@@ -75,16 +106,16 @@ class AwardsController extends BaseController
 		}
 	}
 
-	public function doAcceptAward($fundCode, $studentID)
+	public function doAcceptAward($fundCode, $studentID, $aidyear)
 	{
-		Awards::where('fundCode', '=', $fundCode)->where('studentID', '=', $studentID)->update(array('awardStatus' => 2));
+		Awards::where('fundCode', '=', $fundCode)->where('studentID', '=', $studentID)->where('aidyear', '=', $aidyear)->update(array('awardStatus' => 2));
 
 		return Redirect::route('showAllAwards')->with('success', 'Award has been accepted');
 	}
 
-	public function doRevokeAward($fundCode, $studentID)
+	public function doRevokeAward($fundCode, $studentID, $aidyear)
 	{
-		Awards::where('fundCode', '=', $fundCode)->where('studentID', '=', $studentID)->update(array('awardStatus' => 1));
+		Awards::where('fundCode', '=', $fundCode)->where('studentID', '=', $studentID)->where('aidyear', '=', $aidyear)->update(array('awardStatus' => 1));
 
 		return Redirect::route('showAllAwards')->with('success', 'Award has been revoked');
 	}
@@ -108,7 +139,8 @@ class AwardsController extends BaseController
             'studentID'   => 'array_studentID',
             'awardAmount' => 'array_awardAmount',
             'department'  => 'array_text',
-            'notes'       => 'array_text'
+            'notes'       => 'array_text',
+	    'typeID'	  => 'array_num'
         );
 
         $v = Validator::make(Input::all(), $rules);
@@ -116,7 +148,7 @@ class AwardsController extends BaseController
         if($v->passes())
         {
             $awards  = new Awards();
-            $awarded = $awards->insertAward(Input::all(), TRUE, $guid);
+            $awarded = $awards->insertAward(Input::all(), null, null, TRUE, $studentID, $fundCode, null);
 
             if ($awarded[0] == TRUE && $awarded != 'Invalid')
             {
@@ -142,6 +174,16 @@ class AwardsController extends BaseController
         $scholarships = Scholarships::orderBy('scholarshipName', 'asc')->remember(2)->lists('scholarshipName', 'fundCode');
         $data['scholarships'] = array($fundCode => $scholarships[$fundCode]);
         $data['scholarships'] = array_merge($data['scholarships'], $scholarships);
+	$data['typeID'] = array('' => 'Choose scholarship type (alphabetical order');
+	
+	$typeID = ApplicationType::orderBy('typeName', 'asc')
+			->where('typeID', '!=', 0)
+			->where('typeID', '!=', 1)
+			->where('typeID', '!=', 8)
+			->orWhere('typeID', '>=', 9)
+			->remember(1)->lists('typeName', 'typeID');
+
+	$data['typeID'] = array_merge($data['typeID'], $typeID);
 
         return View::make('Content.Admin.Awards.edit', $data);
     }
@@ -153,7 +195,8 @@ class AwardsController extends BaseController
             'studentID'   => 'array_studentID',
             'awardAmount' => 'array_awardAmount',
             'department'  => 'array_text',
-            'notes'       => 'array_text'
+            'notes'       => 'array_text',
+	    'typeID'	  => 'array_num'
         );
 
         $v = Validator::make(Input::all(), $rules);
@@ -161,7 +204,7 @@ class AwardsController extends BaseController
         if($v->passes())
         {
             $awards  = new Awards();
-            $awarded = $awards->insertAward(Input::all(), null, null, true, $studentID, $fundCode);
+            $awarded = $awards->insertAward(Input::all(), null, null, true, $studentID, $fundCode, null);
         }
 
         if ($awarded[0] == TRUE)
@@ -170,7 +213,7 @@ class AwardsController extends BaseController
         }
         else
         {
-            return Redirect::route('showEditAward', array($fundCode, $studentID))->with('error', 'Award could not be saved due to a processing error');
+            return Redirect::route('showEditAward', array($fundCode, $studentID, null))->with('error', 'Award could not be saved due to a processing error');
         }
     }
 }

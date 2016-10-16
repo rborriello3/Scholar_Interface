@@ -4,6 +4,9 @@ Route::get('home', array('uses' => 'ScoringController@showApplications', 'as' =>
 
 Route::get('show/{guid}', array('uses' => 'ScoringController@showGrading', 'as' => 'showGrading', 'before' => 'appGUID'));
 
+//Route::get('show/{received}', array('uses' => 'ScoringController@showNextGrading', 'as' => 'showNextGrading', 'before' => 'dateReceived'));
+
+
 Route::post('show/{guid}/{paginate?}', array('uses' => 'ScoringController@processGrade', 'as' => 'processGrade', 'before' => 'appGUID'));
 
 Route::post('mass_grading/', array('uses' => 'ScoringController@doPaginateRequest', 'as' => 'doPaginateRequest',));

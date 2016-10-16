@@ -231,11 +231,13 @@ class ApplicationController extends BaseController
     {
         $data['appKey']          = $guid;
         $app                     = Application::where('GUID', '=', $data['appKey'])->get(array(
-            'typeID', 'essay', 'extraCurricular'
+            'typeID', 'essay', 'extraCurricular', 'essaySelf', 'essayWhy'
         ));
         $data['type']            = $app[0]->typeID;
         $data['essay']           = $app[0]->essay;
         $data['extraCurricular'] = $app[0]->extraCurricular;
+	$data['essaySelf']       = $app[0]->essaySelf;
+	$data['essayWhy']        = $app[0]->essayWhy;
 
 
         if ($data['type'] == '2' || $data['type'] == '4' || $data['type'] == '6')
@@ -258,7 +260,7 @@ class ApplicationController extends BaseController
      */
     public function doEssays($guid)
     {
-        $rules = array('essay' => 'Required|essay|words:1', 'extraCurricular' => 'Required|essay');
+        $rules = array('essay' => 'Required|essay|words:1', 'extraCurricular' => 'Required|essay', 'essaySelf' => 'Required|essay', 'essayWhy' => 'Required|essay');
 
         $v = Validator::make(Input::all(), $rules);
 

@@ -6,9 +6,9 @@ class ScholarshipsDataController extends BaseController
     {
         return Datatable::query(DB::table('scholarships')
                     ->leftjoin('scholarshipAwards', 'scholarshipAwards.fundCode', '=', 'scholarships.fundCode')
-                    ->select('scholarships.fundCode', 'scholarshipName', 'scholarshipAmount', 'programRequired', 'yearFrom', 'yearTo', 
-                        'awardBasis', 'recipients', 'equalAwarding', 'active')
-                    ->orderBy('scholarshipAmount', 'desc')
+                    ->select('scholarships.fundCode', 'scholarshipName', 'scholarshipAmount', 'programRequired','scholarshipDesc', 'yearFrom', 'yearTo', 
+                        'awardBasis', 'recipients', 'equalAwarding', 'active', 'donorContactName', 'donorContactNumber', 'donorContactEmail', 'donorStreet', 'donorCity', 'donorZip','donorState','appTypes')
+                    ->orderBy('scholarshipName')
                     ->groupBy('scholarships.fundCode')
                     )
                 ->addColumn('actions', function($scholarships)
@@ -36,7 +36,7 @@ class ScholarshipsDataController extends BaseController
 
                     return $crudLinks;
                 })
-                ->showColumns('scholarshipName', 'scholarshipAmount', 'programRequired')
+                ->showColumns('scholarshipName', 'scholarshipAmount', 'programRequired', 'scholarshipDesc')
                 ->addColumn('years', function ($scholarships)
                 {
                     return $scholarships->yearFrom . ' - ' . $scholarships->yearTo;
@@ -53,6 +53,17 @@ class ScholarshipsDataController extends BaseController
                         return 'FALSE';
                    }
                 })
+		->showColumns('donorContactName', 'donorContactNumber', 'donorContactEmail')
+		->addColumn('address', function($scholarships)
+		{
+		   return $scholarships->donorStreet. ' '. $scholarships->donorCity. ' '.$scholarships->donorState. ' '.$scholarships->donorZip;
+		})
+		->addColumn('type', function($scholarships)
+		{
+		  $type = $scholarships->appTypes;
+		  $descriptions = DB::table('applicationType')->where('typeID', $type)->pluck('typeDescription');
+		return $descriptions;
+		})
                 ->setSearchWithAlias()
                 ->searchColumns('scholarships.fundCode', 'scholarshipName', 'scholarshipAmount', 'programRequired', 'awardBasis')
                 ->make();

@@ -19,7 +19,7 @@
 <h4 class='reportName'>Awarded Student Address</h4>
 {{ Datatable::table()
 ->setURL(route('all_awards_json'))
-->addColumn('Student ID', 'First', 'Last', 'Address 1', 'Address 2', 'City', 'State', 'Zip', 'Code', 'Scholarship', 'Amount')
+->addColumn('Student ID', 'First', 'Last', 'Email', 'Address 1', 'Address 2', 'City', 'State', 'Zip', 'Code', 'Scholarship', 'Amount')
 ->setOptions('bProcessing', true)
 ->setOptions('bSort', true)
 ->setOptions('aaSorting', array(
@@ -39,10 +39,11 @@ array('sExtends' => 'copy', 'sButtonText' => 'Copy Current Set')
 )
 ->setOptions('aoColumns', array(
 array('sWidth' => '1%'),
-array('sWidth' => '10%'),
-array('sWidth' => '10%'),
-array('sWidth' => '20%'),
-array('sWidth' => '5%'),
+array('sWidth' => '1%'),
+array('sWidth' => '1%'),
+array('sWidth' => '1%'),
+array('sWidth' => '1%'),
+array('sWidth' => '1%'),
 array('sWidth' => '1%'),
 array('sWidth' => '1%'),
 array('sWidth' => '1%'),

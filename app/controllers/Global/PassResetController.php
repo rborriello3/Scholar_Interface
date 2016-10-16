@@ -15,7 +15,7 @@ class PassResetController extends BaseController
          }
          */
 
-        $publicKey       = '6LdZTPESAAAAAOMpP7gBrBFVSKwrXoE8QNdPU-QY';
+        $publicKey       = '6LdGXPESAAAAABaeqxBZ5gdq2dfU9iCXqbvADClE';
         $data['captcha'] = Recaptcha::recaptcha_get_html($publicKey, NULL, TRUE);
 
         return View::make('Content.Global.ResetPassword.validation', $data);

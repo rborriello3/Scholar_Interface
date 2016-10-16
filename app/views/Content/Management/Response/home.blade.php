@@ -18,7 +18,7 @@
 
         {{ Datatable::table()
             ->setURL(route('allResponses'))
-            ->addColumn('Actions', 'First Name', 'Last Name', 'ID', 'Aid Year', 'TY', 'ACCPT', 'CV', 'App Date')
+            ->addColumn('Actions', 'First Name', 'Last Name', 'ID', 'Scholarship', 'Aid Year', 'TY', 'ACCPT', 'CV', 'App Date')
             ->setOptions('bProcessing', true)
             ->setOptions('bSort', false)
             ->setOptions('iDisplayLength', 50)
@@ -29,6 +29,7 @@
                 array('sWidth' => '5%'),
                 array('sWidth' => '5%'),
                 array('sWidth' => '1%'),
+		array('sWidth' => '5%'),
                 array('sWidth' => '2%'),
                 array('sWidth' => '1%'),
                 array('sWidth' => '1%'),
