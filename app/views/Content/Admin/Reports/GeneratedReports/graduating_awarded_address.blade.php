@@ -43,12 +43,12 @@
         array('sWidth' => '10%'),
 	array('sWidth' => '1%'),
         array('sWidth' => '20%'),
-        array('sWidth' => '5%'),
         array('sWidth' => '1%'),
         array('sWidth' => '1%'),
 	array('sWidth' => '1%'),
         array('sWidth' => '1%'),
         array('sWidth' => '1%'),
+	array('sWidth' => '1%')
     ))
     ->render() }}
 

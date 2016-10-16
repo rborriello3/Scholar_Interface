@@ -366,17 +366,12 @@ class ReportsDataController extends BaseController
         return Datatable::query(DB::table('student')
                     ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                     ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
-                 //   ->join('applications', 'applications.studentID', '=', 'student.studentID')
                     ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                    ->select('student.studentID as studentID', 'student.firstName as firstName', 'student.lastName as lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode')
+                    ->select('student.studentID as studentID', 'student.firstName as firstName', 'student.lastName as lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'), DB::raw('SUBSTRING(address, LOCATE("||", address) ) as address2'), 'city', 'state', 'zipCode')
+		     /*->select('student.studentID as studentID', 'firstName', 'lastName', 'sunyEmail', 'studentAddress.address as address1', 'city', 'state', 'zipCode')*/
                     ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
-               //    ->where('department', '=', NULL)
-                 //  ->orWhere('department', '=', "")
-                  /*  ->where('scholarshipAwards.typeID', '=', 4)
-		    ->orWhere('scholarshipAwards.typeID', '=', 5)*/
-		    ->whereIn('scholarshipAwards.typeID', array(4, 5)) 
-                    ->where('scholarshipAwards.awardStatus', '=', 1)
+                    ->whereIn('scholarshipAwards.typeID', array(4, 5)) 
+                    ->whereIn('scholarshipAwards.awardStatus', array(1, 2))
                     ->groupBy('student.studentID')
                 )
             ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode')
@@ -818,7 +813,7 @@ class ReportsDataController extends BaseController
                    /* ->where('scholarshipAwards.typeID', '=', 6)
 		    ->orWhere('scholarshipAwards.typeID', '=', 7)*/
 		    ->whereIn('scholarshipAwards.typeID', array(6, 7, 11, 12))
-                    ->where('scholarshipAwards.awardStatus', '=',1)
+                    ->whereIn('scholarshipAwards.awardStatus', array(1, 2))
                     ->groupBy('student.studentID')
                 )
             ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode')
@@ -921,7 +916,7 @@ class ReportsDataController extends BaseController
                /* ->where('scholarshipAwards.typeID', '=', 2)
 		->orWhere('scholarshipAwards.typeID', '=', 3)*/
 		->whereIn('scholarshipAwards.typeID', array(2, 3, 9, 10))
-		->where('scholarshipAwards.awardStatus', '=', 1)
+		->whereIn('scholarshipAwards.awardStatus', array(1, 2))
                 ->groupBy('student.studentID')
 
         )
