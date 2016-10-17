@@ -1,0 +1,12 @@
+/bootstrap/compiled.php
+.env.*.php
+.env.php
+/app/config/*
+/app/storage/*
+NEXT.txt
+THINKING.txt
+composer.lock
+vendor/
+.idea/
+app/Uploads
+upgrade.md
