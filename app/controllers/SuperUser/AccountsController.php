@@ -63,8 +63,8 @@ class AccountsController extends BaseController
                 'email'  => 'email|max:80',
 		'monthTo' => 'Required|date_format:n', 
 		'yearTo' => 'Required|date_format:Y'
-		//'availableRoles'  => 'Required|Required_if_in_array_digit:availableGroups,4,digit|integer_array:1',
-		//'availableGroups' => ''
+		'availableRoles'  => 'Required|Required_if_in_array_digit:availableGroups,4,digit|integer_array:1',
+		'availableGroups' => ''
 
         );
 		
@@ -73,7 +73,7 @@ class AccountsController extends BaseController
         if ($v->passes())
         {
             $user = new User();
-            $user->editUser($id, Input::all());
+            $user->editUser(Input::all());
             return Redirect::route('showUsers') ->with('success', $user->name .  'User Updated!');
         }
 

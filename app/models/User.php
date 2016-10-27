@@ -195,10 +195,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface
         }
     }
 
-   public function editUser($id, $values)
+   public function editUser($values)
    {
         $yearsActive = $values['monthTo'] . '/' . $values['yearTo'];
-	DB::table('user') ->where('userId', '=', $id)->update(array('name' => $values['name'] ));
+	/*DB::table('user') ->where('userId', '=', $id)->update(array('name' => $values['name'] ));
         DB::table('user') ->where('userId', '=', $id)->update(array('email' => $values['email']));
 	DB::table('user') ->where('userId', '=', $id)->update(array('yearto' => $yearsActive ));
 	DB::table('user') ->where('userId', '=', $id)->update(array('userRole' => implode('',  $values['availableRoles'])));
@@ -210,8 +210,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface
 	{
 		
 		DB::table('user') ->where('userId', '=', $id)->update(array('gradeGroup' => 0));
-	}
-	$this->save();
+	}*/
+	$this->name = $values['name'];
+	$this->email = $values['email'];
+	$this->yearTo = $yearsActive;
+	$this->userRole = implode('', $values['availableRoles']);
+	
+	if(in_array('4', $values['availableRoles']) !== FALSE)
+	{
+		DB::table
+	$this->update();
 	
    }
 }
