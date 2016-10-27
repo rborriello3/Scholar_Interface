@@ -367,14 +367,51 @@ class ReportsDataController extends BaseController
                     ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                     ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
                     ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                    ->select('student.studentID as studentID', 'student.firstName as firstName', 'student.lastName as lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'), DB::raw('SUBSTRING(address, LOCATE("||", address) ) as address2'), 'city', 'state', 'zipCode')
-		     /*->select('student.studentID as studentID', 'firstName', 'lastName', 'sunyEmail', 'studentAddress.address as address1', 'city', 'state', 'zipCode')*/
+                    ->select('student.studentID as studentID', 'student.firstName as firstName', 'student.lastName as lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) - 1) as address1'), DB::raw('SUBSTRING(address, LOCATE("||", address) + 1) as address2'), 'city', 'state', 'zipCode')
+		     //->select('student.studentID as studentID', 'firstName', 'lastName', 'sunyEmail', 'studentAddress.address', 'city', 'state', 'zipCode')
                     ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
                     ->whereIn('scholarshipAwards.typeID', array(4, 5)) 
                     ->whereIn('scholarshipAwards.awardStatus', array(1, 2))
                     ->groupBy('student.studentID')
                 )
             ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode')
+	    //->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail')
+	    /*->addColumn('address1', function($address1)
+	    {
+		$address = $address1->address;
+		
+		//Remove '||' as well as address2 if either are present
+		if(strpos($address, '||') !== false) 
+		{
+			$position = strpos($address, '||');
+			$address = substr($address, 0, $position);
+		}		
+		return $address;
+	    })
+	    ->addColumn('address2', function($address2)
+	    {
+		$address = $address2->address;
+
+		//Remove '||' as well as address1 if either are present
+		if(strpos($address, '||') !== false)
+		{
+			preg_match('/||/', $address, $matches);
+			$address = $matches[1];
+			
+		}
+		/*se
+		{
+			$address = " ";
+		}
+
+		/*$false = "false";
+		if(strcmp($address, $false) === 0)
+		{	
+			$address = "";
+		}
+		return $address;
+	    })*/
+	    //->showColumns('city', 'state', 'zipCode')
             ->addColumn('scholarshipName', function($name)
             {
                 $awards = DB::table('scholarships')->leftJoin('scholarshipAwards', 'scholarshipAwards.fundCode', '=', 'scholarships.fundCode')
