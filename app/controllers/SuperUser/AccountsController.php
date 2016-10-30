@@ -62,17 +62,14 @@ class AccountsController extends BaseController
 		'name'   => 'Required|full_name',
                 'email'  => 'email|max:80',
 		'monthTo' => 'Required|date_format:n', 
-		'yearTo' => 'Required|date_format:Y'
-		'availableRoles'  => 'Required|Required_if_in_array_digit:availableGroups,4,digit|integer_array:1',
-		'availableGroups' => ''
-
-        );
+		'yearTo' => 'Required|date_format:Y',
+		'availableRoles'  => 'Required|Required_if_in_array_digit:availableGroups,4,digit|integer_array:1');
 		
         $v = Validator::make(Input::all(), $rules);
 
         if ($v->passes())
         {
-            $user = new User();
+            $user = User::find($id);
             $user->editUser(Input::all());
             return Redirect::route('showUsers') ->with('success', $user->name .  'User Updated!');
         }

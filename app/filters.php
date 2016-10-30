@@ -32,8 +32,12 @@ Route::filter('auth', function ()
 Route::filter('accessRights', function ()
 {
     $User = Auth::user();
+    $yearTo = $User->yearTo;
+    $slashIndex = strpos($yearTo, "/");
+    $userMonth = substr($yearTo, 0, $slashIndex);
+    $userYear = substr($yearTo, $slashIndex + 1);
 
-    if ($User->active == 'Inactive' || $User->userRole == 1 || $User->yearTo <= date('m/Y'))
+    if ($User->status == 'Inactive' || $User->userRole == 1 || ($userMonth <= date('m') && $userYear <= date('Y')))
     {
         Session::flush();
         Auth::logout();
