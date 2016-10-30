@@ -187,11 +187,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface
     {
         $aidyear = new Aidyear();
         $aid = $aidyear->getCurrentAidyear();
-        $user = $this->find($id)->get(array('yearsActive'));
+        $user = $this->find($id)->get(array('yearTo'));
 
-        if (strrpos($user[0]->yearsActive, $aid) === FALSE)
+        if (strrpos($user[0]->yearTo, $aid) === FALSE)
         {
-	   DB::table('user')->where('userId', '=', $id)->update(array('yearsActive' => $user[0]->yearsActive . '*' . $aid . '*'));
+	   DB::table('user')->where('userId', '=', $id)->update(array('yearTo' => $user[0]->yearsActive . '*' . $aid . '*'));
         }
     }
 
@@ -211,6 +211,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface
 		
 		DB::table('user') ->where('userId', '=', $id)->update(array('gradeGroup' => 0));
 	}*/
+	
 	$this->name = $values['name'];
 	$this->email = $values['email'];
 	$this->yearTo = $yearsActive;
@@ -218,8 +219,13 @@ class User extends Eloquent implements UserInterface, RemindableInterface
 	
 	if(in_array('4', $values['availableRoles']) !== FALSE)
 	{
-		DB::table
-	$this->update();
+		$this->gradeGroup = implode(',', $values['availableGroups']);
+	}
+	else
+	{
+		$this->gradeGroup = 0;
+	}
+	$this->save();
 	
    }
 }

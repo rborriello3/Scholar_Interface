@@ -18,7 +18,7 @@ class SessionController extends BaseController
                 $user            = User::find(Auth::user()->userId);
                 $user->lastLogin = new dateTime();
                 $user->save();
-                $check = new User();
+                //$check = new User();
                 //$check->updateYearsActive(Auth::user()->userId);
 
                 return Redirect::route('showDashboard');
