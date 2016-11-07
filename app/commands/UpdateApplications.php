@@ -176,11 +176,11 @@ class UpdateApplications extends Command
 
                                     $application->save();
 
-                                    if ($type != 'GSAPON')
+                                    /*if ($type != 'GSAPON')
                                     {
-                                        $response = new \ApplicationResponse($application->applicationID, $application->studentID);
+                                        $response = new \ApplicationResponse($application->studentID, $application-);
                                         $response->newResponse();
-                                    }
+                                    }*/
 
                                     $recomm = new \ApplicationRecommendation($application->applicationID, $application->studentID);
                                     $recomm->newRecommendation();
