@@ -1,0 +1,13 @@
+.events .ui-accordion-header
+{
+    background: #005696;
+    border-color: #005696;
+    margin-left: 2%;
+}
+
+.events .ui-accordion-content
+{
+    background: white;
+    color: #464646;
+    margin-left: 2%;
+}
