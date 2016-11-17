@@ -11,3 +11,20 @@
     color: #464646;
     margin-left: 2%;
 }
+
+.longText
+{
+    overflow: auto;
+    height: 300px;
+    width: 40%;
+    display: inline-block;
+    margin-right: 8%;
+}
+
+.eventActions
+{
+    display: block;
+    float: left;
+    margin-top: 1%;
+    padding-right: 20px;
+}
