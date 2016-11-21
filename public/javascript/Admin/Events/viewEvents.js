@@ -1,8 +1,8 @@
-$document.ready(function()
+$(document).ready(function()
 {
     $(function()
     {
-	$( ".events" ).accordion(
+	$( ".eventsMenu" ).accordion(
 	{
 	    heightStyle: "content",
 	    collapsible: true,
