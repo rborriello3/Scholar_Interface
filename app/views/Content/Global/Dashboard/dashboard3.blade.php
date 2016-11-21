@@ -16,12 +16,20 @@
 <div class="eventsMenu">
     <h3>Events</h3>
 
-    <div>
-	<div class = "col-xs-4">
-	    <b>Event Name:</b>
-	    <b>Event Date:</b>
-	    <b>Event Time:</b>
-	    <b>Event Place:</b>
+    <div class="container" width="100%">
+	<div class="row">
+	    <div class="col-xs-3">
+		<b>Event Name:</b>	
+	    </div>
+	    <div class="col-xs-3">
+		<b>Event Date:</b>
+	    </div>
+	    <div class="col-xs-3">
+		<b>Event Time:</b>
+	    </div>
+	    <div class="col-xs-3">
+		<b>Event Place:</b>
+	    </div>
 	</div>
     </div>
 </div>

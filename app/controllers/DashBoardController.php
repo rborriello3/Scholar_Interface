@@ -21,8 +21,11 @@ class DashboardController extends BaseController
             Session::put('aidyears', $aidyears);
             Session::put('currentAidyear', $current);
         }
-
-        return View::make('Content.Global.Dashboard.dashboard' . Session::get('role')); // View based off of session
+	
+	if(Session::get('role') == '3' || Session::get('role') == 4)
+		return Redirect::route('showEvents');
+	else
+        	return View::make('Content.Global.Dashboard.dashboard' . Session::get('role')); // View based off of session
     }
 
     public function doAidYearSelect()
@@ -40,5 +43,19 @@ class DashboardController extends BaseController
         }
 
         return Redirect::route('showDashboard')->with('error', 'You must select an aidyear');
+    }
+
+    public function showEvents()
+    {
+	$values = Event::where(strtotime('time') <= time());
+	if(Session::get('role') == 3)
+		$values = Event::where(strtotime('time') <= time());
+	else
+	{
+		$commMember = User::where('userId', '=', Session::get('userId'));
+		$values = Event::where(strtotime('time') <= time())->whereIn($commMember->gradeGroup, implode('', $values['gradeGroup']));
+	}
+	
+	return View::make('Content.Global.Dashboard.dashboard' . Session::get('role'));
     }
 }

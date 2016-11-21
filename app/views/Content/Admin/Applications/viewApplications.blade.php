@@ -14,7 +14,8 @@
 <h4>{{ link_to_route('showEditStudent', $history[0]->firstName . ' ' . $history[0]->lastName, array($history[0]->studentID)) }}</h4>
 <h5>{{{$history[0]->studentID}}}</h5>
 
-<!--@foreach($history as $v){{ link_to_route('showEditApplication', '', array($v->GUID), array('class' => 'applicationActions glyphicon glyphicon-edit', 'title' => 'Edit Application', 'alt' => 'editApplication')) }}-->
+<!--@foreach($history as $v)
+	{{ link_to_route('showEditApplication', '', array($v->GUID), array('class' => 'applicationActions glyphicon glyphicon-edit', 'title' => 'Edit Application', 'alt' => 'editApplication')) }}-->
 
 @if (strpos($v->overallRank1, 'Top') !== FALSE)
     <?php
