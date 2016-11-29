@@ -23,7 +23,7 @@ class DashboardController extends BaseController
         }
 	
 	if(Session::get('role') == '3' || Session::get('role') == 4)
-		return Redirect::route('showMeetings');
+		return Redirect::route('showAllMeetingsJSON');
 	else
         	return View::make('Content.Global.Dashboard.dashboard' . Session::get('role')); // View based off of session
     }
@@ -45,7 +45,7 @@ class DashboardController extends BaseController
         return Redirect::route('showDashboard')->with('error', 'You must select an aidyear');
     }
 
-    public function showMeetings()
+    /*public function showMeetings()
     {
 	$currentTime = strtotime(time());
 	$values = Meeting::where('strtotime', '>=', $currentTime);
@@ -58,5 +58,5 @@ class DashboardController extends BaseController
 	}
 	
 	return View::make('Content.Global.Dashboard.dashboard' . Session::get('role'), $values);
-    }
+    }*/
 }
