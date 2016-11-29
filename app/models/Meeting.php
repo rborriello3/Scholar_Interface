@@ -1,11 +1,11 @@
 <?php
 
-class Event extends Eloquent
+class Meeting extends Eloquent
 {
     /**
      * The database table
      */
-    protected $table = 'event';
+    protected $table = 'meeting';
 
     /**
      * We don't want any default time stamps
@@ -20,7 +20,7 @@ class Event extends Eloquent
     /**
     * Creates a new event 
     */
-    public function createEvent($values)
+    public function createMeeting($values)
     {
         $values['gradeGroup'] = implode(',', $values['gradeGroup']);
 	$values['strtotime'] = strtotime($values['date'] . $values['time']);
@@ -32,7 +32,7 @@ class Event extends Eloquent
     /**
     * Updates an event
     */
-    public function updateEvent($eventID, $values)
+    public function updateMeeting($eventID, $values)
     {
         $this->find($eventID);
         $values['gradeGroup'] = implode(',', $values['gradeGroup']);

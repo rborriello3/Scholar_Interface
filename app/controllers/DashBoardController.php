@@ -23,7 +23,7 @@ class DashboardController extends BaseController
         }
 	
 	if(Session::get('role') == '3' || Session::get('role') == 4)
-		return Redirect::route('showEvents');
+		return Redirect::route('showMeetings');
 	else
         	return View::make('Content.Global.Dashboard.dashboard' . Session::get('role')); // View based off of session
     }
@@ -45,17 +45,18 @@ class DashboardController extends BaseController
         return Redirect::route('showDashboard')->with('error', 'You must select an aidyear');
     }
 
-    public function showEvents()
+    public function showMeetings()
     {
-	$values = Event::where(strtotime('time') <= time());
+	$currentTime = strtotime(time());
+	$values = Meeting::where('strtotime', '>=', $currentTime);
 	if(Session::get('role') == 3)
-		$values = Event::where(strtotime('time') <= time());
+		$values = Meeting::where('strtotime', '>=', $currentTime);
 	else
 	{
 		$commMember = User::where('userId', '=', Session::get('userId'));
-		$values = Event::where(strtotime('time') <= time())->whereIn($commMember->gradeGroup, implode('', $values['gradeGroup']));
+		$values = Meeting::where('strtotime', '>=', $currentTime)->whereIn($commMember->gradeGroup, implode('', $values['gradeGroup']));
 	}
 	
-	return View::make('Content.Global.Dashboard.dashboard' . Session::get('role'));
+	return View::make('Content.Global.Dashboard.dashboard' . Session::get('role'), $values);
     }
 }
