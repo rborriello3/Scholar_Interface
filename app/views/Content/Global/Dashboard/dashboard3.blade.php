@@ -21,7 +21,7 @@
 	->addColumn('Actions', 'Name', 'Date', 'Time', 'Place', 'Grade Group/Person')
 	->setOptions('bProcessing', true)
 	->setOptions('bSort', false)
-	->setOptions('iDisplayLength', 15)
+	->setOptions('iDisplayLength', 5)
 	->setOptions('aLengthMenu', [5, 10, 15, 20, 25, 30, 35, 40, 45, 50])
 	->setOptions('bAutoWidth', false)
 	->setOptions('aoColumns', array(
