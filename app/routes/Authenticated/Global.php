@@ -3,7 +3,6 @@
 Route::group(array('before' => 'auth|accessRights'), function ()
 {
     Route::get('dashboard', array('uses' => 'DashboardController@showDashboard', 'as' => 'showDashboard', 'before' => 'firstLogin|multiRole|cellCheck'));
-    //Route::get('dashboard', array('uses' =>'DashboardController@showMeetings', 'as' => 'showEvents'));
     Route::get('role', array('uses' => 'RoleController@showSelect', 'as' => 'showRoleSelect'));
     Route::post('role', array('uses' => 'RoleController@doSelect', 'as' => 'doRoleSelect'));
     Route::get('mandatory-update', array('uses' => 'FirstLoginController@showFirstLoginUpdate', 'as' => 'showFirstLogin'));

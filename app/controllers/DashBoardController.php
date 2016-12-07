@@ -22,10 +22,7 @@ class DashboardController extends BaseController
             Session::put('currentAidyear', $current);
         }
 	
-	if(Session::get('role') == '3' || Session::get('role') == 4)
-		return Redirect::route('showAllMeetingsJSON');
-	else
-        	return View::make('Content.Global.Dashboard.dashboard' . Session::get('role')); // View based off of session
+	return View::make('Content.Global.Dashboard.dashboard' . Session::get('role')); // View based off of session
     }
 
     public function doAidYearSelect()

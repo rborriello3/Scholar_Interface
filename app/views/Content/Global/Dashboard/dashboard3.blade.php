@@ -4,33 +4,35 @@
 <title>Scholarship Interface Admin Dashboard</title>
 @parent
 <script type="text/javascript" src="{{asset('/jqueryUI/js/jquery-ui-1.10.3.custom.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('/javascript/Admin/Meeting/viewMeetings.js')}}"></script>
+<script type="text/javascript" src="{{asset('DataTables-1.9.4/media/js/jquery.dataTables.min.js')}}"></script>
 <link rel="stylesheet" type="text/css" href="{{asset('/jqueryUI/css/ui-darkness/jquery-ui-1.10.3.custom.min.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('/css/Admin/Events/viewEvents.css')}}">
-<script type="text/javascript" src="{{asset('/javascript/Admin/Events/viewEvents.js')}}"></script>
+<link rel="stylesheet" type="text/css" href="{{asset('DataTAbles-1.9.4/media/css/demo_table_jui.css') }}">
+<link rel="stylesheet" type="text/css" href="{{asset('/css/Admin/Meeting/viewMeetings.css')}}">
 
-<link rel="stylesheet" type="text/css" href="{{asset('css/Admin/Application/viewApplications.css')}}">
-<script type="text/javascript" src="{{asset('/javascript/Admin/Applications/viewApplications.js')}}"></script>
 @stop
 
 @section('dashBoardContent')
-<div class="eventsMenu">
-    <h3>Events</h3>
-
-    <div class="container" width="100%">
-	<div class="row">
-	    <div class="col-xs-3">
-		<b>Event Name:</b>	
-	    </div>
-	    <div class="col-xs-3">
-		<b>Event Date:</b>
-	    </div>
-	    <div class="col-xs-3">
-		<b>Event Time:</b>
-	    </div>
-	    <div class="col-xs-3">
-		<b>Event Place:</b>
-	    </div>
-	</div>
+<div class="meetingsMenu">
+    <h3>Meetings</h3>
+    <div class="container">
+	{{ Datatable::table()
+	->setURL(route('showAllMeetingsJsonCRUD'))
+	->addColumn('Actions', 'Name', 'Date', 'Time', 'Place', 'Grade Group/Person')
+	->setOptions('bProcessing', true)
+	->setOptions('bSort', false)
+	->setOptions('iDisplayLength', 15)
+	->setOptions('aLengthMenu', [5, 10, 15, 20, 25, 30, 35, 40, 45, 50])
+	->setOptions('bAutoWidth', false)
+	->setOptions('aoColumns', array(
+	    array('sWidth' => '1%'),
+	    array('sWidth' => '1%'),
+	    array('sWidth' => '1%'),
+	    array('sWidth' => '1%'),
+	    array('sWidth' => '1%'),
+  	    array('sWidth' => '1%')
+	))
+	->render() }}	        
     </div>
 </div>
 @stop
