@@ -1,0 +1,30 @@
+.meetingsMenu .ui-accordion-header
+{
+    background: #005696;
+    border-color: #005696;
+    margin-left: 2%;
+}
+
+.meetingsMenu .ui-accordion-content
+{
+    background: white;
+    color: #464646;
+    margin-left: 2%;
+}
+
+.meetingsMenuActions
+{
+    display: block;
+    float: left;
+    margin-top: 1%;
+    padding-right: 20px;
+}
+
+.meetings
+{
+    overflow: auto;
+    height: 10px;
+    width: 20%;
+    display: inline-block;
+    margin-right: 5%;
+}
