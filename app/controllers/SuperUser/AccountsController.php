@@ -71,7 +71,7 @@ class AccountsController extends BaseController
         {
             $user = User::find($id);
             $user->editUser(Input::all());
-            return Redirect::route('showUsers') ->with('success', $user->name .  'User Updated!');
+            return Redirect::route('showUsers') ->with('success', $user->name .  ' User Updated!');
         }
 
         return Redirect::route('showEditUser', $id)->withInput()->withErrors($v->messages())->with('error', 'An error has occured while updating ');

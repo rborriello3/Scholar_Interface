@@ -23,11 +23,9 @@ class ReportsDataController extends BaseController
 		    ->showColumns('Total', 'major', 'GPA')
                     ->addColumn('grader', function($student)
                     {
-                        $graders = DB::table('activeUsers')
-                            ->join('user', 'user.userId', '=', 'activeUsers.userId')
-                            ->where('aidyear', '=', Session::get('currentAidyear'))
-                            ->where('activeUsers.gradeGroup', 'LIKE', '%4%')
-			    ->where('activeUsers.status', '=', '1')
+                        $graders = DB::table('user')
+                            ->where('user.gradeGroup', 'LIKE', '%4%')
+			    ->where('user.yearTo', '>=', date("m/Y"))
                             ->get(array('user.userId', 'name'));
 
                         $output = "";
@@ -113,10 +111,9 @@ class ReportsDataController extends BaseController
                 ->get(array('awardAmount', 'studentID'));
 
 
-            $graders = DB::table('activeUsers')
-                ->join('user', 'user.userId', '=', 'activeUsers.userId')
-                ->where('aidyear', '=', Session::get('currentAidyear'))
-                ->where('activeUsers.gradeGroup', 'LIKE', '%4%')
+            $graders = DB::table('user')
+		->where('gradeGroup', 'LIKE', '%4%')
+                ->where('user.yearTo', '>=', date("m/Y"))
                 ->get(array('user.userId', 'name'));
 
             $output = array();
@@ -204,11 +201,9 @@ class ReportsDataController extends BaseController
                 ->showColumns('name', 'major', 'HS', 'city', 'county', 'highSchoolAvg', 'AVGTotal')
 		->addColumn('grader', function($student)
 		{
-		    $graders = DB::table('activeUsers')
-			->join('user', 'user.userId', '=', 'activeUsers.userId')
-			->where('aidyear', '=', Session::get('currentAidyear'))
-			->where('activeUsers.gradeGroup', 'LIKE', '%2%')
-			->where('activeUsers.status', '=', '1')
+		    $graders = DB::table('user')
+			->where('user.gradeGroup', 'LIKE', '%2%')
+			->where('user.yearTo', '>=', date("m/Y"))	
 			->get(array('user.userId as userId', 'name'));
 
 		    $output = "";
@@ -293,10 +288,9 @@ class ReportsDataController extends BaseController
 		->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
 		->get(array('awardAmount', 'studentID'));
 
-            $graders = DB::table('activeUsers')
-                ->join('user', 'user.userId', '=', 'activeUsers.userId')
-                ->where('aidyear', '=', Session::get('currentAidyear'))
-                ->where('activeUsers.gradeGroup', 'LIKE', '%2%')
+            $graders = DB::table('user')  
+                ->where('user.gradeGroup', 'LIKE', '%2%')
+		->where('user.yearTo', '>=', date("m/Y"))
                 ->get(array('user.userId', 'name'));
 
             $output = array();
@@ -367,51 +361,32 @@ class ReportsDataController extends BaseController
                     ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                     ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
                     ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                    ->select('student.studentID as studentID', 'student.firstName as firstName', 'student.lastName as lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) - 1) as address1'), DB::raw('SUBSTRING(address, LOCATE("||", address) + 1) as address2'), 'city', 'state', 'zipCode')
-		     //->select('student.studentID as studentID', 'firstName', 'lastName', 'sunyEmail', 'studentAddress.address', 'city', 'state', 'zipCode')
+                    ->select('student.studentID as studentID', 'student.firstName as firstName', 'student.lastName as lastName', 'sunyEmail', 'address', 'city', 'state', 'zipCode')
                     ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
                     ->whereIn('scholarshipAwards.typeID', array(4, 5)) 
                     ->whereIn('scholarshipAwards.awardStatus', array(1, 2))
                     ->groupBy('student.studentID')
                 )
-            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode')
-	    //->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail')
-	    /*->addColumn('address1', function($address1)
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail')
+	    ->addColumn('address1', function($address)
 	    {
-		$address = $address1->address;
-		
-		//Remove '||' as well as address2 if either are present
-		if(strpos($address, '||') !== false) 
-		{
-			$position = strpos($address, '||');
-			$address = substr($address, 0, $position);
-		}		
-		return $address;
+		$address1 = explode('||', $address->address);
+		return $address1[0];
 	    })
-	    ->addColumn('address2', function($address2)
+	    ->addColumn('address2', function($address)
 	    {
-		$address = $address2->address;
-
-		//Remove '||' as well as address1 if either are present
-		if(strpos($address, '||') !== false)
+		$address2 = explode('||', $address->address);
+		if(count($address2) > 1)
 		{
-			preg_match('/||/', $address, $matches);
-			$address = $matches[1];
-			
+		    return $address2[1];
 		}
-		/*se
+		else
 		{
-			$address = " ";
+		    $return = '';
+		    return $return;
 		}
-
-		/*$false = "false";
-		if(strcmp($address, $false) === 0)
-		{	
-			$address = "";
-		}
-		return $address;
-	    })*/
-	    //->showColumns('city', 'state', 'zipCode')
+	    })
+	    ->showColumns('city', 'state', 'zipCode')	   
             ->addColumn('scholarshipName', function($name)
             {
                 $awards = DB::table('scholarships')->leftJoin('scholarshipAwards', 'scholarshipAwards.fundCode', '=', 'scholarships.fundCode')
@@ -458,15 +433,33 @@ class ReportsDataController extends BaseController
         return Datatable::query(DB::table('student')
                     ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
                     ->join('applications', 'applications.studentID', '=', 'student.studentID')
-                    ->select('student.studentID', 'firstName', 'lastName', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode')
+                    ->select('student.studentID', 'firstName', 'lastName', 'address', 'city', 'state', 'zipCode')
                     ->where('applications.typeID', '=', 4)
                     ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                     ->whereIn('statusID', array(5,8))
                 )
-        ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode')
-        ->setSearchWithAlias()
-        ->make();
+            ->showColumns('studentID', 'firstName', 'lastName')
+	    ->addColumn('address1', function($address)
+	    {
+	        $address1 = explode('||', $address->address);
+	        return $address1[0];
+	    })
+	    ->addColumn('address2', function($address)
+	    {
+	        $address2 = explode('||', $address->address);
+	        if(count($address2) > 1)
+	        {
+	            return $address2[1];
+	        }
+	        else
+	        {
+	            $return = '';
+	            return $return;
+	        }
+	    })
+	    ->showColumns('city', 'state', 'zipCode')
+            ->setSearchWithAlias()
+            ->make();
     }
 
     public function graduatingFacultyAddress()
@@ -476,15 +469,33 @@ class ReportsDataController extends BaseController
                     ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
                    // ->join('applications', 'applications.studentID', '=', 'student.studentID')
                     ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                    ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'scholarshipAwards.awardAmount', 'scholarshipAwards.department', 'scholarships.scholarshipName')
+                    ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', 'address', 'city', 'state', 'zipCode', 'scholarshipAwards.awardAmount', 'scholarshipAwards.department', 'scholarships.scholarshipName')
                    // ->where('scholarshipAwards.statusID', '=', '3')
                    //->where('scholarshipAwards.department', '!=', 'NULL')
                     ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
 		    ->where('scholarshipAwards.awardStatus', '=', 1)
                     ->where('scholarshipAwards.typeID', '=', 5)
                 )
-            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode', 'awardAmount', 'department', 'scholarshipName')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail')
+	    ->addColumn('address1', function($address)
+	    {
+		$address1 = explode('||', $address->address);
+		return $address1[0];
+	    })
+	    ->addColumn('address2', function($address)
+	    {
+		$address2 = explode('||', $address->address);
+		if(count($address2) > 1)
+		{
+		    return $address2[1];
+		}
+		else
+		{
+		    $return = '';
+		    return $return;
+		}
+	    })
+	    ->showColumns('city', 'state', 'zipCode', 'awardAmount', 'department', 'scholarshipName')
             ->addColumn('amount', function($award)
                 {
                     return '$' . $award->awardAmount;
@@ -548,11 +559,9 @@ class ReportsDataController extends BaseController
 		    ->showColumns('Total', 'major', 'GPA', 'creditHourFA')
                     ->addColumn('graders', function($student)
                     {
-                        $graders = DB::table('activeUsers')
-                            ->join('user', 'user.userId', '=', 'activeUsers.userId')
-                            ->where('aidyear', '=', Session::get('currentAidyear'))
-                            ->where('activeUsers.gradeGroup', 'LIKE', '%6%')
-			    ->where('activeUsers.status', '=', '1')
+                        $graders = DB::table('user')
+                            ->where('user.gradeGroup', 'LIKE', '%4%')
+			    ->where('user.yearTo', '>=', date("m/Y"))
                             ->get(array('user.userId', 'name'));
 
                         $output = "";
@@ -634,11 +643,10 @@ class ReportsDataController extends BaseController
 
             $data['awards'] = DB::table('scholarshipAwards')->whereIn('awardStatus', array('1', '2'))->get(array('awardAmount', 'studentID'));
 
-            $graders = DB::table('activeUsers')
-                ->join('user', 'user.userId', '=', 'activeUsers.userId')
-                ->where('aidyear', '=', Session::get('currentAidyear'))
-                ->where('activeUsers.gradeGroup', 'LIKE', '%6%')
-                ->get(array('user.userId', 'name'));
+            $graders = DB::table('user')
+                            ->where('user.gradeGroup', 'LIKE', '%4%')
+			    ->where('user.yearTo', '>=', date("m/Y"))
+                            ->get(array('user.userId', 'name'));
 
             $output = array();
             $outPutString = "";
@@ -842,8 +850,7 @@ class ReportsDataController extends BaseController
                     ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
                     //->join('applications', 'applications.studentID', '=', 'student.studentID')
                     ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                    ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'scholarshipName', 'scholarshipAwards.awardAmount')
+                    ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', 'address', 'city', 'state', 'zipCode', 'scholarshipName', 'scholarshipAwards.awardAmount')
                     ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
                   //->where('department', '=', '')
                     //->orWhere('department', '=', 'NULL')
@@ -853,7 +860,26 @@ class ReportsDataController extends BaseController
                     ->whereIn('scholarshipAwards.awardStatus', array(1, 2))
                     ->groupBy('student.studentID')
                 )
-            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail')
+	    ->addColumn('address1', function($address)
+	    {
+		$address1 = explode('||', $address->address);
+		return $address1[0];
+	    })
+	    ->addColumn('address2', function($address)
+	    {
+		$address2 = explode('||', $address->address);
+		if(count($address2) > 1)
+		{
+		    return $address2[1];
+		}
+		else
+		{
+		    $return = '';
+		    return $return;
+		}
+	    })
+	    ->showColumns('city', 'state', 'zipCode')
             ->addColumn('scholarshipName', function($name)
             {
                 $awards = DB::table('scholarships')->leftJoin('scholarshipAwards', 'scholarshipAwards.fundCode', '=', 'scholarships.fundCode')
@@ -919,15 +945,33 @@ class ReportsDataController extends BaseController
                     ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
                    // ->join('applications', 'applications.studentID', '=', 'student.studentID')
                     ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                    ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'scholarshipAwards.awardAmount', 'scholarshipAwards.department', 'scholarships.scholarshipName')
+                    ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', 'address', 'city', 'state', 'zipCode', 'scholarshipAwards.awardAmount', 'scholarshipAwards.department', 'scholarships.scholarshipName')
                   //  ->where('applications.statusID', '=', '9')
                     ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
                    // ->where('scholarshipAwards.department', '!=', 'NULL')
                    // ->orWhere('scholarshipAwards.department', '!=', '')
                     ->whereIn('scholarshipAwards.typeID', array(7, 11, 12))
                 )
-            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode', 'awardAmount', 'department', 'scholarshipName')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail')
+	    ->addColumn('address1', function($address)
+	    {
+		$address1 = explode('||', $address->address);
+		return $address1[0];
+	    })
+	    ->addColumn('address2', function($address)
+	    {
+		$address2 = explode('||', $address->address);
+		if(count($address2) > 1)
+		{
+		    return $address2[1];
+		}
+		else
+		{
+		    $return = '';
+		    return $return;
+		}
+	    })
+	    ->showColumns('city', 'state', 'zipCode', 'awardAmount', 'department', 'scholarshipName')
             ->addColumn('amount', function($award)
                 {
                     return '$' . $award->awardAmount;
@@ -944,8 +988,7 @@ class ReportsDataController extends BaseController
                 ->join('studentDemographics', 'studentDemographics.studentID', '=', 'student.studentID')
                 ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
                 ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                    DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'studentDemographics.highSchoolName',  'awardAmount', 'scholarshipName')
+                ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', 'address', 'city', 'state', 'zipCode', 'studentDemographics.highSchoolName',  'awardAmount', 'scholarshipName')
                 ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
           
                // ->where('scholarshipAwards.department', '=', '')
@@ -957,7 +1000,26 @@ class ReportsDataController extends BaseController
                 ->groupBy('student.studentID')
 
         )
-            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode', 'highSchoolName')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail')
+	    ->addColumn('address1', function($address)
+	    {
+		$address1 = explode('||', $address->address);
+		return $address1[0];
+	    })
+	    ->addColumn('address2', function($address)
+	    {
+		$address2 = explode('||', $address->address);
+		if(count($address2) > 1)
+		{
+		    return $address2[1];
+		}
+		else
+		{
+		    $return = '';
+		    return $return;
+		}
+	    })
+	    ->showColumns('city', 'state', 'zipCode', 'highSchoolName')
             ->addColumn('scholarshipName', function($name)
             {
                 $awards = DB::table('scholarships')->leftJoin('scholarshipAwards', 'scholarshipAwards.fundCode', '=', 'scholarships.fundCode')
@@ -1024,8 +1086,7 @@ class ReportsDataController extends BaseController
                 ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
                // ->join('applications', 'applications.studentID', '=', 'student.studentID')
                 ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                    DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'studentDemographics.highSchoolName', 'awardAmount', 'scholarshipAwards.department', 'scholarshipName')
+                ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', 'address', 'city', 'state', 'zipCode', 'studentDemographics.highSchoolName', 'awardAmount', 'scholarshipAwards.department', 'scholarshipName')
                // ->where('applications.statusID', '=', '9')
                // ->where('scholarshipAwards.department', '!=', 'NULL')
                 ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
@@ -1033,7 +1094,26 @@ class ReportsDataController extends BaseController
 		->where('scholarshipAwards.awardStatus', '=', '1')
                 ->whereIn('scholarshipAwards.typeID', array(3, 9, 10))
         )
-            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode', 'highSchoolName', 'awardAmount', 'department', 'scholarshipName')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail')
+	    ->addColumn('address1', function($address)
+	    {
+		$address1 = explode('||', $address->address);
+		return $address1[0];
+	    })
+	    ->addColumn('address2', function($address)
+	    {
+		$address2 = explode('||', $address->address);
+		if(count($address2) > 1)
+		{
+		    return $address2[1];
+		}
+		else
+		{
+		    $return = '';
+		    return $return;
+		}
+	    })
+	    ->showColumns('city', 'state', 'zipCode', 'highSchoolName', 'awardAmount', 'department', 'scholarshipName')
             ->addColumn('amount', function($award)
             {
                 return '$' . $award->awardAmount;
@@ -1051,15 +1131,33 @@ class ReportsDataController extends BaseController
                 ->join('scholarshipAwards', 'scholarshipAwards.studentID', '=', 'student.studentID')
               //  ->join('applications', 'applications.studentID', '=', 'student.studentID')
                 ->join('scholarships', 'scholarships.fundCode', '=', 'scholarshipAwards.fundCode')
-                ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                    DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode')
+                ->select('student.studentID', 'firstName', 'lastName', 'sunyEmail', 'address', 'city', 'state', 'zipCode')
                 //->where('applications.statusID', '=', '9')
                 ->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))
 		//->where('scholarshipAwards.awardStatus', '=', 1)
                // ->whereNotIn('applications.typeID', array(4,5))
                 ->groupBy('student.studentID')
             )
-            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail', 'address1', 'address2', 'city', 'state', 'zipCode')
+            ->showColumns('studentID', 'firstName', 'lastName', 'sunyEmail')
+	    ->addColumn('address1', function($address)
+	    {
+		$address1 = explode('||', $address->address);
+		return $address1[0];
+	    })
+	    ->addColumn('address2', function($address)
+	    {
+		$address2 = explode('||', $address->address);
+		if(count($address2) > 1)
+		{
+		    return $address2[1];
+		}
+		else
+		{
+		    $return = '';
+		    return $return;
+		}
+	    })
+	     ->showColumns('city', 'state', 'zipCode')
             ->addColumn('scholarshipFundCode', function($name)
             {
                 $awards = DB::table('scholarshipAwards')->where('studentID', '=', $name->studentID)->where('scholarshipAwards.aidyear', '=', Session::get('currentAidyear'))->whereIn('awardStatus', array(1,2))
@@ -1132,12 +1230,30 @@ class ReportsDataController extends BaseController
                 ->join('applications', 'applications.studentID', '=', 'student.studentID')
                 ->join('applicationType', 'applicationType.typeID', '=', 'applications.typeID')
                 ->join('applicationStatus', 'applicationStatus.statusID', '=', 'applications.statusID')
-                ->select('applicationStatus.statusName', 'student.studentID', 'firstName', 'lastName', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                    DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode', 'studentDemographics.highSchoolName', 'applicationType.typeDescription')
+                ->select('applicationStatus.statusName', 'student.studentID', 'firstName', 'lastName', 'address', 'city', 'state', 'zipCode', 'studentDemographics.highSchoolName', 'applicationType.typeDescription')
                 ->where('applications.aidyear', '=', Session::get('currentAidyear'))
                 ->groupBy('student.studentID')
                 )
-                ->showColumns('statusName', 'studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode', 'highSchoolName')
+                ->showColumns('statusName', 'studentID', 'firstName', 'lastName')
+	 	->addColumn('address1', function($address)
+	    	{
+		    $address1 = explode('||', $address->address);
+		    return $address1[0];
+	    	})
+	    	->addColumn('address2', function($address)
+	    	{
+		    $address2 = explode('||', $address->address);
+		    if(count($address2) > 1)
+		    {
+		        return $address2[1];
+		    }
+		    else
+		    {
+		        $return = '';
+		        return $return;
+		    }
+	    	})
+	        ->showColumns('city', 'state', 'zipCode', 'highSchoolName')
                 ->addColumn('status', function($application)
                 {
                     return $application->typeDescription;
