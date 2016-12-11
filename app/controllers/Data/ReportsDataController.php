@@ -23,9 +23,15 @@ class ReportsDataController extends BaseController
 		    ->showColumns('Total', 'major', 'GPA')
                     ->addColumn('grader', function($student)
                     {
-                        $graders = DB::table('user')
+                        $aidyear = Session::get('currentAidyear');
+			$date[0] = substr($aidyear, 0, 2);
+		        $date[1] = substr($aidyear, -2);	
+			
+			$graders = DB::table('user')
                             ->where('user.gradeGroup', 'LIKE', '%4%')
-			    ->where('user.yearTo', '>=', date("m/Y"))
+			    ->where('userRole', '=', '3')
+			    ->where(DB::raw("substr('user.yearTo', -2)"), '=', $date[0])
+			    ->orWhere(DB::raw("substr('user.yearTo', -2)"), '=', $date[1])
                             ->get(array('user.userId', 'name'));
 
                         $output = "";
