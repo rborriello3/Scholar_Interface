@@ -13,6 +13,8 @@
 @stop
 
 @section('dashBoardContent')
+<br>
+{{ link_to_route('showCreateMeeting', 'Create Meeting') }}
 <div class="meetingsMenu">
     <h3>Meetings</h3>
     <div class="container">

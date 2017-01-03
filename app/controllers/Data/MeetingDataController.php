@@ -5,18 +5,15 @@ class MeetingDataController extends BaseController
     public function showAllMeetingsJsonCRUD()
     {
 	return Datatable::query(DB::table('meeting')
-	    ->join('gradeGroup', 'meeting.gradeGroup', '=', 'gradeGroup.gradeGroup')
-	    ->select('eventID', 'name', 'month', 'day', 'year', 'time', 'place', 'meeting.gradeGroup', 'gradeGroup.groupDescription', 'status')
+	    ->join('gradeGroup', 'meeting.participant', '=', 'gradeGroup.gradeGroup')
+	    ->select('meetingID', 'name', 'date', 'time', 'place', 'meeting.participant', 'gradeGroup.groupDescription', 'status')
 	    ->where(function($query) 
 	    {
-		$query->where('month', '>=', date('m'))
-		      ->where('day', '>=', date('d'))
-		      ->where('year', '>=', date('y'));
+		$today = date('Y/m/d');
+		$query->whereDate('date', '>=', $today);
 		return $query;
 	    })
-	    ->orderBy('year', 'asc')
-	    ->orderBy('month', 'asc')
-	    ->orderBy('day', 'asc'))
+	    ->orderBy('date', 'asc'))
 	    ->addColumn('Actions', function($meeting) 
 	    {
 		$crudLinks = '<div class="btn-group">';
@@ -41,14 +38,14 @@ class MeetingDataController extends BaseController
 
 		return $crudLinks;
 	    })
-	    ->showColumns('name')
-	    ->addColumn('Date', function($meeting)  
+	    ->showColumns('name', 'date', 'time', 'place', 'participant')
+	    /*->addColumn('date', function($meeting)  
 	    {
 		//$year = $meeting->year;
 		$date = $meeting->month . '/' . $meeting->day . '/' . substr($meeting->year, -2);
 		return $date;
 	    })
-	    ->showColumns('time', 'place', 'gradeGroup')
+	    ->showColumns('time', 'place', 'participant')*/
 	    ->make();
     }
 }

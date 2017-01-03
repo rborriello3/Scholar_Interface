@@ -7,16 +7,15 @@
 <link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.9.4/media/css/demo_table_jui.css') }}">
 <script type="text/javascript" src="{{asset('DataTables-1.9.4/extras/TableTools/media/js/ZeroClipboard.js')}}"></script>
 <script type="text/javascript" src="{{asset('DataTables-1.9.4/extras/TableTools/media/js/TableTools.js')}}"></script>
-<link rel="stylesheet" type="text/css"
-      href="{{asset('DataTables-1.9.4/extras/TableTools/media/css/TableTools_JUI.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.9.4/extras/TableTools/media/css/TableTools_JUI.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.9.4/extras/TableTools/media/css/TableTools.css')}}">
 @stop
 
 @section('dashBoardContent')
 <br>
 {{ link_to_route('showReportsHome', 'Return') }}
-<br>
-    <h4 class='reportName'>All Awarded Graduating Students</h4>
+<br> 
+	<h4 class='reportName'>All Awarded Graduating Students</h4>
     {{ Datatable::table()
     ->setURL(route('graduatingStudentAddress'))
     ->addColumn('Student ID', 'First', 'Last', 'Email', 'Address 1', 'Address 2', 'City', 'State', 'Zip', 'Scholarship', 'Amount') 
@@ -51,5 +50,4 @@
 	array('sWidth' => '1%')
     ))
     ->render() }}
-
 @stop
