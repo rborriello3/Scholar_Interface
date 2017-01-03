@@ -4,15 +4,24 @@ class MeetingController extends BaseController
 {
     public function showCreateMeeting()
     {
-        $data['participants'] = array('' => 'Choose Meeting Participant(s)');
-	$data['gradeGroup'] = array('2' => 'Entering', '4' => 'Graduating', '6' => 'Returning');
-	$data['participants'] = User::where(function($query)
+	$data['participants'] = array('' => 'Choose Meeting Participant(s)', '2' => 'Entering', '4' => 'Graduating', '6' => 'Returning');
+	$today = date('m/Y');
+	$participants = DB::table('user')
+	    ->where(function($query)
 	    {
-	        $today = date('m/Y');
-		$query->whereDate('yearTo', '>=', $today);
-		return $query;
-	    });
-	//$data['participants'] = array_merge($data['participants'], $participants);
+		$yearTo = $query->yearTo;
+		$yearTo = explode('/', $yearTo);
+		$userMonth = $yearTo[0];
+		$userYear = $yearTo[1];	
+	    ->where('userRole', 'LIKE', '%4%')
+	    ->get();
+
+	foreach($participants as $k => $v)
+	{
+	    $participants[$k] = $v->name;
+	}
+
+	$data['participants'] = array_merge($data['participants'], $participants);
 	return View::make('Content.Admin.Meeting.showCreateMeeting', $data);
     }	
 
