@@ -17,9 +17,4 @@ class HomeController extends BaseController
 	{	
 		return View::make('Content.Global.Authentication.homepage');
 	}
-
-	public function goHome()
-	{
-	    return View::make('Content.Global.Dashboard.dashboard3.blade.php');
-	}
 }

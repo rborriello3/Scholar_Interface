@@ -7,7 +7,7 @@
 <script type="text/javascript" src="{{asset('/javascript/Admin/Meeting/viewMeetings.js')}}"></script>
 <script type="text/javascript" src="{{asset('DataTables-1.9.4/media/js/jquery.dataTables.min.js')}}"></script>
 <link rel="stylesheet" type="text/css" href="{{asset('/jqueryUI/css/ui-darkness/jquery-ui-1.10.3.custom.min.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('DataTAbles-1.9.4/media/css/demo_table_jui.css') }}">
+<link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.9.4/media/css/demo_table_jui.css') }}">
 <link rel="stylesheet" type="text/css" href="{{asset('/css/Admin/Meeting/viewMeetings.css')}}">
 
 @stop
