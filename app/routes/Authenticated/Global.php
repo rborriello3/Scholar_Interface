@@ -10,5 +10,5 @@ Route::group(array('before' => 'auth|accessRights'), function ()
     Route::post('change-aidyear', array('uses' => 'DashboardController@doAidyearSelect', 'as' => 'doAidYearSelect'));
     Route::get('settings', array('uses' => 'SettingsController@showSettingsPage', 'as' => 'showSettingsPage'));
     Route::post('settings/update/{type}', array('uses' => 'SettingsController@doSettingsUpdate', 'as' => 'doUpdate', 'before' => 'settingsUpdate'));
-
+Route::get('home', array('uses' => 'HomeController@goHome', 'as' => 'goHome'));
 });

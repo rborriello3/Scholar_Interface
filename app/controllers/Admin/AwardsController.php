@@ -13,20 +13,11 @@ class AwardsController extends BaseController
 		$scholarships = Scholarships::orderBy('scholarshipName', 'asc')->where('active', '=', 1)->remember(2)->lists('scholarshipName', 'fundCode', 'scholarshipAmount');
 		$amounts = Scholarships::orderBy('scholarshipName', 'asc')->where('active', '=', 1)->remember(1)->lists('scholarshipAmount', 'fundCode');
 
-//		var_dump($amounts);
 		//Attach fundCode to each scholarship name
 		foreach($scholarships as $k => $v)
 		{
 			$scholarships[$k] = $v . " - " . $k . " ($" . $amounts[$k] . ")";
-		}
-//		var_dump($scholarships);
-	
-		//Attach scholarship amount to each name/fundCode combo
-/*		foreach($amounts as $k => $v)
-		{
-			$amounts[$k] = $scholarships[$k] . "(" . $v . ")";
-		}
-*/		
+		}		
 
 		$data['scholarships'] = array_merge($data['scholarships'], $scholarships);
 
