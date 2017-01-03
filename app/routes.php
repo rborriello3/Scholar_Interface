@@ -79,7 +79,7 @@ Route::group(array('before' => 'auth|accessRights|user:3'), function ()
     {
         require 'routes/Authenticated/Admin/Notifications.php';
     });
-    Route::group(array('prefix' => 'meeting/'), function()
+    Route::group(array('prefix' => 'dashboard/meeting/'), function()
     {
 	require 'routes/Authenticated/Admin/Meeting.php';
     });

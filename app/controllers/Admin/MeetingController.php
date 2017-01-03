@@ -34,14 +34,14 @@ class MeetingController extends BaseController
 
 	    if($meetingConfirmed[0])
 	    {
-		return View::make('Content.Global.Dashboard.dashboard3.blade.php')->with('success', 'Successfully scheduled ' . $meetingConfirmed[1] . ' meeting(s).');
+		return Redirect::route('showDashboard')->with('success', 'Successfully scheduled ' . $meetingConfirmed[1] . ' meeting(s).');
 	    }
 	    else
 	    {
-		return View::make('Content.Global.Dashboard.dashboard3.blade.php')->with('error', 'Meeting(s) could not be scheduled due to a processing error');
+		return Redirect::route('showDashboard')->with('error', 'Meeting(s) could not be scheduled due to a processing error');
 	    }
 	} 
 	
-	return View::make('Content.Global.Dashboard.dashboard3.blade.php')->withErrors($v->messages())->withInput()->with('error', 'Meeting(s) could not be saved due to invalid characters in text fields');
+	return Redirect::route('showDashboard')->withErrors($v->messages())->withInput()->with('error', 'Meeting(s) could not be saved due to invalid characters in text fields');
     }  		
 }   
