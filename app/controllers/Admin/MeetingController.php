@@ -7,12 +7,8 @@ class MeetingController extends BaseController
 	$data['participants'] = array('' => 'Choose Meeting Participant(s)', '2' => 'Entering', '4' => 'Graduating', '6' => 'Returning');
 	$today = date('m/Y');
 	$participants = DB::table('user')
-	    ->where(function($query)
-	    {
-		$yearTo = $query->yearTo;
-		$yearTo = explode('/', $yearTo);
-		$userMonth = $yearTo[0];
-		$userYear = $yearTo[1];	
+	    ->where(DB::raw('substr(yearTo, 2)'), '>=', date('m'))
+	    ->where(DB::raw('substr(yearTo, -4)'), '>=', date('Y'))	
 	    ->where('userRole', 'LIKE', '%4%')
 	    ->get();
 
