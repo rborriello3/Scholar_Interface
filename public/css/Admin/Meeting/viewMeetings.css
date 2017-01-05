@@ -2,6 +2,7 @@
 {
     background: #005696;
     border-color: #005696;
+    max-width: 1020px;
     margin-left: 2%;
 }
 
@@ -9,6 +10,7 @@
 {
     background: white;
     color: #464646;
+    max-width: 1020px;
     margin-left: 2%;
 }
 
@@ -17,7 +19,6 @@
     display: block;
     float: left;
     margin-top: 1%;
-    padding-right: 20px;
 }
 
 .meetings
@@ -26,5 +27,9 @@
     height: 10px;
     width: 20%;
     display: inline-block;
-    margin-right: 5%;
+}
+
+.link
+{
+    margin-left: 2%;
 }

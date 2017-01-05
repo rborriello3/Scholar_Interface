@@ -14,6 +14,7 @@
 {{link_to_route('showCreateSchol', 'Create Scholarship')}}
 <br><br>
 <h4 class='reportName'>Scholarships Overview</h4>
+    <div class="container">
 	{{ Datatable::table()
 		->setURL(route('allScholarshipsJSON'))
 		->addColumn('Actions', 'Name', 'Amount', 'Requirements','Description', 'Years', 'Basis', 'Recipients', 'Equal?', 'Donor Name', 'Donor Number', 'Donor Email', 'Donor Address', 'Application Types')
@@ -40,4 +41,5 @@
 
 		))	
 ->render() }}
+    </div>
 @stop
