@@ -4,12 +4,13 @@ class MeetingController extends BaseController
 {
     public function showCreateMeeting()
     {
-	$data['participants'] = array('' => 'Choose Meeting Participant(s)', '2' => 'Entering', '4' => 'Graduating', '6' => 'Returning');
+	$data['participants'] = array('2' => 'All Entering Student Committee Members', '4' => 'All Graduating Student Committee Members', '6' => 'All Returning Student Committee Members');
 	$today = date('m/Y');
 	$participants = DB::table('user')
 	    ->where(DB::raw('substr(yearTo, 2)'), '>=', date('m'))
 	    ->where(DB::raw('substr(yearTo, -4)'), '>=', date('Y'))	
 	    ->where('userRole', 'LIKE', '%4%')
+	    ->orderBy(DB::raw('substring_index(name, " ", -1)'), 'asc')
 	    ->get();
 
 	foreach($participants as $k => $v)

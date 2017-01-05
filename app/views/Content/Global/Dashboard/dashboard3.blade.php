@@ -14,7 +14,9 @@
 
 @section('dashBoardContent')
 <br>
-{{ link_to_route('showCreateMeeting', 'Create Meeting') }}
+<div class="link">
+    {{ link_to_route('showCreateMeeting', 'Create Meeting') }}
+</div>
 <div class="meetingsMenu">
     <h3>Meetings</h3>
     <div class="container">
@@ -35,6 +37,6 @@
   	    array('sWidth' => '1%')
 	))
 	->render() }}	        
-    </div>
+    </table>
 </div>
 @stop
