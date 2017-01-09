@@ -50,5 +50,21 @@ class MeetingController extends BaseController
 	} 
 	
 	return Redirect::route('showDashboard')->withErrors($v->messages())->withInput()->with('error', 'Meeting could not be scheduled due to invalid characters in the text fields');
+    }
+
+    public function deactivateMeeting($meetingID)
+    {
+	$meeting = new Meeting($meetingID);
+	$meeting->deactivate($meetingID);
+
+	return Redirect::route('showDashboard')->with('success', 'Meeting Deactivated');
+    }
+
+    public function activateMeeting($meetingID)
+    {
+	$meeting = new Meeting($meetingID);
+	$meeting->activate($meetingID);
+
+	return Redirect::route('showDashboard')->with('success', 'Meeting Activated');
     }  		
 }   
