@@ -5,14 +5,11 @@ class MeetingDataController extends BaseController
     public function showAllMeetingsJsonCRUD()
     {
 	return Datatable::query(DB::table('meeting')
-	    ->join('gradeGroup', 'meeting.participant', '=', 'gradeGroup.gradeGroup')
-	    ->select('meetingID', 'name', 'date', 'time', 'place', 'meeting.participant', 'gradeGroup.groupDescription', 'status')
-	    ->where(function($query) 
-	    {
-		$today = date('Y/m/d');
-		$query->whereDate('date', '>=', $today);
-		return $query;
-	    })
+	    //->join('gradeGroup', 'meeting.participants', '=', 'gradeGroup.gradeGroup')
+	    ->select('meetingID', 'name', 'date', 'time', 'place', 'participants', /*'gradeGroup.groupDescription',*/ 'status')
+	    ->where(DB::raw('substring(date, 2)'), '>=', date('m'))
+	    ->where(DB::raw('substring(date, 4, 2)'), '>=', date('d'))
+	    ->where(DB::raw('substring(date, 7, 4)'), '>=', date('Y'))
 	    ->orderBy('date', 'asc'))
 	    ->addColumn('Actions', function($meeting) 
 	    {
@@ -38,7 +35,7 @@ class MeetingDataController extends BaseController
 
 		return $crudLinks;
 	    })
-	    ->showColumns('name', 'date', 'time', 'place', 'participant')
+	    ->showColumns('name', 'date', 'time', 'place', 'participants')
 	    /*->addColumn('date', function($meeting)  
 	    {
 		//$year = $meeting->year;

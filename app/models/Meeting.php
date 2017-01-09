@@ -15,49 +15,46 @@ class Meeting extends Eloquent
     /**
     * must define a specific key for our database table
     */   
-    protected $primaryKey = 'eventID';
+    protected $primaryKey = 'meetingID';
 
     /**
-    * Creates a new event 
+    * Creates a new meeting 
     */
     public function createMeeting($values)
     {
-        $values['gradeGroup'] = implode(',', $values['gradeGroup']);
-	$values['strtotime'] = strtotime($values['date'] . $values['time']);
-	$values['active'] = 1;
-	//$values = array_except($values, array('date', 'time'));
-        $this->insert($values);
+	$values['participants'] = implode(',', $values['participants']);
+	$values = array_except($values, array('_token'));
+	$values['status'] = 1;
+        return $this->insert($values);
     }
 
     /**
-    * Updates an event
+    * Updates an meeting
     */
-    public function updateMeeting($eventID, $values)
+    public function editMeeting($meetingID, $values)
     {
-        $this->find($eventID);
-        $values['gradeGroup'] = implode(',', $values['gradeGroup']);
-	$values = array_except($values, array('active'));
-	//$values = array_except($values, array('date', 'time'));
-        return $this->where('eventID', '=', $eventID)->update($values);
+        $this->find($meetingID);
+	$values = array_except($values, array('status'));
+        return $this->where('meetingID', '=', $meetingID)->update($values);
     }
 
     /**
-    * Activates an event
+    * Activates an meeting
     */
-    public function activate($eventID)
+    public function activate($meetingID)
     {
-        $event = $this->find($eventID);
-        $event->active = 1;
-        return $event->save();
+        $meeting = $this->find($meetingID);
+        $meeting->status = 1;
+        return $meeting->save();
     }
 
     /**
-    * Deactivates an event
+    * Deactivates an meeting
     */
-    public function deactivate($eventID)
+    public function deactivate($meetingID)
     {
-	$event = $this->find($eventID);
-	$event->active = 0;
-	return $event->save();
+	$meeting = $this->find($meetingID);
+	$meeting->status = 0;
+	return $meeting->save();
     } 
 }

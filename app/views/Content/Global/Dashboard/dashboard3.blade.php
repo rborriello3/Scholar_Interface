@@ -15,7 +15,7 @@
 @section('dashBoardContent')
 <br>
 <div class="link">
-    {{ link_to_route('showCreateMeeting', 'Create Meeting') }}
+    <h4>{{ link_to_route('showCreateMeeting', 'Create Meeting') }}</h4>
 </div>
 <div class="meetingsMenu">
     <h3>Meetings</h3>
