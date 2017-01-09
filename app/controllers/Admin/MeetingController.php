@@ -25,29 +25,30 @@ class MeetingController extends BaseController
     public function doCreateMeeting()
     {
 	$rules = array(
-	    'name'		=>	'array_text',
-	    'date'		=>	'array_date',
-	    'time'		=>	'array_time',
-	    'place'		=>	'array_text',
-	    'participant'	=>	'array_text'
+	    'name'		=>	'alpha_space_dash_num',
+	    'date'		=>	'date_format:m/d/Y',
+	    'time'		=>	'date_format:g:i A',
+	    'place'		=>	'alpha_space_dash_num',
+	    'participants'	=>	'array_text'
 	);
+
 	$v = Validator::make(Input::all(), $rules);
 
 	if($v->passes())
 	{
 	    $meetingAttempt = new Meeting();
-	    $meetingConfirmed = $meetingAttempt->createMeeting(Input::al(), FALSE);
+	    $meetingConfirmed = $meetingAttempt->createMeeting(Input::all(), FALSE);
 
-	    if($meetingConfirmed[0])
+	    if($meetingConfirmed)
 	    {
 		return Redirect::route('showDashboard')->with('success', 'Successfully scheduled ' . $meetingConfirmed[1] . ' meeting(s).');
 	    }
 	    else
 	    {
-		return Redirect::route('showDashboard')->with('error', 'Meeting(s) could not be scheduled due to a processing error');
+		return Redirect::route('showDashboard')->with('error', 'Meeting could not be scheduled due to a processing error');
 	    }
 	} 
 	
-	return Redirect::route('showDashboard')->withErrors($v->messages())->withInput()->with('error', 'Meeting(s) could not be saved due to invalid characters in text fields');
+	return Redirect::route('showDashboard')->withErrors($v->messages())->withInput()->with('error', 'Meeting could not be scheduled due to invalid characters in the text fields');
     }  		
 }   

@@ -38,11 +38,13 @@
 	    <br><br>
 	    
 	    <div class="form-group" style="width:45%;">
-		<select name="participants" multiple="multiple" id="participants">
-		    @foreach($participants as $p => $name)
+		
+		<select name="participants[]" multiple="multiple" id="participants">
+		@foreach($participants as $p => $name)    
 			<option value="{{ $name }}"> {{ $name }} </option>
-		    @endforeach
+		@endforeach    
 		</select>
+		
 	    </div>
 	    
 	    <!--<div class="form-group">
