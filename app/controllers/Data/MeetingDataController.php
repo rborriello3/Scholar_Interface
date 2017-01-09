@@ -5,30 +5,30 @@ class MeetingDataController extends BaseController
     public function showAllMeetingsJsonCRUD()
     {
 	return Datatable::query(DB::table('meeting')
-	    //->join('gradeGroup', 'meeting.participants', '=', 'gradeGroup.gradeGroup')
-	    ->select('meetingID', 'name', 'date', 'time', 'place', 'participants', /*'gradeGroup.groupDescription',*/ 'status')
+	    ->select('meetingID', 'name', 'date', 'time', 'place', 'participants', 'status')
 	    ->where(DB::raw('substring(date, 2)'), '>=', date('m'))
 	    ->where(DB::raw('substring(date, 4, 2)'), '>=', date('d'))
 	    ->where(DB::raw('substring(date, 7, 4)'), '>=', date('Y'))
 	    ->orderBy('date', 'asc'))
-	    ->addColumn('Actions', function($meeting) 
+	    ->addColumn('Meeting', function($meeting) 
 	    {
 		$crudLinks = '<div class="btn-group">';
 		if($meeting->status == '0')
 		{
 		    $crudLinks .= '<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">' . 'Deactivated' . '<span class="glyphicon glyphicon-arrow-down"></span></button>';
-		    //$statusLinks = link to activate
+		    $statusLinks = '<li>' . link_to_route('activateMeeting', 'Activate Meeting', $parameters = array($meeting->meetingID), $attributes = array('alt' => 'reactivateMeeting')) . '</li>';
 		}
 		else
 		{
 			$crudLinks .= '<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">' . $meeting->name . '<span class="glyphicon glyphicon-arrow-down"></span></button>';
-		    //$statusLinks = link to deactivate
+		    $statusLinks = '<li>' . link_to_route('deactivateMeeting', 'Deactivate Meeting', $parameters = array($meeting->meetingID), $attributes = array('alt' => 'cancelMeeting')) . '</li>';
 	 	}
 
 		$crudLinks .= '<ul class="dropdown-menu" role="menu">';
 		
-		//$crudLinks .= link to route (showEdit)
-		//$crudLinks .= $statusLinks;
+		//$crudLinks .= '<li>' . link_to_route('showEditMeeting', 'Edit Meeting', $parameters = array($meeting->meetingID), $attributes = array('alt' => 'editMeeting')) . '</li>';
+		//$crudLinks .= '<li>' . link_to_route('deleteMeeting', 'Delete Meeting', $parameters = array($meeting->meetingID), $attributes = array('alt' => 'eraseMeeting')) . '</li>';
+		$crudLinks .= $statusLinks;
 
 		$crudLinks .= '</ul>';
 		$crudLinks .= '</div>';
@@ -36,13 +36,6 @@ class MeetingDataController extends BaseController
 		return $crudLinks;
 	    })
 	    ->showColumns('name', 'date', 'time', 'place', 'participants')
-	    /*->addColumn('date', function($meeting)  
-	    {
-		//$year = $meeting->year;
-		$date = $meeting->month . '/' . $meeting->day . '/' . substr($meeting->year, -2);
-		return $date;
-	    })
-	    ->showColumns('time', 'place', 'participant')*/
 	    ->make();
     }
 }
