@@ -121,7 +121,7 @@ class UpdateApplications extends Command
                             }
 
                             // Check if the student has duplicate applications that are active and are in another application type
-                            $checkApps = \Application::where('studentID', '=', $app[9])->whereIn('typeID', $queryType)->whereHas('Aidyear', function ($q)
+                            $checkApps = \Application::where('studentID', '=', $app[9])->whereIn('typeID', $queryType)->whereHas('aidyear', function ($q)
                             {
                                 $q->where('status', '=', 1);
                             })->get(array('typeID'));
@@ -130,7 +130,7 @@ class UpdateApplications extends Command
                             if (count($checkApps) == 0)
                             {
                                 // check if student has an application that is active and have the typeID of 2,4 or 6.
-                                $checkForApp = \Application::where('studentID', '=', $app[9])->where('typeID', '=', $single)->whereHas('Aidyear', function ($q)
+                                $checkForApp = \Application::where('studentID', '=', $app[9])->where('typeID', '=', $single)->whereHas('aidyear', function ($q)
                                 {
                                     $q->where('status', '=', 1);
                                 })->get(array('noUpdateNightly'));
@@ -158,20 +158,20 @@ class UpdateApplications extends Command
                                     elseif ($type == 'RSAPON')
                                     {
                                         $application->typeID          		= 6;
-                                        $application->extraCurricular 		= $app[46];
-                                        $application->essay           		= $app[47];
-					$application->desiredScholarships 	= $app[48];
-					$application->essaySelf       		= $app[49];
-					$application->essayWhy        		= $app[50];
+                                        $application->extraCurricular 		= $app[68];
+                                        $application->essay           		= $app[69];
+					$application->desiredScholarships 	= $app[70];
+					$application->essaySelf       		= $app[71];
+					$application->essayWhy        		= $app[72];
                                     }
                                     else
                                     {
                                         $application->typeID          		= 2;
-                                        $application->extraCurricular 		= $app[28];
-                                        $application->essay           		= $app[29];
-					$application->essaySelf       		= $app[30];
-					$application->essayWhy        		= $app[31];
-					$application->desiredScholarships	= $app[32];
+                                        $application->extraCurricular 		= $app[40];
+                                        $application->essay           		= $app[41];
+					$application->essaySelf       		= $app[42];
+					$application->essayWhy        		= $app[43];
+					$application->desiredScholarships	= $app[44];
                                     }
 
                                     $application->save();
@@ -205,23 +205,23 @@ class UpdateApplications extends Command
                                     elseif ($type == 'RSAPON')
                                     {
                                         $application->typeID          = 6;
-                                        $application->extraCurricular = $app[47];
-                                        $application->essay           = $app[48];
-					$application->desiredScholarships = $app[49];
-					$application->essaySelf       = $app[50];
-					$application->essayWhy        = $app[51];
+                                        $application->extraCurricular = $app[68];
+                                        $application->essay           = $app[69];
+					$application->desiredScholarships = $app[70];
+					$application->essaySelf       = $app[71];
+					$application->essayWhy        = $app[72];
                                     }
                                     else
                                     {
                                         $application->typeID          = 2;
-                                        $application->extraCurricular = $app[29];
-                                        $application->essay           = $app[30];
-					$application->essaySelf       = $app[31];
-					$application->essayWhy        = $app[32];
-					$application->desiredScholarships = $app[33];
+                                        $application->extraCurricular = $app[41];
+                                        $application->essay           = $app[42];
+					$application->essaySelf       = $app[43];
+					$application->essayWhy        = $app[44];
+					$application->desiredScholarships = $app[45];
                                     }
 
-                                    \Application::where('studentID', '=', $app[9])->where('typeID', '=', $single)->whereHas('Aidyear', function ($q)
+                                    \Application::where('studentID', '=', $app[9])->where('typeID', '=', $single)->whereHas('aidyear', function ($q)
                                     {
                                         $q->where('status', '=', 1);
                                     })->update($updates);
@@ -328,7 +328,7 @@ class UpdateApplications extends Command
                         ++$line;
 
                         // Get the applicationID
-                        $appCount = \Application::where('studentID', '=', $recs[6])->where('typeID', '=', $singleSearch)->whereHas('Aidyear', function ($q)
+                        $appCount = \Application::where('studentID', '=', $recs[6])->where('typeID', '=', $singleSearch)->whereHas('aidyear', function ($q)
                         {
                             $q->where('status', '=', 1);
                         })->get(array('applicationID'));
