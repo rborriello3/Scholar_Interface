@@ -255,7 +255,7 @@ class BannerStudentUpdate extends Command
                             }
 			    elseif ($type == 'RSAPON')
                             {
-                                $criteria = array($extra[25], 2, $extra[26], 3, $extra[27], 4, $extra[28], 5, $extra[29], 6, $extra[30], 7, $extra[31], 8, $extra[32], 9, $extra[33], 10, $extra[34], 11, $extra[35], 12, $extra[36], 13, $extra[37], 14, $extra[38], 15, $extra[39], 16, $extra[40], 17, $extra[41], 18, $extra[42], 19, $extra[43], 20, $extra[44], 21, $extra[45], 22, $extra[46], 23, $extra[47], 24, $extra[48], 25, $extra[49], 26, $extra[50], 27, $extra[51], 28, $extra[52], 29, $extra[53], 30, $extra[54], 31, $extra[55], 32, $extra[56], 33, $extra[57], 34, $extra[58], 35, $extra[59], 36, $extra[60], 37, $extra[61], 38);
+                                $criteria = array($extra[25], 30, $extra[26], 9, $extra[27], 20, $extra[28], 31, $extra[29], 32, $extra[30], 33, $extra[31], 5, $extra[32], 21, $extra[33], 22, $extra[34], 4, $extra[35], 23, $extra[36], 34, $extra[37], 2, $extra[38], 35, $extra[39], 18, $extra[40], 13, $extra[41], 12, $extra[42], 36, $extra[43], 11, $extra[44], 37, $extra[45], 41, $extra[46], 26, $extra[47], 3, $extra[48], 8, $extra[49], 38, $extra[50], 27, $extra[51], 6, $extra[52], 28, $extra[53], 29, $extra[54], 7, $extra[55], 10, $extra[56], 39, $extra[57], 40, $extra[58], 14, $extra[59], 15, $extra[60], 16, $extra[61], 17);
 
                                 $checkedCriteria = array();
 
@@ -267,7 +267,7 @@ class BannerStudentUpdate extends Command
                                     }
                                 }
 
-                                $minority        = array($extra[62], 2, $extra[63], 3, $extra[64], 4, $extra[65], 5, $extra[66], 6);
+                                $minority        = array($extra[62], 2, $extra[63], 5, $extra[64], 6, $extra[65], 3, $extra[66], 7, $extra[67], 4);
                                 $checkedMinority = array();
 
                                 foreach ($minority as $k => $v)
@@ -303,7 +303,7 @@ class BannerStudentUpdate extends Command
                                 $student->minority    = 1;	
 				$demo->highSchoolName = $extra[25];
 			
-				$criteria = array($extra[25], 2, $extra[26], 3, $extra[27], 4, $extra[28], 5, $extra[29], 6, $extra[30], 7, $extra[31], 8, $extra[32], 9, $extra[33], 10, $extra[34], 11, $extra[35], 12, $extra[36], 13, $extra[37], 14);
+				$criteria = array($extra[25], 19, $extra[26], 20, $extra[27], 21, $extra[28], 22, $extra[29], 23, $extra[30], 24, $extra[31], 25, $extra[32], 26, $extra[33], 27, $extra[34], 28, $extra[35], 29, $extra[36], 30);
 
                                 $checkedCriteria = array();
 

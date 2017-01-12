@@ -167,11 +167,11 @@ class UpdateApplications extends Command
                                     else
                                     {
                                         $application->typeID          		= 2;
-                                        $application->extraCurricular 		= $app[40];
-                                        $application->essay           		= $app[41];
-					$application->essaySelf       		= $app[42];
-					$application->essayWhy        		= $app[43];
-					$application->desiredScholarships	= $app[44];
+                                        $application->extraCurricular 		= $app[39];
+                                        $application->essay           		= $app[40];
+					$application->essaySelf       		= $app[41];
+					$application->essayWhy        		= $app[42];
+					$application->desiredScholarships	= $app[43];
                                     }
 
                                     $application->save();
