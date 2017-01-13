@@ -35,6 +35,7 @@ class Meeting extends Eloquent
     {
         $this->find($meetingID);
 	$values = array_except($values, array('status'));
+	$values = array_except($values, array('_token'));
         return $this->where('meetingID', '=', $meetingID)->update($values);
     }
 
