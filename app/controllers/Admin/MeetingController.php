@@ -44,7 +44,7 @@ class MeetingController extends BaseController
 	    $name = $user->name;
 	    array_push($participants, 'John Ivankovic', 'Cherie Wierzbicki-McMickle', $name);
 	    
-	    array_merge($data['participants'], $participants);
+	    array_merge($data['participants'], $participants);*/
 
 	    $meetingAttempt = new Meeting();
 	    $meetingConfirmed = $meetingAttempt->createMeeting($data, FALSE);
@@ -56,10 +56,10 @@ class MeetingController extends BaseController
 	    else
 	    {
 		return Redirect::route('showDashboard')->with('error', 'Meeting could not be scheduled due to a processing error');
-	    }*/
+	    }
 	} 
 	
-	//return Redirect::route('showDashboard')->withErrors($v->messages())->withInput()->with('error', 'Meeting could not be scheduled due to invalid characters in the text fields');
+	return Redirect::route('showDashboard')->withErrors($v->messages())->withInput()->with('error', 'Meeting could not be scheduled due to invalid characters in the text fields');
     }
 
     public function deactivateMeeting($meetingID)
