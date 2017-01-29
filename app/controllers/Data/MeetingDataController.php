@@ -6,15 +6,7 @@ class MeetingDataController extends BaseController
     {
 	return Datatable::query(DB::table('meeting')
 	    ->select('meetingID', 'name', 'date', 'time', 'place', 'participants', 'status')
-	    /*->where(DB::raw('substring(date, 2)'), '>=', date('m'))
-	    ->where(DB::raw('substring(date, 4, 2)'), '>=', date('d'))
-	    ->where(DB::raw('substring(date, 7, 4)'), '>=', date('Y'))*/
-	    ->where(function($query)
-	    {
-		$query->where(strtotime('MM/DD/YY', $query->date), '>=', strtotime('MM/DD/YY', date('m/d/Y')));
-		//return $query;
-	    })
-		//strtotime('MM/DD/YY', date('m/d/Y', 'date')), '>=', strtotime('MM/DD/YY', date('m/d/Y')))
+	    ->where('date', '>=', date('Y/m/d', strtotime('today')))
 	    ->orderBy('date', 'asc'))
 	    ->addColumn('Meeting', function($meeting) 
 	    {
@@ -41,7 +33,14 @@ class MeetingDataController extends BaseController
 
 		return $crudLinks;
 	    })
-	    ->showColumns('name', 'date', 'time', 'place', 'participants')
+	    //Date is stored in 'YYYY/MM/DD' format so it's easier to compare dates in queries
+	    //This will change the display format to 'MM/DD/YYYY'
+	    ->addColumn('date', function($meeting)
+	    {
+		$meeting->date = date('m/d/Y', strtotime($meeting->date));
+		return $meeting->date;
+	    })
+	    ->showColumns('time', 'place', 'participants')
 	    ->make();
     }
 }
