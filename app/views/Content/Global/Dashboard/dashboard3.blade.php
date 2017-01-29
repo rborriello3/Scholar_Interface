@@ -22,7 +22,7 @@
     <div class="container">
 	{{ Datatable::table()
 	->setURL(route('showAllMeetingsJsonCRUD'))
-	->addColumn('Actions', 'Name', 'Date', 'Time', 'Place', 'Grade Group/Person')
+	->addColumn('Actions', 'Date', 'Time', 'Place', 'Grade Group/Person')
 	->setOptions('bProcessing', true)
 	->setOptions('bSort', false)
 	->setOptions('iDisplayLength', 5)
@@ -32,9 +32,8 @@
 	    array('sWidth' => '1%'),
 	    array('sWidth' => '1%'),
 	    array('sWidth' => '1%'),
-	    array('sWidth' => '1%'),
-	    array('sWidth' => '1%'),
-  	    array('sWidth' => '1%')
+	    array('sWidth' => '5%'),
+  	    array('sWidth' => '20%')
 	))
 	->render() }}	        
     </table>

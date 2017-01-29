@@ -38,7 +38,7 @@ class MeetingController extends BaseController
 	{
 	    $data = Input::all();
 	    $participants = $data['participants'];
-	    $userId = Session::getName();
+	    /*$userId = Session::getName();
 	    var_dump($userId);
 	    /*$user = User::where('userId', '=', $userId)->get();
 	    $name = $user->name;
@@ -46,11 +46,20 @@ class MeetingController extends BaseController
 	    
 	    array_merge($data['participants'], $participants);*/
 
+	    //Format meeting date in YYYY/MM/DD
+	    $data['date'] = date('Y/m/d', strtotime($data['date']));
+		/*foreach($meetingDates as $k => $v) 
+		{
+		    $meetingDates[$k] = date('Y/m/d', strtotime($v));
+		}
+		array_merge($data['date'], $meetingDates);*/
+
 	    $meetingAttempt = new Meeting();
 	    $meetingConfirmed = $meetingAttempt->createMeeting($data, FALSE);
 
 	    if($meetingConfirmed)
 	    {
+		
 		return Redirect::route('showDashboard')->with('success', 'Successfully scheduled ' . $meetingConfirmed . ' meeting(s).');
 	    }
 	    else
