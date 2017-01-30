@@ -37,22 +37,14 @@ class MeetingController extends BaseController
 	if($v->passes())
 	{
 	    $data = Input::all();
-	    $participants = $data['participants'];
-	    /*$userId = Session::getName();
-	    var_dump($userId);
-	    /*$user = User::where('userId', '=', $userId)->get();
-	    $name = $user->name;
-	    array_push($participants, 'John Ivankovic', 'Cherie Wierzbicki-McMickle', $name);
-	    
-	    array_merge($data['participants'], $participants);*/
+	 
+	    //Append name of user who created the meeting to list of participants
+	    $currentUser = User::find(Auth::user()->userId);
+	    $currentName = $currentUser->name;
+	    array_push($data['participants'], $currentName);
 
 	    //Format meeting date in YYYY/MM/DD
 	    $data['date'] = date('Y/m/d', strtotime($data['date']));
-		/*foreach($meetingDates as $k => $v) 
-		{
-		    $meetingDates[$k] = date('Y/m/d', strtotime($v));
-		}
-		array_merge($data['date'], $meetingDates);*/
 
 	    $meetingAttempt = new Meeting();
 	    $meetingConfirmed = $meetingAttempt->createMeeting($data, FALSE);

@@ -22,7 +22,7 @@ class Meeting extends Eloquent
     */
     public function createMeeting($values)
     {
-	$values['participants'] = implode(',', $values['participants']);
+	$values['participants'] = implode(', ', $values['participants']);
 	$values = array_except($values, array('_token'));
 	$values['status'] = 1;
         return $this->insert($values);
