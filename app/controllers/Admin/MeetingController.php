@@ -78,4 +78,9 @@ class MeetingController extends BaseController
 
 	return Redirect::route('showDashboard')->with('success', 'Meeting Activated');
     }  		
+
+    public function showEditMeeting($meetingId)
+    {
+	$meetingInfo = Meeting::where('meetingID', '=', $meetingId)->get();
+    }
 }   
