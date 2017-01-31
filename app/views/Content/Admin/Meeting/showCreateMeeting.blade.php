@@ -40,8 +40,8 @@
 	    <div class="form-group" style="width:45%;">
 		
 		<select name="participants[]" multiple="multiple" id="participants">
-		@foreach($participants as $p => $name)    
-			<option value="{{ $name }}"> {{ $name }} </option>
+		@foreach($participants as $k => $v)    
+			<option value="{{ $k }}"> {{ $v }} </option>
 		@endforeach    
 		</select>
 		

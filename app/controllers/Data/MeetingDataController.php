@@ -40,7 +40,56 @@ class MeetingDataController extends BaseController
 		$meeting->date = date('m/d/Y', strtotime($meeting->date));
 		return $meeting->date;
 	    })
-	    ->showColumns('time', 'place', 'participants')
+	    ->showColumns('time', 'place')
+	    ->addColumn('participants', function($meeting)
+	    {
+		/*$participantID = $meeting->participants;
+		$groupParticipants = '';
+		if(strpos('0', $meeting->participants) !== false)
+		{
+		    $groupParticipants .= "All Entering Student Committee Members";
+		}
+		else if(strpos('1', $meeting->participants) !== false)
+		{
+		    $groupParticipants .= "All Graduating Student Committee Members";
+		}
+		else if(strpos('2', $meeting->participants) !== false)
+		{
+		    $groupParticipants .= "All Returning Student Committee Members";
+		}
+
+		$participantID = array_except($participantID, array('userId' => '0', 'userId' => '1', 'userId' =>'2'));
+		$participants = DB::table('user')->whereIn('userId', $participantID)->select('name');
+		$participants[] = $groupParticipants;
+		$participants = implode(', ', $participants);
+		return $participants;*/
+		$participants = explode(',', $meeting->participants);
+		foreach($participants as $k => $v)
+		{
+		    if($v == 0)
+		    {
+			$participants[$k] = "All Entering Student Committee Members";
+		    }
+		    else if ($v == 1)
+		    {
+			$participants[$k] = "All Graduating Student Committee Members";
+		    }
+		    else if($v == 2)
+		    {
+			$participants[$k] = "All Returning Student Committee Members";
+		    }
+		    else
+		    {
+			$v = User::where('userId', '=', $v)->whereNotIn('userId', array(0, 1, 2))->get();
+			foreach($v as $participant => $name)
+			{
+			    $participants[$k] = $name->name;
+			}
+		    }
+		}
+		$participants = implode(', ', $participants);
+		return $participants;
+	    })
 	    ->make();
     }
 }

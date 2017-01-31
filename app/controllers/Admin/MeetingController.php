@@ -13,11 +13,7 @@ class MeetingController extends BaseController
 	    ->orderBy(DB::raw('substring_index(name, " ", -1)'), 'asc')
 	    ->get();
 
-	foreach($participants as $k => $v)
-	{
-	    $participants[$k] = $v->name;
-	}
-
+	$participants = array_pluck($participants, 'name', 'userId');
 	$data['participants'] = array_merge($data['participants'], $participants);
 	return View::make('Content.Admin.Meeting.showCreateMeeting', $data);
     }	
@@ -29,7 +25,7 @@ class MeetingController extends BaseController
 	    'date'		=>	'date_format:m/d/Y',
 	    'time'		=>	'date_format:g:i A',
 	    'place'		=>	'alpha_space_dash_num',
-	    'participants'	=>	'array_text'
+	    'participants'	=>	'array_num'
 	);
 
 	$v = Validator::make(Input::all(), $rules);
@@ -40,8 +36,11 @@ class MeetingController extends BaseController
 	 
 	    //Append name of user who created the meeting to list of participants
 	    $currentUser = User::find(Auth::user()->userId);
-	    $currentName = $currentUser->name;
-	    array_push($data['participants'], $currentName);
+	    $currentId = $currentUser->userId;
+	    array_push($data['participants'], $currentId);
+
+	    //Append Cherie (22) and John (21) as participants to every meeting
+	    array_push($data['participants'], '21', '22');
 
 	    //Format meeting date in YYYY/MM/DD
 	    $data['date'] = date('Y/m/d', strtotime($data['date']));
@@ -82,5 +81,11 @@ class MeetingController extends BaseController
     public function showEditMeeting($meetingId)
     {
 	$meetingInfo = Meeting::where('meetingID', '=', $meetingId)->get();
+	$data['meetingID'] = $meetingId;
+	$data['name'] = $meetingInfo->name;
+	$data['date'] = $meetingInfo->date;
+	$data['time'] = $meetingInfo->time;
+	$data['place'] = $meetingInfo->place;
+	$data['meetingParticipants'] = $meetingInfo->participants;
     }
 }   
