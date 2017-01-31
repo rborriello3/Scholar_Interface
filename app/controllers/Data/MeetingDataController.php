@@ -66,15 +66,15 @@ class MeetingDataController extends BaseController
 		$participants = explode(',', $meeting->participants);
 		foreach($participants as $k => $v)
 		{
-		    if($v == 0)
+		    if($v == 2)
 		    {
 			$participants[$k] = "All Entering Student Committee Members";
 		    }
-		    else if ($v == 1)
+		    else if ($v == 4)
 		    {
 			$participants[$k] = "All Graduating Student Committee Members";
 		    }
-		    else if($v == 2)
+		    else if($v == 6)
 		    {
 			$participants[$k] = "All Returning Student Committee Members";
 		    }

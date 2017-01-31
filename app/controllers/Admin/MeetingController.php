@@ -4,17 +4,27 @@ class MeetingController extends BaseController
 {
     public function showCreateMeeting()
     {
-	$data['participants'] = array('2' => 'All Entering Student Committee Members', '4' => 'All Graduating Student Committee Members', '6' => 'All Returning Student Committee Members');
-	$today = date('m/Y');
-	$participants = DB::table('user')
+	$data['participants'] = array(array('2', 'All Entering Student Committee Members'), array('4', 'All Graduating Student Committe Members'), array('6', 'All Returning Student Committee Members'));
+
+	$participants = User::orderBy(DB::raw('substring_index(name, " ", -1)'), 'asc')
 	    ->where(DB::raw('substr(yearTo, 2)'), '>=', date('m'))
 	    ->where(DB::raw('substr(yearTo, -4)'), '>=', date('Y'))	
 	    ->where('userRole', 'LIKE', '%4%')
-	    ->orderBy(DB::raw('substring_index(name, " ", -1)'), 'asc')
 	    ->get();
 
-	$participants = array_pluck($participants, 'name', 'userId');
-	$data['participants'] = array_merge($data['participants'], $participants);
+	//var_dump($participantInfo['userId']);
+
+	foreach($participants as $part)
+	{
+	    /*$participantInfo['userId'] = */ array_push($data['participants'], array($part->userId, $part->name));
+	}
+
+	//$participants = array_only($participants, array('userId', 'name'));
+	//$data['participants'] = $groups;
+	//$data['participants'] = array_merge($data['participants'], $participants);
+	//var_dump($data['participants']);
+	//$data['participants'] = $participantInfo;
+	//array_push($data['participants'], $participantInfo);
 	return View::make('Content.Admin.Meeting.showCreateMeeting', $data);
     }	
 
