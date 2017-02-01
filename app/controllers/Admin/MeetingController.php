@@ -12,19 +12,10 @@ class MeetingController extends BaseController
 	    ->where('userRole', 'LIKE', '%4%')
 	    ->get();
 
-	//var_dump($participantInfo['userId']);
-
 	foreach($participants as $part)
 	{
-	    /*$participantInfo['userId'] = */ array_push($data['participants'], array($part->userId, $part->name));
+	    array_push($data['participants'], array($part->userId, $part->name));
 	}
-
-	//$participants = array_only($participants, array('userId', 'name'));
-	//$data['participants'] = $groups;
-	//$data['participants'] = array_merge($data['participants'], $participants);
-	//var_dump($data['participants']);
-	//$data['participants'] = $participantInfo;
-	//array_push($data['participants'], $participantInfo);
 	return View::make('Content.Admin.Meeting.showCreateMeeting', $data);
     }	
 
@@ -44,10 +35,13 @@ class MeetingController extends BaseController
 	{
 	    $data = Input::all();
 	 
-	    //Append name of user who created the meeting to list of participants
+	    //Append name of user who created the meeting to list of participants as long as that user is not Cherie (22) or John (21)
 	    $currentUser = User::find(Auth::user()->userId);
 	    $currentId = $currentUser->userId;
-	    array_push($data['participants'], $currentId);
+	    if(!in_array($currentId, array(21, 22)))
+	    {
+	        array_push($data['participants'], $currentId);
+	    }
 
 	    //Append Cherie (22) and John (21) as participants to every meeting
 	    array_push($data['participants'], '21', '22');
@@ -90,12 +84,62 @@ class MeetingController extends BaseController
 
     public function showEditMeeting($meetingId)
     {
-	$meetingInfo = Meeting::where('meetingID', '=', $meetingId)->get();
-	$data['meetingID'] = $meetingId;
+	$data = DB::table('meeting')->where('meetingID', '=', $meetingId)->get();
+	/*$data['meetingID'] = $meetingId;
 	$data['name'] = $meetingInfo->name;
 	$data['date'] = $meetingInfo->date;
 	$data['time'] = $meetingInfo->time;
 	$data['place'] = $meetingInfo->place;
-	$data['meetingParticipants'] = $meetingInfo->participants;
+	$data['meetingParticipants'] = $meetingInfo->participants;*/
+
+	return View::make('Content.Admin.Meeting.showEditMeeting', $data);
     }
+
+    public function doEditMeeting()
+    {
+	$rules = array(
+	    'name'		=>	'alpha_space_dash_num',
+	    'date'		=>	'date_format:m/d/Y',
+	    'time'		=>	'date_format:g:i A',
+	    'place'		=>	'alpha_space_dash_num',
+	    'participants'	=>	'array_num'
+	);
+
+	$v = Validator::make(Input::all(), $rules);
+
+	if($v->passes())
+	{
+	    $data = Input::all();
+	 
+	    /*//Append name of user who created the meeting to list of participants as long as that user is not Cherie (22) or John (21)
+	    $currentUser = User::find(Auth::user()->userId);
+	    $currentId = $currentUser->userId;
+	    if(!in_array($currentId, array(21, 22)))
+	    {
+	        array_push($data['participants'], $currentId);
+	    }
+
+	    //Append Cherie (22) and John (21) as participants to every meeting
+	    array_push($data['participants'], '21', '22');*/
+
+	    //Format meeting date in YYYY/MM/DD
+	    $data['date'] = date('Y/m/d', strtotime($data['date']));
+
+	    $meetingAttempt = new Meeting();
+	    $meetingConfirmed = $meetingAttempt->editMeeting($data['meetingID'], $data, FALSE);
+
+	    if($meetingConfirmed)
+	    {
+		
+		return Redirect::route('showDashboard')->with('success', 'Successfully scheduled ' . $meetingConfirmed . ' meeting(s).');
+	    }
+	    else
+	    {
+		return Redirect::route('showDashboard')->with('error', 'Meeting could not be scheduled due to a processing error');
+	    }
+	} 
+	
+	return Redirect::route('showDashboard')->withErrors($v->messages())->withInput()->with('error', 'Meeting could not be scheduled due to invalid characters in the text fields');
+    }
+
 }   
