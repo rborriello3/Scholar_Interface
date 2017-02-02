@@ -156,7 +156,7 @@ Route::filter('reCaptcha', function ()
     }
     */
    
-    $privateKey = '6LdZTPESAAAAAM4g63snTgVyc1HkQnSSvYN24PsW';
+    $privateKey = '6LfW3BMUAAAAAN-8kOjBGMcGCRpFFiAwmTZE3cM3';
     $_SERVER["REMOTE_ADDR"];
     $challenge = Input::get('recaptcha_challenge_field');
     $input     = Input::get('recaptcha_response_field');
