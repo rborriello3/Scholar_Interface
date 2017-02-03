@@ -108,7 +108,8 @@ class PassResetController extends BaseController
                         return Redirect::route('home.index')->with('Error', 'Could not send message, notify Super User');
                     }
 
-                    $email = new Email(Session::get('email'), $user[0]->name);
+                    //$email = new Email(Session::get('email'), $user[0]->name);
+		    $email = new Email('cheriewierzbickimcmickle@sunyorange.edu', $user[0]->name);
 
                     if ($email->sendResetSteps($token))
                     {
@@ -192,7 +193,8 @@ class PassResetController extends BaseController
             $user[0]->token     = NULL;
             $user[0]->tokenTime = NULL;
 
-            $email = new Email($user[0]->email, $user[0]->name);
+            //$email = new Email($user[0]->email, $user[0]->name);
+	    $email = new Email('cheriewierzbickimcmickle@sunyorange.edu', $user[0]->name);
             if ($email->passwordResetConfirm())
             {
                 $user[0]->save();
