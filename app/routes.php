@@ -83,6 +83,10 @@ Route::group(array('before' => 'auth|accessRights|user:3'), function ()
     {
 	require 'routes/Authenticated/Admin/Meeting.php';
     });
+    Route::group(array('prefix' => 'dashboard/deadline/'), function()
+    {
+	require 'routes/Authenticated/Admin/Deadline.php';
+    });
 });
 
 

@@ -63,7 +63,7 @@
 
 <script type="text/javascript">
     $('.form-inline').submit(function() {
-	$'#loading_image').show();
+	$('#loading_image').show();
 	$(':submit', this).attr('disabled', 'disabled');
 	return true;
     });

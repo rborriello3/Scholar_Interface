@@ -34,7 +34,7 @@ class MeetingDataController extends BaseController
 		return $crudLinks;
 	    })
 	    //Date is stored in 'YYYY/MM/DD' format so it's easier to compare dates in queries
-	    //This will change the display format to 'MM/DD/YYYY'
+	    //This function will change the display format to 'MM/DD/YYYY'
 	    ->addColumn('date', function($meeting)
 	    {
 		$meeting->date = date('m/d/Y', strtotime($meeting->date));
