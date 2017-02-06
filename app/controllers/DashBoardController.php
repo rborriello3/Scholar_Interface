@@ -21,8 +21,42 @@ class DashboardController extends BaseController
             Session::put('aidyears', $aidyears);
             Session::put('currentAidyear', $current);
         }
-	
-	return View::make('Content.Global.Dashboard.dashboard' . Session::get('role')); // View based off of session
+
+	if(Session::get('role') == '4')
+	{
+	    $userId = User::find(Auth::user()->userId);
+	    $gradeGroup = User::find(Auth::user()->gradeGroup);
+	    $data['userId'] = $userId;
+	    $data['name'] = User::find(Auth::user()->name);
+	    $data['countTotal'] = DB::table('applications')
+            ->join('student', 'student.studentID', '=', 'applications.studentID')
+            ->join('applicationType', 'applicationType.typeID', '=', 'applications.typeID')
+            ->leftjoin('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
+            ->select('GUID', 'firstName', 'lastName', 'student.studentID', 'applications.aidyear', 'typeName', 'applications.received', 'applicationAssessment.status')
+            ->whereRaw('statusID IN (3,5)')
+            ->whereRaw('applicationType.typeID NOT IN (1,3,5,7,8)')
+            ->where('applicationAssessment.userID', '=', Auth::user()->userId)
+            ->where('applicationAssessment.status', '!=', 'Deactivated')
+            ->where('applications.aidyear', '=', Session::get('currentAidyear'))
+	    ->count();
+
+	    $data['countGraded'] = DB::table('applications')
+            ->join('student', 'student.studentID', '=', 'applications.studentID')
+            ->join('applicationType', 'applicationType.typeID', '=', 'applications.typeID')
+            ->leftjoin('applicationAssessment', 'applicationAssessment.applicationID', '=', 'applications.applicationID')
+            ->select('GUID', 'firstName', 'lastName', 'student.studentID', 'applications.aidyear', 'typeName', 'applications.received', 'applicationAssessment.status')
+            ->whereRaw('statusID IN (3,5)')
+            ->whereRaw('applicationType.typeID NOT IN (1,3,5,7,8)')
+            ->where('applicationAssessment.userID', '=', Auth::user()->userId)
+            ->where('applicationAssessment.status', '=', 'Graded')
+            ->where('applications.aidyear', '=', Session::get('currentAidyear'))
+	    ->count();
+
+
+	    return View::make('Content.Global.Dashboard.dashboard' . Session::get('role'), $data);
+	}
+	else
+	    return View::make('Content.Global.Dashboard.dashboard' . Session::get('role')); // View based off of session
     }
 
     public function doAidYearSelect()
@@ -41,19 +75,4 @@ class DashboardController extends BaseController
 
         return Redirect::route('showDashboard')->with('error', 'You must select an aidyear');
     }
-
-    /*public function showMeetings()
-    {
-	$currentTime = strtotime(time());
-	$values = Meeting::where('strtotime', '>=', $currentTime);
-	if(Session::get('role') == 3)
-		$values = Meeting::where('strtotime', '>=', $currentTime);
-	else
-	{
-		$commMember = User::where('userId', '=', Session::get('userId'));
-		$values = Meeting::where('strtotime', '>=', $currentTime)->whereIn($commMember->gradeGroup, implode('', $values['gradeGroup']));
-	}
-	
-	return View::make('Content.Global.Dashboard.dashboard' . Session::get('role'), $values);
-    }*/
 }

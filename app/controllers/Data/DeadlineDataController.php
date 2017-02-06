@@ -36,7 +36,29 @@ class DeadlineDataController extends BaseController
 		$deadline->date = date('m/d/Y', strtotime($deadline->date));
 		return $deadline->date;
 	    })
-	    ->showColumns('description', 'gradeGroup')
+	    ->showColumns('description')
+	    ->addColumn('gradeGroup', function($deadline)
+	    {
+		$gradeGroup = explode(',', $deadline->gradeGroup);
+		foreach($gradeGroup as $k => $v)
+		{
+		    if($v == 2)
+		    {
+			$gradeGroup[$k] = "All Entering Student Committee Members";
+		    }
+		    else if ($v == 4)
+		    {
+			$gradeGroup[$k] = "All Graduating Student Committee Members";
+		    }
+		    else if($v == 6)
+		    {
+			$gradeGroup[$k] = "All Returning Student Committee Members";
+		    }
+		}
+		   
+		$gradeGroup = implode(', ', $gradeGroup);
+		return $gradeGroup;
+	    })
 	    ->make();
     }
 
@@ -76,7 +98,29 @@ class DeadlineDataController extends BaseController
 		$deadline->date = date('m/d/Y', strtotime($deadline->date));
 		return $deadline->date;
 	    })
-	    ->showColumns('description', 'gradeGroup')
+	    ->showColumns('description') 
+	    ->addColumn('gradeGroup', function($deadline)
+	    {
+		$gradeGroup = explode(',', $deadline->gradeGroup);
+		foreach($gradeGroup as $k => $v)
+		{
+		    if($v == 2)
+		    {
+			$gradeGroup[$k] = "All Entering Student Committee Members";
+		    }
+		    else if ($v == 4)
+		    {
+			$gradeGroup[$k] = "All Graduating Student Committee Members";
+		    }
+		    else if($v == 6)
+		    {
+			$gradeGroup[$k] = "All Returning Student Committee Members";
+		    }
+		}
+		   
+		$gradeGroup = implode(', ', $gradeGroup);
+		return $gradeGroup;
+	    })
 	    ->make();
     }
 }

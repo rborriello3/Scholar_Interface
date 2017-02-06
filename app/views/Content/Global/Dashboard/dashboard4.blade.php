@@ -13,6 +13,50 @@
 @stop
 
 @section('dashBoardContent')
+    <div>
+	<h1>Assessment Count (Completed Assessments/Total Assessements): {{{$countGraded}}}/{{{$countTotal}}}</h1>
+        <br>
+    </div>
+<div class="dashboardMenu">
+    <h3>Assessments</h3>
+
+    <div class="container">
+    	{{ Datatable::table()
+    		->setURL(route('showSingleCommMemberAssessments', $userId->userId))
+    		->addColumn('Student', 'Essay', 'Extra', 'Faculty', 'Total', 'Notes From ' . $userId->name, 'Date')
+    		->setOptions('bProcessing', true)
+    		->setOptions('bSort', true)
+    		->setOptions('aaSorting', array(
+            	array(0, 'asc')
+        	))
+        	->setOptions('iDisplayLength', 10)
+    		->setOptions('aLengthMenu', [10, 20, 30, 40, 50, 100, 150, 200])
+    		->setOptions('bAutoWidth', false)
+    		->setOptions('sDom', 'T<"clear">lrtip')
+    		->setOptions('oTableTools', array(
+        		'sSwfPath' => '/DataTables-1.9.4/extras/TableTools/media/swf/copy_csv_xls_pdf.swf',
+        		'aButtons' => array(
+            			array('sExtends' => 'csv', 'sButtonText' => 'CSV Export'),
+                        array('sExtends' => 'print', 'sButtonText' => 'Print'),
+            			array('sExtends' => 'copy', 'sButtonText' => 'Copy Current Set')
+            		)
+        		)
+    		) 	
+    		->setOptions('aoColumns', array(
+    				array('sWidth' => '15%'),
+    				array('sWidth' => '1%'),
+    				array('sWidth' => '1%'),
+    				array('sWidth' => '1%'),
+    				array('sWidth' => '1%'),
+    				array('sWidth' => '40%'),
+    				array('sWidth' => '1%')
+
+    			)  
+    		)
+    		->render() }}
+    </div>
+
+</div>
 <div class="dashboardMenu">
     <h3>Meetings</h3>
     <div class="container">

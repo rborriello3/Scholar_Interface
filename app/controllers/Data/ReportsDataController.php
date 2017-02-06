@@ -1159,4 +1159,22 @@ class ReportsDataController extends BaseController
 	    ->make();
     }
 
+    public function showSingleCommMemberAssessments($userId)
+    {
+	return Datatable::query(DB::table('applicationAssessment')
+            ->join('applications', 'applications.applicationID', '=', 'applicationAssessment.applicationID')
+            ->join('student', 'student.studentID', '=', 'applications.studentID')
+	  //  ->join('activeUsers', 'activeUsers.userId', '=', $userId)
+            ->select(DB::raw('CONCAT(student.lastName, ", ", student.firstName) as name'), 'applicationAssessment.essay', 'applicationAssessment.extra', 'applicationAssessment.faculty', 'Total', 'assessorNotes', 'assessmentDate', 'applications.typeID')
+            ->where('applicationAssessment.status', '=', 'Graded')
+            ->whereIn('applications.statusID', array(3, 5, 8, 9))
+            ->where('applications.aidyear', '=', Session::get('currentAidyear'))
+            ->where('applicationAssessment.userId', '=', $userId)
+	    ->orderBy('applications.typeID')
+	    ->orderBy('student.lastName'))
+	//    ->where('activeUsers.status', '=', '1')
+            ->showColumns('name', 'essay', 'extra', 'faculty', 'Total', 'assessorNotes', 'assessmentDate')
+            ->setSearchWithAlias()
+	    ->make();
+    }
 }
