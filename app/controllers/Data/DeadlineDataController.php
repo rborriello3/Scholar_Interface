@@ -13,7 +13,7 @@ class DeadlineDataController extends BaseController
 		$crudLinks = '<div class="btn-group">';
 		if($deadline->status == '0')
 		{
-		    $crudLinks .= '<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">' . 'Deactivated' . '<span class="glyphicon glyphicon-arrow-down"></span></button>';
+		    $crudLinks .= '<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">' . $deadline->name . '<span class="glyphicon glyphicon-arrow-down"></span></button>';
 		    $statusLinks = '<li>' . link_to_route('activateDeadline', 'Activate Deadline', $parameters = array($deadline->deadlineID), $attributes = array('alt' => 'reactivateDeadline')) . '</li>';
 		}
 		else

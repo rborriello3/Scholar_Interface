@@ -45,14 +45,14 @@ class DeadlineController extends BaseController
     public function deactivateDeadline($deadlineID)
     {
 	$deadline = new Deadline();
-	$deadline->deactivate($deadlineID);
+	$deadline->deactivateDeadline($deadlineID);
     	return Redirect::route('showDashboard')->with('success', 'Deadline Deactivated');
     }
 
     public function activateDeadline($deadlineID)
     {
 	$deadline = new Deadline();
-	$deadline->activate($deadlineID);
+	$deadline->activateDeadline($deadlineID);
 	return Redirect::route('showDashboard')->with('success', 'Deadline Activated');
     }
 } 

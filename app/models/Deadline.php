@@ -42,7 +42,7 @@ class Deadline extends Eloquent
     /**
     * Activates a deadline
     */
-    public function activate($deadlineID)
+    public function activateDeadline($deadlineID)
     {
 	$deadline = $this->find($deadlineID);
    	$deadline->status = 1;
@@ -52,7 +52,7 @@ class Deadline extends Eloquent
     /**
     * Deactivates a deadline
     */
-    public function deactivate($deadlineID)
+    public function deactivateDeadline($deadlineID)
     {
 	$deadline = $this->find($deadlineID);
 	$deadline->status = 0;

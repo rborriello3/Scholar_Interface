@@ -69,7 +69,7 @@ class MeetingController extends BaseController
     public function deactivateMeeting($meetingID)
     {
 	$meeting = new Meeting();
-	$meeting->deactivate($meetingID);
+	$meeting->deactivateMeeting($meetingID);
 
 	return Redirect::route('showDashboard')->with('success', 'Meeting Deactivated');
     }
@@ -77,7 +77,7 @@ class MeetingController extends BaseController
     public function activateMeeting($meetingID)
     {
 	$meeting = new Meeting();
-	$meeting->activate($meetingID);
+	$meeting->activateMeeting($meetingID);
 
 	return Redirect::route('showDashboard')->with('success', 'Meeting Activated');
     }  		
