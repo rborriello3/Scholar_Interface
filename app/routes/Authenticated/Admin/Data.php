@@ -2,6 +2,7 @@
 
 Route::get('applications', array('uses' => 'ApplicationsDataController@JsonCRUD', 'as' => 'allApplicationsJson'));
 Route::get('meeting', array('uses' => 'MeetingDataController@showAllMeetingsJsonCRUD', 'as' => 'showAllMeetingsJsonCRUD'));
+Route::get('deadline', array('uses' => 'DeadlineDataController@showAllDeadlinesJsonCRUD', 'as' => 'showAllDeadlinesJsonCRUD'));
 Route::get('processes', array('uses' => 'ProcessDataController@JsonCRUD', 'as' => 'allProcessesJSON'));
 Route::get('graduating_rank', array('uses' => 'ReportsDataController@graduatingRankJSON', 'as' => 'graduatingRankJSON'));
 Route::get('graduating_assessments/{userId}', array('uses' => 'ReportsDataController@graduatingAssessmentsJSON', 'as' => 'graduatingAssessmentsJSON'));

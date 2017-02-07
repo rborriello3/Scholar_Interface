@@ -17,10 +17,10 @@
 <div class="link">
     <h4>{{ link_to_route('showCreateMeeting', 'Create Meeting') }}</h4>
 </div>
-<div class="meetingsMenu">
+<div class="dashboardMenu">
     <h3>Meetings</h3>
     <div class="container">
-	{{ Datatable::table()
+   	{{ Datatable::table()
 	->setURL(route('showAllMeetingsJsonCRUD'))
 	->addColumn('Actions', 'Date', 'Time', 'Place', 'Grade Group/Person')
 	->setOptions('bProcessing', true)
@@ -36,6 +36,29 @@
   	    array('sWidth' => '20%')
 	))
 	->render() }}	        
-    </table>
+    </div>
+</div>
+<br>
+<div class="link">
+    <h4>{{ link_to_route('showCreateDeadline', 'Create Deadline') }}</h4>
+<div class="dashboardMenu">
+    <h3>Deadlines</h3>
+    <div class="container">
+        {{ Datatable::table()
+	->setURL(route('showAllDeadlinesJsonCRUD'))
+	->addColumn('Actions', 'Date', 'Description', 'Grade Group')
+	->setOptions('bProcessing', true)
+	->setOptions('bSort', false)
+	->setOptions('iDisplayLength', 5)
+	->setOptions('aLengthMenu', [5, 10, 15, 20, 25, 30, 35, 40, 45, 50])
+	->setOptions('bAutoWidth', false)
+	->setOptions('aoColumns', array(
+	    array('sWidth' => '1%'),
+	    array('sWidth' => '1%'),
+	    array('sWidth' => '1%'),
+	    array('sWidth' => '20%')
+	))
+	->render() }}
+    </div>
 </div>
 @stop

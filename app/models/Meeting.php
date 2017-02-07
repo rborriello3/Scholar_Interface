@@ -42,7 +42,7 @@ class Meeting extends Eloquent
     /**
     * Activates an meeting
     */
-    public function activate($meetingID)
+    public function activateMeeting($meetingID)
     {
         $meeting = $this->find($meetingID);
         $meeting->status = 1;
@@ -52,7 +52,7 @@ class Meeting extends Eloquent
     /**
     * Deactivates an meeting
     */
-    public function deactivate($meetingID)
+    public function deactivateMeeting($meetingID)
     {
 	$meeting = $this->find($meetingID);
 	$meeting->status = 0;
