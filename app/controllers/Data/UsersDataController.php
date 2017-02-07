@@ -8,7 +8,7 @@ class UsersDataController extends BaseController
         {
             $crudLinks = '<div class="btn-group">';
 
-            if ($user->status == 'Inactive' && $user->yearTo == NULL)
+            if ($user->status == 'Inactive')// && $user->yearTo == NULL)
             {
                 $crudLinks .= '<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">' . $user->status . '<span class="glyphicon glyphicon-arrow-down"></span></button>';
                 $statusLinks = '<li>' . link_to_route('showActivateUser', 'Activate User', $parameters = array($user->userId), $attributes = array('alt'   => 'activateUser',
