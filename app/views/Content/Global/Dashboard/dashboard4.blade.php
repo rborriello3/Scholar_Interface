@@ -17,10 +17,10 @@
 	<h1>Assessment Count (Completed Assessments/Total Assessements): {{{$countGraded}}}/{{{$countTotal}}}</h1>
         <br>
     </div>
-<div class="dashboardMenu">
+<div class="dashboardMenu ui-accordion-header" id="dashboardMenu">
     <h3>Assessments</h3>
 
-    <div class="container">
+    <div class="dashboardMenu ui-accordion-content">
     	{{ Datatable::table()
     		->setURL(route('showSingleCommMemberAssessments', $userId->userId))
     		->addColumn('Student', 'Essay', 'Extra', 'Faculty', 'Total', 'Notes From ' . $userId->name, 'Date')
@@ -57,9 +57,9 @@
     </div>
 
 </div>
-<div class="dashboardMenu">
+<div class="dashboardMenu ui-accordion-header" id="dashboardMenu">
     <h3>Meetings</h3>
-    <div class="container">
+    <div class="dashboardMenu ui-accordion-content">
    	{{ Datatable::table()
 	->setURL(route('showCommMemberMeetings'))
 	->addColumn('Actions', 'Date', 'Time', 'Place', 'Grade Group/Person')
@@ -79,9 +79,9 @@
     </div>
 </div>
 
-<div class="dashboardMenu">
+<div class="dashboardMenu ui-accordion-header" id="dashboardMenu">
     <h3>Deadlines</h3>
-    <div class="container">
+    <div class="dashboardMenu ui-accordion-content">
         {{ Datatable::table()
 	->setURL(route('showCommMemberDeadlines'))
 	->addColumn('Actions', 'Date', 'Description', 'Grade Group')

@@ -2,7 +2,7 @@
 {
     background: #005696;
     border-color: #005696;
-    
+    width: 95%;
     margin-left: 2%;
 }
 
@@ -10,7 +10,8 @@
 {
     background: white;
     color: #464646;
-    
+    display: inline-block;
+    width: 95%;
     margin-left: 2%;
 }
 

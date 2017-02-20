@@ -17,9 +17,9 @@
 <div class="link">
     <h4>{{ link_to_route('showCreateMeeting', 'Create Meeting') }}</h4>
 </div>
-<div class="dashboardMenu">
+<div class="dashboardMenu ui-accordion-header" id="dashboardMenu">
     <h3>Meetings</h3>
-    <div class="container">
+    <div class="dashboardMenu ui-accordion-content">
    	{{ Datatable::table()
 	->setURL(route('showAllMeetingsJsonCRUD'))
 	->addColumn('Actions', 'Date', 'Time', 'Place', 'Grade Group/Person')
@@ -41,9 +41,10 @@
 <br>
 <div class="link">
     <h4>{{ link_to_route('showCreateDeadline', 'Create Deadline') }}</h4>
-<div class="dashboardMenu">
+</div>
+<div class="dashboardMenu ui-accordion-header" id="dashboardMenu">
     <h3>Deadlines</h3>
-    <div class="container">
+    <div class="dashboardMenu ui-accordion-content">
         {{ Datatable::table()
 	->setURL(route('showAllDeadlinesJsonCRUD'))
 	->addColumn('Actions', 'Date', 'Description', 'Grade Group')

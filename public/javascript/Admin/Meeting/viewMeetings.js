@@ -2,7 +2,7 @@ $(document).ready(function()
 {
     $(function()
     {
-	$( ".dashboardMenu" ).accordion(
+	$( "#dashboardMenu:nth-child(1n)" ).accordion(
 	{
 	    heightStyle: "content",
 	    collapsible: true,
