@@ -26,7 +26,7 @@
 
 <footer style="margin: 0; text-align: center; color: #464646;">
     <p>Scholarship Interface Created By <a href="https://www.linkedin.com/in/rixhersajazi" target="_blank">Rixhers
-            Ajazi</a></p><p>Special thanks to the <a href="http://www.sunyorange.edu/its/" target="_blank">SUNY Orange ITS Department</a> for all of their
+            Ajazi</a> and <a href="https://www.linkedin.com/in/raymond-borriello-508637107" target="blank">Ray Borriello</a></p><p>Special thanks to the <a href="http://www.sunyorange.edu/its/" target="_blank">SUNY Orange ITS Department</a> for all of their
                             great work and the <a href="https://www.sunyorange.edu/financialaid/" target="_blank">SUNY Orange Financial Aid Office</a> for giving me the opportunity to grow my portfolio and person skills.</p>
 </footer>
 </body>
