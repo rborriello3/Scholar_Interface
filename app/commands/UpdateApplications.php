@@ -328,11 +328,27 @@ class UpdateApplications extends Command
                         ++$line;
 
                         // Get the applicationID
-                        $appCount = \Application::where('studentID', '=', $recs[6])->where('typeID', '=', $singleSearch)->whereHas('aidyear', function ($q)
-                        {
-                            $q->where('status', '=', 1);
-                        })->get(array('applicationID'));
-
+			/********************
+			    -- NOTE: the machform field containing student's email is in a different position for Returning Student Recommendations than for Graduating/Entering Student Recommendations.
+				  Returning --> email was added before A#, so A# is now in $recs[7] and everything beyond $recs[7] has been incremented by 1 (i.e. $recs[10] was originally $recs[9])
+				  Entering/Graduating --> email was added directly after A#, so A# remains in $recs[6] but everything beyond $recs[6] has still been incremented by 1
+			
+			    -- Per client, it is not necessary to store the student email provided in the recommendation (student-supplied email will take precedence)
+			********************/
+                        if($recs[4] == 'RSREC1' || $recs[4] == 'RSREC2')
+			{
+			    $appCount = \Application::where('studentID', '=', $recs[7])->where('typeID', '=', $singleSearch)->whereHas('aidyear', function ($q)
+                            {	
+                                $q->where('status', '=', 1);
+                            })->get(array('applicationID'));
+			}
+			else
+			{
+			    $appCount = \Application::where('studentID', '=', $recs[6])->where('typeID', '=', $singleSearch)->whereHas('aidyear', function ($q)
+                            {	
+                                $q->where('status', '=', 1);
+                            })->get(array('applicationID'));
+			}
                         if (count($appCount) == 1)
                         {
                             $machFormDate = date('m/d/y', strtotime($recs[1]));
@@ -342,32 +358,32 @@ class UpdateApplications extends Command
                             {
                                 if ($recs[4] == 'ESREC1')
                                 {
-                                    $facultyName = $recs[8];
-                                    $department  = $recs[7];
+                                    $facultyName = $recs[9];
+                                    $department  = $recs[8];
                                 }
                                 else
                                 {
-                                    $facultyName = $recs[7];
-                                    $department  = $recs[8];
+                                    $facultyName = $recs[8];
+                                    $department  = $recs[9];
                                 }
 
                                 $recom->recommender1       = $facultyName;
-                                $recom->email1             = $recs[9];
+                                $recom->email1             = $recs[10];
                                 $recom->department1        = $department;
-                                $recom->courseName1        = $recs[10];
-                                $recom->academicPotential1 = $recs[11];
-                                $recom->character1         = $recs[12];
-                                $recom->emotionalMaturity1 = $recs[13];
+                                $recom->courseName1        = $recs[11];
+                                $recom->academicPotential1 = $recs[12];
+                                $recom->character1         = $recs[13];
+                                $recom->emotionalMaturity1 = $recs[14];
 
-                                if ($recs[14] == 'Top 10%')
+                                if ($recs[15] == 'Top 10%')
                                 {
                                     $recom->overallRank1 = 'Top 10';
                                 }
                                 else
                                 {
-                                    if (strpos($recs[14], '%') !== FALSE)
+                                    if (strpos($recs[15], '%') !== FALSE)
                                     {
-                                        $recom->overallRank1 = 'Top ' . substr($recs[14], 0, 2);
+                                        $recom->overallRank1 = 'Top ' . substr($recs[15], 0, 2);
                                     }
                                     else
                                     {
@@ -375,7 +391,7 @@ class UpdateApplications extends Command
                                     }
                                 }
 
-                                $recom->comments1 = $recs[15];
+                                $recom->comments1 = $recs[16];
                                 $recom->received  = $machFormDate;
                                 $recom->save();
                             }
@@ -385,32 +401,32 @@ class UpdateApplications extends Command
                                 {
                                     if ($recs[4] == 'ESREC2')
                                     {
-                                        $facultyName = $recs[8];
-                                        $department  = $recs[7];
+                                        $facultyName = $recs[9];
+                                        $department  = $recs[8];
                                     }
                                     else
                                     {
-                                        $facultyName = $recs[7];
-                                        $department  = $recs[8];
+                                        $facultyName = $recs[8];
+                                        $department  = $recs[9];
                                     }
 
                                     $recom->recommender2       = $facultyName;
-                                    $recom->email2             = $recs[9];
+                                    $recom->email2             = $recs[10];
                                     $recom->department2        = $department;
-                                    $recom->courseName2        = $recs[10];
-                                    $recom->academicPotential2 = $recs[11];
-                                    $recom->character2         = $recs[12];
-                                    $recom->emotionalMaturity2 = $recs[13];
+                                    $recom->courseName2        = $recs[11];
+                                    $recom->academicPotential2 = $recs[12];
+                                    $recom->character2         = $recs[13];
+                                    $recom->emotionalMaturity2 = $recs[14];
 
-                                    if ($recs[14] == 'Top 10%')
+                                    if ($recs[15] == 'Top 10%')
                                     {
                                         $recom->overallRank2 = 'Top 10';
                                     }
-                                    elseif ($recs[14] != 'Top 10%')
+                                    elseif ($recs[15] != 'Top 10%')
                                     {
-                                        if (strpos($recs[14], '%') !== FALSE)
+                                        if (strpos($recs[15], '%') !== FALSE)
                                         {
-                                            $recom->overallRank2 = 'Top ' . substr($recs[14], 0, 2);
+                                            $recom->overallRank2 = 'Top ' . substr($recs[15], 0, 2);
                                         }
                                         else
                                         {
@@ -418,7 +434,7 @@ class UpdateApplications extends Command
                                         }
                                     }
 
-                                    $recom->comments2 = $recs[15];
+                                    $recom->comments2 = $recs[16];
                                     $recom->updated   = $machFormDate;
                                     $recom->complete  = 1;
                                     $recom->save();
@@ -429,25 +445,39 @@ class UpdateApplications extends Command
                             // and that they are in the incomplete / new status.
                             $application = \Application::find($appCount[0]->applicationID);
 
-                            if ($recom->complete == 1 && ($application->statusID == 2 || $application->statusID == 1))
-                            {
-                                $completeStudents[$recs[6]] = $appCount[0]->applicationID;
+                            if($recs[4] == 'RSREC1' || $recs[4] == 'RSREC2')
+			    {
+			        if ($recom->complete == 1 && ($application->statusID == 2 || $application->statusID == 1))
+                                {
+                                    $completeStudents[$recs[7]] = $appCount[0]->applicationID;
+                                }
+                                elseif ($recom->complete == 0)
+                                {
+                                    $incompleteStudents[$recs[7]] = $appCount[0]->applicationID;
+                                }
                             }
-                            elseif ($recom->complete == 0)
-                            {
-                                $incompleteStudents[$recs[6]] = $appCount[0]->applicationID;
-                            }
-                        }
+			    else
+			    {
+				if ($recom->complete == 1 && ($application->statusID == 2 || $application->statusID == 1))
+                                {
+                                    $completeStudents[$recs[6]] = $appCount[0]->applicationID;
+                                }
+                                elseif ($recom->complete == 0)
+                                {
+                                    $incompleteStudents[$recs[6]] = $appCount[0]->applicationID;
+                                }
+			    }	
+			}
                         else
                         {
                             ++$noAppCount;
                             if ($type == 'Entering Freshmen')
                             {
-                                $appNotFound[] = '[Group : ' . $recs[4] . '] [Student ID : ' . $recs[6] . '] [Student Name : ' . $recs[5] . '] [Faculty : ' . $recs[8] . '] [Date : ' . $recs[1] . ']';
+                                $appNotFound[] = '[Group : ' . $recs[4] . '] [Student ID : ' . $recs[6] . '] [Student Name : ' . $recs[5] . '] [Faculty : ' . $recs[9] . '] [Date : ' . $recs[1] . ']';
                             }
-                            else
+                            else if($type == 'Returning Students')
                             {
-                                $appNotFound[] = '[Group : ' . $recs[4] . '] [Student ID : ' . $recs[6] . '] [Student Name : ' . $recs[5] . '] [Faculty : ' . $recs[7] . '] [Date : ' . $recs[1] . ']';
+                                $appNotFound[] = '[Group : ' . $recs[4] . '] [Student ID : ' . $recs[7] . '] [Student Name : ' . $recs[5] . '] [Faculty : ' . $recs[8] . '] [Date : ' . $recs[1] . ']';
                             }
                         }
                     }
