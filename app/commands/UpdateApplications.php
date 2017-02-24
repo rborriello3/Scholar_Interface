@@ -471,11 +471,11 @@ class UpdateApplications extends Command
                         else
                         {
                             ++$noAppCount;
-                            if ($type == 'Entering Freshmen')
+                            if ($type == 'Entering Freshmen' || $type == 'Graduating')
                             {
                                 $appNotFound[] = '[Group : ' . $recs[4] . '] [Student ID : ' . $recs[6] . '] [Student Name : ' . $recs[5] . '] [Faculty : ' . $recs[9] . '] [Date : ' . $recs[1] . ']';
                             }
-                            else if($type == 'Returning Students')
+                            else if($type == 'Returning Student')
                             {
                                 $appNotFound[] = '[Group : ' . $recs[4] . '] [Student ID : ' . $recs[7] . '] [Student Name : ' . $recs[5] . '] [Faculty : ' . $recs[8] . '] [Date : ' . $recs[1] . ']';
                             }
