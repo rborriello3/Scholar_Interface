@@ -301,9 +301,31 @@ class BannerStudentUpdate extends Command
                             {
                                 $student->goal        = $extra[23];
                                 $student->minority    = 1;	
-				$demo->highSchoolName = $extra[25];
+				//$demo->highSchoolName = $extra[25];
+
+				$highSchoolName = array($extra[25], 0, $extra[26], 1, $extra[27], 2, $extra[28], 3, $extra[29], 4, $extra[30], 5, $extra[31], 6, $extra[32], 7, $extra[33], 8, $extra[34], 9, $extra[35], 10, $extra[36], 11, $extra[37], 12, $extra[38], 13, $extra[39], 14, $extra[40], 15, $extra[41], 16, $extra[42], 17, $extra[43], 18, $extra[44], 19, $extra[45], 20, $extra[46], 21);
+				$otherHighSchoolName = $extra[47];	
 			
-				$criteria = array($extra[25], 19, $extra[26], 20, $extra[27], 21, $extra[28], 22, $extra[29], 23, $extra[30], 24, $extra[31], 25, $extra[32], 26, $extra[33], 27, $extra[34], 28, $extra[35], 29, $extra[36], 30);
+				$checkedHighSchoolName;
+
+                                foreach ($highSchoolName as $k => $v)
+                                {
+                                    if ($v == 'Checked')
+                                    {
+                                        $checkedHighSchoolName = $highSchoolName[$k + 1];
+                                    }
+                                }
+
+                                if (strlen($checkedHighSchoolName) > 0)
+                                {
+                                    $demo->highSchoolName = trim(',', $checkedHighSchoolName);
+                                }
+                                else
+                                {
+                                    $demo->highSchoolName = $otherHighSchoolName;
+                                }
+
+				$criteria = array($extra[55], 19, $extra[56], 20, $extra[57], 21, $extra[58], 22, $extra[59], 23, $extra[60], 24, $extra[61], 25, $extra[62], 26, $extra[63], 27, $extra[64], 28, $extra[65], 29, $extra[66], 30);
 
                                 $checkedCriteria = array();
 

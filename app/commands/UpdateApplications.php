@@ -167,12 +167,12 @@ class UpdateApplications extends Command
                                     else
                                     {
                                         $application->typeID          		= 2;
-                                        $application->extraCurricular 		= $app[39];
-                                        $application->essay           		= $app[40];
-					$application->essaySelf       		= $app[41];
-					$application->essayWhy        		= $app[42];
-					$application->desiredScholarships	= $app[43];
-                                    }
+                                        $application->extraCurricular 		= $app[50];
+                                        $application->essay           		= $app[51];
+					$application->essaySelf       		= $app[52];
+					$application->essayWhy        		= $app[53];
+					$application->desiredScholarships	= $app[54];
+                                   }
 
                                     $application->save();
 
@@ -214,11 +214,11 @@ class UpdateApplications extends Command
                                     else
                                     {
                                         $application->typeID          = 2;
-                                        $application->extraCurricular = $app[41];
-                                        $application->essay           = $app[42];
-					$application->essaySelf       = $app[43];
-					$application->essayWhy        = $app[44];
-					$application->desiredScholarships = $app[45];
+                                        $application->extraCurricular = $app[50];
+                                        $application->essay           = $app[51];
+					$application->essaySelf       = $app[52];
+					$application->essayWhy        = $app[53];
+					$application->desiredScholarships = $app[54];
                                     }
 
                                     \Application::where('studentID', '=', $app[9])->where('typeID', '=', $single)->whereHas('aidyear', function ($q)
