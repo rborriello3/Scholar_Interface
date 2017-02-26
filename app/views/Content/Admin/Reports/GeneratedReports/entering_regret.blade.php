@@ -5,10 +5,12 @@
 @parent
 <script type="text/javascript" src="{{asset('DataTables-1.9.4/media/js/jquery.dataTables.min.js')}}"></script>
 <link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.9.4/media/css/demo_table_jui.css') }}">
-<script type="text/javascript" src"{{asset('DataTables-1.9.4/extras/TableTools/media/js/ZeroClipboard.js')}}"></script>
+<script type="text/javascript" src="{{asset('DataTables-1.9.4/extras/TableTools/media/js/ZeroClipboard.js')}}"></script>
 <script type="text/javascript" src="{{asset('DataTables-1.9.4/extras/TableTools/media/js/TableTools.js')}}"></script>
-<link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.9.4/extras/TableTools/media/css/TableTools.JUI.css')}}">
+<link rel="stylesheet" type="text/css"
+      href="{{asset('DataTables-1.9.4/extras/TableTools/media/css/TableTools_JUI.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.9.4/extras/TableTools/media/css/TableTools.css')}}">
+
 @stop
 
 @section('dashBoardContent')
@@ -16,8 +18,9 @@
 {{ link_to_route('showReportsHome', 'Return') }}
 <br>
 	<h4 class='reportName'>Entering Students Regret Address</h4>
+	
 	{{ Datatable::table()
-	->setURL(route('enteringRegret'))
+	->setURL(route('enteringStudentsRegret'))
 	->addColumn('StudentID', 'First', 'Last', 'Address 1', 'Address 2', 'City', 'State', 'Zip')
 	->setOptions('bProcessing', true)
 	->setOptions('bSort', true)

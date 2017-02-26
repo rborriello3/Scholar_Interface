@@ -21,7 +21,7 @@ Route::get('returning_regret', array('uses' => 'ReportsDataController@returningS
 Route::get('faculty_returning_address', array('uses' => 'ReportsDataController@returningFacultyAddress', 'as' => 'returningFacultyAddress'));
 Route::get('notifications_history', array('uses' => 'NotificationsDataController@getAllNotifications', 'as' => 'getAllNotifications'));
 Route::get('entering_award_address', array('uses' => 'ReportsDataController@enteringStudentAddress', 'as' => 'getAllEnteringAwardAddress'));
-Route::get('entering_regret', array('uses' => 'ReportsDataController@enteringStudentRegret', 'as' => 'enteringRegret'));
+Route::get('entering_regret', array('uses' => 'ReportsDataController@enteringStudentRegret', 'as' => 'enteringStudentsRegret'));
 Route::get('faculty_entering_address', array('uses' => 'ReportsDataController@enteringFacultyAddress', 'as' => 'enteringFacultyAddress'));
 Route::get('all_awards', array('uses' => 'ReportsDataController@all_Awards', 'as' => 'all_awards_json'));
 Route::get('all_students', array('uses' => 'ReportsDataController@all_students', 'as' => 'all_students_json'));

@@ -103,7 +103,7 @@ class JobHelper
     {
         /*$users = \User::where('userRole', 'LIKE', '%' . 3 . '%')->where('status', '=', 'Active')->where('userId', '!=', '1')->get(array('userId', 'email', 'name'));*/
 
-	$users = \User::where('userId', '=', '22')->get(array('userId', 'email', 'name'));
+	$users = \User::where('userId', '=', '40')->get(array('userId', 'email', 'name'));
 
         foreach ($users as $v)
         {
@@ -138,7 +138,7 @@ class JobHelper
     {
         /*$users = \User::where('userRole', 'LIKE', '%' . 3 . '%')->where('status', '=', 'Active')->where('userId', '!=', '1')->get(array('userId', 'email', 'name'));*/
 	
-	$users = \User::where('userId', '=', '22')->get(array('userId', 'email', 'name'));
+	$users = \User::where('userId', '=', '40')->get(array('userId', 'email', 'name'));
 
         foreach ($users as $v)
         {

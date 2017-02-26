@@ -462,7 +462,7 @@ class ReportsDataController extends BaseController
                         DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode')
                     ->where('applications.typeID', '=', 4)
                     ->where('applications.aidyear', '=', Session::get('currentAidyear'))
-                    ->whereIn('statusID', array(5,8))
+                    ->where('statusID', '!=', '9')
                 )
         ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode')
         ->setSearchWithAlias()
@@ -905,7 +905,7 @@ class ReportsDataController extends BaseController
                         DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode')
                     ->where('applications.typeID', '=', 6)
                     ->where('applications.aidyear', '=', Session::get('currentAidyear'))
-                    ->whereIn('statusID', array(5,8))
+                    ->where('statusID', '!=', '9')
                 )
         ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode')
         ->setSearchWithAlias()
@@ -1003,17 +1003,17 @@ class ReportsDataController extends BaseController
     public function enteringStudentRegret()
     {
         return Datatable::query(DB::table('student')
-                ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
-                ->join('applications', 'applications.studentID', '=', 'student.studentID')
-                ->select('student.studentID', 'firstName', 'lastName', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
-                    DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode')
-                ->where('applications.typeID', '=', 2)
-                ->where('applications.aidyear', '=', Session::get('currentAidyear'))
-                ->whereIn('statusID', array(5,8))
-        )
-            ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode')
-            ->setSearchWithAlias()
-            ->make();
+                    ->join('studentAddress', 'studentAddress.studentID', '=', 'student.studentID')
+                    ->join('applications', 'applications.studentID', '=', 'student.studentID')
+                    ->select('student.studentID', 'firstName', 'lastName', DB::raw('SUBSTRING(address, 1, LOCATE("||", address) -1) as address1'),
+                        DB::raw('SUBSTRING(address, LOCATE("||", address) +2) as address2'), 'city', 'state', 'zipCode')
+                    ->where('applications.typeID', '=', 2)
+                    ->where('applications.aidyear', '=', Session::get('currentAidyear'))
+                    ->where('statusID', '!=', '9')
+                )
+        ->showColumns('studentID', 'firstName', 'lastName', 'address1', 'address2', 'city', 'state', 'zipCode')
+        ->setSearchWithAlias()
+        ->make();
     }
 
     public function enteringFacultyAddress()
