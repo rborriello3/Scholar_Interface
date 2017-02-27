@@ -35,16 +35,18 @@ class Email
     public function sendRegisterMail()
     {
         $data['name'] = $this->name;
-        $userId = DB::table('user')->where('email', '=', $this->email)->get(array('userId'));
+        //$userId = DB::table('user')->where('email', '=', $this->email)->get(array('userId'));
+	$userId = DB::table('user')->where('userId', '=', '22')->get(array('userId'));
 
         $callback = function ($message)
         {
-            $message->to($this->email)->subject('Welcome to ScholarInterface');
+            //$message->to($this->email)->subject('Welcome to ScholarInterface');
+	    $message->to('rborriello3@gmail.com')->subject('Welcome to ScholarInterface');
         };
 
         if (Mail::send('OutGoingMessages.Emails.registerEmail', $data, $callback))
         {
-            Event::fire('notification', array($data['name'] . ' created a account', 11, 1, $userId[0]['userId'], null, null, 'Welcome to ScholarInterface'));
+            Event::fire('notification', array($data['name'] . ' created a account', 11, 1, $userId[0]->userId, null, null, 'Welcome to ScholarInterface'));
             return TRUE;
         }
     }
@@ -53,8 +55,8 @@ class Email
     {
         $data['name']  = $this->name;
         $data['email'] = $this->email;
-        $info          = DB::table('user')->select('email', 'name', 'userId')->where('userRole', 'LIKE', '%2%')->where('status', '=', 'Active')->get();
-
+        //$info          = DB::table('user')->select('email', 'name', 'userId')->where('userRole', 'LIKE', '%2%')->where('status', '=', 'Active')->get();
+	$info = DB::table('user')->select('email', 'name', 'userId')->where('userId', '=', '22')->get();
         foreach ($info as $inf)
         {
             $data['adminName'] = $inf->name;
@@ -67,8 +69,8 @@ class Email
             {
                 return FALSE;
             }
-
-            Event::fire('notification', array($data['name'] . ' has just created an account', 12, 1, $info[0]['userId'], null, null, $this->name . ' account registration'));
+	
+            Event::fire('notification', array($data['name'] . ' has just created an account', 12, 1, /*$info[0]['userId']*/$info[0]->userId, null, null, $this->name . ' account registration'));
         }
 
         return TRUE;
@@ -146,7 +148,8 @@ class Email
 
         $callback = function ($message)
         {
-            $message->to($this->email)->subject('Scholarship Interface Account Activated');
+            //$message->to($this->email)->subject('Scholarship Interface Account Activated');
+	    $message->to("cheriewierzbickimcmickle@sunyorange.edu")->subject('Scholarship Interface Account Activated');
         };
 
         if (!Mail::send('OutGoingMessages.Emails.activationEmail', $data, $callback))
